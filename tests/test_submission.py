@@ -73,3 +73,57 @@ def test_cli(tmp_path, capsys):
     (cp / "x.jsonl").write_text("")
     # cli loads cases from a path; reuse load_cases monkeypatch-free by checking unknown product
     assert main(["verify-submission", "--results", str(out), "--cases", str(cp), "--rerun", "nope"]) == 2
+
+
+class Boom(FakeAdapter):
+    def judge(self, messages, target, mode):
+        raise RuntimeError("no key")
+
+
+def test_spot_check_all_rerun_errors_is_problem(tmp_path):
+    _, res = good(tmp_path)
+    p = spot_check(res, cases(), Boom(), k=3)
+    assert any(x.startswith("spot-check unverified") for x in p)
+
+
+def test_spot_check_all_submitted_errors_is_problem(tmp_path):
+    _, res = good(tmp_path)
+    for r in res:
+        r["decision"] = "error"
+    p = spot_check(res, cases(), FakeAdapter(), k=3)
+    assert any(x.startswith("spot-check unverified") for x in p)
+
+
+def test_spot_check_one_error_among_many_is_note(tmp_path):
+    cs = [mk(f"c{i}") for i in range(6)]
+    out = tmp_path / "r.jsonl"
+    run(FakeAdapter(), cs, out)
+    res = [json.loads(l) for l in out.read_text().splitlines()]
+    res[0]["decision"] = "error"
+    p = spot_check(res, cs, FakeAdapter(), k=6)
+    assert len(p) == 1 and p[0].startswith("note:")
+
+
+def write_cases(tmp_path):
+    import dataclasses
+    cp = tmp_path / "cases"
+    cp.mkdir()
+    (cp / "x.jsonl").write_text("".join(json.dumps(dataclasses.asdict(c)) + "\n" for c in cases()))
+    return cp
+
+
+def test_cli_exit_0_and_prints_seed(tmp_path, capsys):
+    out, _ = good(tmp_path)
+    cp = write_cases(tmp_path)
+    assert main(["verify-submission", "--results", str(out), "--cases", str(cp), "--rerun", "fake"]) == 0
+    assert "seed: " in capsys.readouterr().out
+    assert main(["verify-submission", "--results", str(out), "--cases", str(cp), "--rerun", "fake", "--seed", "7"]) == 0
+    assert "seed: 7" in capsys.readouterr().out
+
+
+def test_cli_exit_1_on_problem(tmp_path, capsys):
+    out, res = good(tmp_path)
+    cp = write_cases(tmp_path)
+    out.write_text("".join(json.dumps(r) + "\n" for r in res[:-1]))
+    assert main(["verify-submission", "--results", str(out), "--cases", str(cp)]) == 1
+    assert "missing case" in capsys.readouterr().out
