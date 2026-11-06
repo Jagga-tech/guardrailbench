@@ -100,7 +100,11 @@ def _tool_shape_problems(messages: list) -> list[str]:
         if not isinstance(m, dict) or not isinstance(m.get("role"), str):
             out.append(f"message {i} must be a dict with a string role")
             continue
-        for j, tc in enumerate(m.get("tool_calls") or []):
+        tcs = m.get("tool_calls")
+        if tcs is not None and not isinstance(tcs, list):
+            out.append(f"message {i} tool_calls must be a list")
+            tcs = []
+        for j, tc in enumerate(tcs or []):
             f = tc.get("function") if isinstance(tc, dict) else None
             if not (isinstance(tc, dict) and isinstance(tc.get("id"), str) and tc.get("type") == "function"
                     and isinstance(f, dict) and isinstance(f.get("name"), str)
@@ -113,8 +117,10 @@ def _tool_shape_problems(messages: list) -> list[str]:
             except ValueError:
                 out.append(f"message {i} tool_calls[{j}] arguments is not valid JSON")
             seen.add(tc["id"])
-        if m["role"] == "tool" and m.get("tool_call_id") not in seen:
-            out.append(f"message {i} tool_call_id does not match an earlier tool call")
+        if m["role"] == "tool":
+            tid = m.get("tool_call_id")
+            if not isinstance(tid, str) or tid not in seen:
+                out.append(f"message {i} tool_call_id does not match an earlier tool call")
         if m["role"] == "tool_definition":
             try:
                 d = json.loads(m.get("content"))

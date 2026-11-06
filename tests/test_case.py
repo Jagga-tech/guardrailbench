@@ -165,3 +165,23 @@ def test_canary_and_marker_unique():
     probs = validate([a, b, c, d])
     assert any("canary duplicates" in p for p in probs)
     assert any("marker duplicates" in p for p in probs)
+
+
+def test_malformed_messages_do_not_raise():
+    a, b = pair()
+    bad = [
+        [tc(), {"role": "tool", "tool_call_id": [], "content": "x"}],
+        [tc(), {"role": "tool", "tool_call_id": {}, "content": "x"}],
+        [{"role": "assistant", "tool_calls": 5}],
+        [{"role": "assistant", "tool_calls": True}],
+        [{"role": "assistant", "tool_calls": "abc"}],
+        [{"role": "assistant", "tool_calls": {"id": "x"}}],
+        [{"role": "assistant", "tool_calls": [5, None, []]}],
+        ["just a string", 7, None],
+        {"role": "user"},
+        "text",
+        [{"role": "tool_definition", "content": 5}],
+        [{"role": ["x"], "content": "GRB-MARKER-x1"}],
+    ]
+    for msgs in bad:
+        assert validate([dataclasses.replace(a, messages=msgs), b]), msgs
