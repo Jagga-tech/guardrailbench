@@ -14,6 +14,7 @@ transformers/torch are imported only when the model is first used.
 """
 from __future__ import annotations
 
+import threading
 from guardrailbench.adapters import register
 from guardrailbench.flatten import to_text
 from guardrailbench.verdict import Verdict
@@ -26,9 +27,14 @@ def _part(role: str, text: str) -> dict:
     return {"role": role, "content": [{"type": "text", "text": text}]}
 
 
-def build_input(messages: list[dict], target: int, mode: str) -> list[dict]:
+def build_input(messages: list[dict], target: int, mode: str) -> list[dict] | None:
+    """None when the target has no text: classifying would judge the previous turn instead."""
     if mode == "flattened":
-        return [_part("user", to_text(messages, target))]
+        text = to_text(messages, target)
+        return [_part("user", text)] if text.strip() else None
+    cur = messages[target]
+    if cur["role"] not in ("user", "assistant") or not (cur.get("content") or "").strip():
+        return None
     # native: the conversation up to the target, text user/assistant turns only
     return [_part(m["role"], m["content"]) for m in messages[:target + 1]
             if m["role"] in ("user", "assistant") and m.get("content")]
@@ -50,23 +56,32 @@ class LlamaGuard4:
     version = f"{MODEL_ID}@{REVISION[:12]}"
     native_checkpoints = frozenset({"prompt", "output"})
     accepts_text = True
+    _lock = threading.Lock()
     parse_output = staticmethod(parse_output)
 
     def __init__(self):
         self._model = self._proc = None
 
     def _load(self):
-        if self._model is None:
-            import torch  # heavy; lazy
-            from transformers import AutoProcessor, Llama4ForConditionalGeneration
-            self._proc = AutoProcessor.from_pretrained(MODEL_ID, revision=REVISION)
-            self._model = Llama4ForConditionalGeneration.from_pretrained(
-                MODEL_ID, revision=REVISION, device_map="auto", torch_dtype=torch.bfloat16)
+        with self._lock:  # load once, even with parallel workers
+            if self._model is None:
+                import torch  # heavy; lazy
+                from transformers import AutoProcessor, Llama4ForConditionalGeneration
+                self._proc = AutoProcessor.from_pretrained(MODEL_ID, revision=REVISION)
+                self._model = Llama4ForConditionalGeneration.from_pretrained(
+                    MODEL_ID, revision=REVISION, device_map="auto", torch_dtype=torch.bfloat16)
+
+    def warmup(self):
+        """Called once by run() before any timed call."""
+        self._load()
 
     def judge(self, messages, target, mode) -> Verdict:
+        conv = build_input(messages, target, mode)
+        if conv is None:
+            return Verdict("error", error="empty target text")
         self._load()
         inputs = self._proc.apply_chat_template(
-            build_input(messages, target, mode), tokenize=True, add_generation_prompt=True,
+            conv, tokenize=True, add_generation_prompt=True,
             return_tensors="pt", return_dict=True).to(self._model.device)
         out = self._model.generate(**inputs, max_new_tokens=10, do_sample=False)
         text = self._proc.batch_decode(out[:, inputs["input_ids"].shape[-1]:], skip_special_tokens=True)[0]

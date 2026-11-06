@@ -83,13 +83,20 @@ class BedrockGuardrailsAdapter:
 
     def judge(self, messages, target, mode) -> Verdict:
         req = build_request(messages, target, mode, self.gid, self.gver)
+        client = self._client()
         try:
-            return parse_response(self._client().apply_guardrail(**req))
-        except Exception as e:  # botocore ClientError carries response["ResponseMetadata"]["HTTPStatusCode"]
-            code = getattr(e, "response", {}).get("ResponseMetadata", {}).get("HTTPStatusCode", 0)
+            raw = client.apply_guardrail(**req)
+        except Exception as e:
+            resp = getattr(e, "response", None)
+            if not isinstance(resp, dict):
+                # botocore network errors (BotoCoreError: EndpointConnectionError, ReadTimeoutError...)
+                # carry no .response; only ClientError does
+                raise Retryable(f"{type(e).__name__}: {e}") from None
+            code = resp.get("ResponseMetadata", {}).get("HTTPStatusCode", 0)
             if code == 429 or code >= 500:
                 raise Retryable(f"HTTP {code}") from None
             raise
+        return parse_response(raw)
 
 
 register("bedrock-guardrails")(BedrockGuardrailsAdapter)

@@ -44,8 +44,13 @@ def build_request(messages: list[dict], target: int, mode: str) -> dict:
 def parse_response(raw: dict) -> Verdict:
     if "userPromptAnalysis" not in raw and "documentsAnalysis" not in raw:
         return Verdict("error", raw=raw, error="no analysis in response")
-    hits = [raw.get("userPromptAnalysis", {})] + list(raw.get("documentsAnalysis", []))
-    return Verdict("block" if any(h.get("attackDetected") for h in hits) else "allow", raw=raw)
+    docs = raw.get("documentsAnalysis", [])
+    if not isinstance(docs, list):
+        return Verdict("error", raw=raw, error="documentsAnalysis is not a list")
+    hits = ([raw["userPromptAnalysis"]] if "userPromptAnalysis" in raw else []) + docs
+    if not all(isinstance(h, dict) and isinstance(h.get("attackDetected"), bool) for h in hits):
+        return Verdict("error", raw=raw, error="missing or non-bool attackDetected")
+    return Verdict("block" if any(h["attackDetected"] for h in hits) else "allow", raw=raw)
 
 
 class AzurePromptShieldsAdapter:

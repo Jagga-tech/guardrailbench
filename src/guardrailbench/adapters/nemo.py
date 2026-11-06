@@ -17,7 +17,7 @@ tool-calling model, so they cannot be replayed against a recorded case and tool_
 (This is narrower than a "tool rails" reading of the product; flagged in the task report.)
 
 Native mode: target role user -> check(history up to target, rail_types=[INPUT]); assistant -> [OUTPUT];
-other roles and flattened mode -> the flattened text as one user turn with [INPUT]. Only user/assistant
+flattened mode -> the flattened text as one user turn with [INPUT]; other roles in native mode -> error. Only user/assistant
 text turns are passed. An assistant turn with only tool_calls has empty text, so an output check on it checks
 nothing (IORails skips empty directions and reports PASSED per the docs).
 Decisions: blocked -> block (rail name kept in raw), modified -> sanitize (content), passed -> allow.
@@ -32,6 +32,7 @@ LLM-backed: the self-check rails call an LLM. Config is built in code from env v
 from __future__ import annotations
 
 import os
+import threading
 
 from guardrailbench.adapters import register
 from guardrailbench.flatten import to_text
@@ -63,10 +64,12 @@ def _text_turns(messages: list[dict]) -> list[dict]:
             if m["role"] in ("user", "assistant")]
 
 
-def build_input(messages: list[dict], target: int, mode: str) -> dict:
+def build_input(messages: list[dict], target: int, mode: str) -> dict | None:
     role = messages[target]["role"]
-    if mode == "flattened" or role not in ("user", "assistant"):
+    if mode == "flattened":
         return {"messages": [{"role": "user", "content": to_text(messages, target)}], "rail_types": ["input"]}
+    if role not in ("user", "assistant"):
+        return None  # native mode cannot express this role; judge() reports an error, never a silent flatten
     return {"messages": _text_turns(messages[:target + 1]),
             "rail_types": ["input" if role == "user" else "output"]}
 
@@ -101,23 +104,31 @@ class NemoGuardrails:
     version = VERSION
     native_checkpoints = frozenset({"prompt", "output"})
     accepts_text = True
+    _lock = threading.Lock()
     parse_output = staticmethod(parse_output)
 
     def __init__(self):
         self._rails = None
 
     def _load(self):
-        if self._rails is None:
-            from nemoguardrails import LLMRails, RailsConfig  # heavy; lazy
-            path = os.environ.get("GUARDRAILBENCH_NEMO_CONFIG")
-            cfg = RailsConfig.from_path(path) if path else RailsConfig.from_content(yaml_content=_config_yaml())
-            self._rails = LLMRails(cfg)
-        return self._rails
+        with self._lock:  # load once, even with parallel workers
+            if self._rails is None:
+                from nemoguardrails import LLMRails, RailsConfig  # heavy; lazy
+                path = os.environ.get("GUARDRAILBENCH_NEMO_CONFIG")
+                cfg = RailsConfig.from_path(path) if path else RailsConfig.from_content(yaml_content=_config_yaml())
+                self._rails = LLMRails(cfg)
+            return self._rails
+
+    def warmup(self):
+        """Called once by run() before any timed call."""
+        self._load()
 
     def judge(self, messages, target, mode) -> Verdict:
+        inp = build_input(messages, target, mode)
+        if inp is None:
+            return Verdict("error", error=f"native mode: unsupported target role {messages[target]['role']!r}")
         from nemoguardrails.rails.llm.options import RailType
         rails = self._load()
-        inp = build_input(messages, target, mode)
         res = rails.check(inp["messages"], rail_types=[RailType(t) for t in inp["rail_types"]])
         return parse_output({"status": res.status.value, "content": res.content, "rail": res.rail})
 

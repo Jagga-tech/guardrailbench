@@ -22,6 +22,7 @@ Heavy imports (transformers, torch) happen only when the model is first used.
 """
 from __future__ import annotations
 
+import threading
 from guardrailbench.adapters import register
 from guardrailbench.flatten import to_text
 from guardrailbench.verdict import Verdict
@@ -50,6 +51,7 @@ def make_windows(text: str, offsets: list[tuple[int, int]], size: int = WINDOW) 
 
 class HFClassifier:
     accepts_text = True
+    _lock = threading.Lock()
 
     def __init__(self, name, model_id, revision, native, block, allow):
         self.name, self.model_id, self.revision = name, model_id, revision
@@ -75,12 +77,17 @@ class HFClassifier:
         return Verdict("block" if blocked else "allow", best, raw={"windows": raw})
 
     def _load(self):
-        if self._pipe is None:
-            from transformers import AutoTokenizer, pipeline  # heavy; lazy
-            self._tok = AutoTokenizer.from_pretrained(self.model_id, revision=self.revision)
-            self._pipe = pipeline("text-classification", model=self.model_id, tokenizer=self._tok,
-                                  revision=self.revision, truncation=True, max_length=512, top_k=None)
-        return self._pipe
+        with self._lock:  # load once, even with parallel workers
+            if self._pipe is None:
+                from transformers import AutoTokenizer, pipeline  # heavy; lazy
+                self._tok = AutoTokenizer.from_pretrained(self.model_id, revision=self.revision)
+                self._pipe = pipeline("text-classification", model=self.model_id, tokenizer=self._tok,
+                                      revision=self.revision, truncation=True, max_length=512, top_k=None)
+            return self._pipe
+
+    def warmup(self):
+        """Called once by run() before any timed call."""
+        self._load()
 
     def judge(self, messages, target, mode) -> Verdict:
         pipe = self._load()

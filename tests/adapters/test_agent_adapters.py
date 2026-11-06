@@ -190,3 +190,13 @@ def test_invariant_targets_reach_the_matching_rule_inputs():
     for idx, role in [(1, "user"), (2, "assistant"), (3, "tool"), (4, "assistant")]:
         pend = invariant.build_input(TOOL_MSGS, idx, "native")["pending"]
         assert len(pend) == 1 and pend[0] == TOOL_MSGS[idx] and pend[0]["role"] == role
+
+
+@pytest.mark.parametrize("mod,name", [(llm_guard, "llm-guard"), (nemo, "nemo-guardrails"),
+                                      (llamafirewall, "llamafirewall")])
+def test_native_unsupported_role_is_error_not_silent_flatten(mod, name):
+    idx = 0 if mod is llamafirewall else 3  # tool_definition / tool
+    assert mod.build_input(TOOL_MSGS, idx, "native") is None
+    assert mod.build_input(TOOL_MSGS, idx, "flattened") is not None
+    v = get(name).judge(TOOL_MSGS, idx, "native")  # returns before importing the library
+    assert v.decision == "error" and "unsupported target role" in v.error
