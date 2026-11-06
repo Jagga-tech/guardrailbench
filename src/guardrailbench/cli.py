@@ -19,7 +19,21 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--results", type=Path, required=True)
     s.add_argument("--cases", type=Path, required=True)
     s.add_argument("--out", type=Path, required=True)
+    sub.add_parser("hash").add_argument("path", type=Path)
+    sc = sub.add_parser("scan")
+    sc.add_argument("--cases", type=Path, required=True)
+    sc.add_argument("data", type=Path, nargs="+")
     args = ap.parse_args(argv)
+    if args.cmd == "hash":
+        from .integrity import split_hash
+        print(split_hash(args.path))
+        return 0
+    if args.cmd == "scan":
+        from .integrity import scan_canaries
+        hits = scan_canaries(args.data, {c.canary for c in load_cases(args.cases)})
+        for f, c in hits:
+            print(f"{f}\t{c}")
+        return 1 if hits else 0
     if args.cmd == "score":
         import json
         from .metrics import report
