@@ -40,10 +40,15 @@ def fake_opener(status=None, body=None):
     return op
 
 
+@pytest.fixture(autouse=True)
+def _lakera_project(monkeypatch):
+    monkeypatch.setenv("LAKERA_PROJECT_ID", "project-1")
+
+
 def test_registry_versions_checkpoints(monkeypatch):
     monkeypatch.setenv("BEDROCK_GUARDRAIL_ID", "gid")
     monkeypatch.setenv("BEDROCK_GUARDRAIL_VERSION", "3")
-    exp = {"lakera-guard": {"prompt", "ingested_content", "tool_call", "tool_definition", "trajectory"},
+    exp = {"lakera-guard": {"prompt", "output", "ingested_content", "tool_call", "tool_definition", "trajectory"},
            "azure-prompt-shields": {"prompt", "ingested_content"}, "bedrock-guardrails": {"prompt"},
            "model-armor": {"prompt"}, "openai-moderation": {"prompt"}}
     for n, cps in exp.items():
@@ -75,6 +80,27 @@ def test_lakera_flattened_and_parse():
                                   "metadata": {"request_uuid": "abcd5678-ab42-42e4-8d80-af44ca72e975"}}).decision == "block"
     assert lakera.parse_response({"flagged": False, "action": "enforce"}).decision == "allow"
     assert lakera.parse_response({}).decision == "error"
+
+
+def test_lakera_detect_mode_is_error_not_allow():
+    # flagged forced false in Detect mode, breakdown detected is unaffected (docs/api/guard)
+    v = lakera.parse_response({"flagged": False, "action": "detect", "breakdown": [
+        {"detector_type": "prompt_attack", "detected": True, "result": "l1_confident", "message_id": 0}]})
+    assert v.decision == "error" and "detect-mode" in v.error
+    assert lakera.parse_response({"flagged": False, "action": "enforce", "breakdown": [
+        {"detector_type": "prompt_attack", "detected": False, "message_id": 0}]}).decision == "allow"
+
+
+def test_lakera_requires_project(monkeypatch):
+    monkeypatch.delenv("LAKERA_PROJECT_ID")
+    with pytest.raises(RuntimeError, match="LAKERA_PROJECT_ID"):
+        ADAPTERS["lakera-guard"]()
+
+
+def test_lakera_output_target_is_last_assistant_message():
+    msgs = MSGS + [{"role": "assistant", "content": "done"}]
+    r = lakera.build_request(msgs, 4, "native")
+    assert r["messages"][-1] == {"role": "assistant", "content": "done"}
 
 
 # ---- Azure
@@ -112,6 +138,12 @@ def test_bedrock_parse():
     assert "canned" not in json.dumps(v.raw)
     assert bedrock.parse_response({"action": "NONE", "outputs": [], "assessments": [{}]}).decision == "allow"
     assert bedrock.parse_response({}).decision == "error"
+
+
+def test_bedrock_detect_mode_is_error_not_allow():
+    v = bedrock.parse_response({"action": "NONE", "assessments": [{"contentPolicy": {"filters": [
+        {"type": "PROMPT_ATTACK", "confidence": "HIGH", "filterStrength": "HIGH", "action": "NONE", "detected": True}]}}]})
+    assert v.decision == "error" and "detect-mode" in v.error
 
 
 # ---- Model Armor

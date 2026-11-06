@@ -1,5 +1,7 @@
-"""Lakera Guard v2 (SaaS). Credentials: env LAKERA_GUARD_API_KEY; optional LAKERA_PROJECT_ID (else the Default
-Policy applies).
+"""Lakera Guard v2 (SaaS). Credentials/config: env LAKERA_GUARD_API_KEY and LAKERA_PROJECT_ID (required; the
+adapter refuses to start without it). The project must be an ENFORCE-mode project created with Lakera's default
+policy: without a project the Default Policy applies and its mode is undocumented, and in Detect mode `flagged` is
+always false.
 
 Sources (fetched 2026-11-05):
 - https://docs.lakera.ai/api-reference/lakera-api/guard/screen-content  (POST https://api.lakera.ai/v2/guard,
@@ -10,18 +12,20 @@ Sources (fetched 2026-11-05):
   definitions screened when sent as top-level `tools`; "Only the last interaction is screened. Earlier messages
   provide context but are not re-screened."; tool message content shown as [{"type":"text","text":...}])
 
-Native checkpoints (ruling 9, per the docs above): prompt, ingested_content, tool_call, tool_definition, trajectory.
+Native checkpoints (ruling 9, per the docs above): prompt, output, ingested_content, tool_call, tool_definition,
+trajectory. Output is native because the docs say: "assistant: The most recent assistant content is screened as
+output." (an output-checkpoint target is the last, assistant, message of the request).
 Native request: OpenAI-style messages[:target+1] (the screened turn is the last one; earlier turns are context),
 tool_definition messages dropped from messages. A target of role tool_definition is sent as top-level `tools`
-only. Flattened (the "output" checkpoint): one user message holding to_text.
+only. Flattened mode (not used by any checkpoint now): one user message holding to_text.
 
 Decision: flagged true -> block, false -> allow. The docs say flagged is ALWAYS false when the project's action is
-"detect" (only "enforce" sets it), so the Lakera project/policy used must be in enforce mode; raw["action"] is
-recorded so a detect-mode run is visible. We send breakdown=true (extra output only, no effect on flagged).
+"detect" (only "enforce" sets it) and that breakdown "detected" is unaffected by mode, so flagged false with any
+breakdown entry detected true is returned as error ("detect-mode project: flagged forced false"), never allow.
+We send breakdown=true for this.
 
-Config note (ruling 10): default policy, i.e. no project_id unless LAKERA_PROJECT_ID is set; no thresholds tuned.
-Version: not pinnable (the API returns no model/policy version). version = "lakera-guard-v2@<run date>" plus the
-project id when set; raw carries metadata.request_uuid per call.
+Config note (ruling 10): an enforce-mode project with Lakera's default policy; no thresholds tuned.
+Version: not pinnable (the API returns no model/policy version). version = "lakera-guard-v2@<run date>+project:<id>"; raw carries metadata.request_uuid per call.
 
 UNVERIFIED: the docs show tool content as a list of text parts and say "only text is supported"; we send tool
 content in that list form and everything else as plain strings (OpenAI format). Not tested against the live API.
@@ -67,23 +71,27 @@ def build_request(messages: list[dict], target: int, mode: str) -> dict:
 def parse_response(raw: dict) -> Verdict:
     if "flagged" not in raw:
         return Verdict("error", raw=raw, error="no 'flagged' in response")
+    if not raw["flagged"] and any(b.get("detected") for b in raw.get("breakdown") or []):
+        return Verdict("error", raw=raw, error="detect-mode project: flagged forced false")
     return Verdict("block" if raw["flagged"] else "allow", raw=raw)
 
 
 class LakeraAdapter:
     name = "lakera-guard"
-    native_checkpoints = frozenset({"prompt", "ingested_content", "tool_call", "tool_definition", "trajectory"})
+    native_checkpoints = frozenset({"prompt", "output", "ingested_content", "tool_call", "tool_definition", "trajectory"})
     accepts_text = True
 
     def __init__(self, opener=None):
         self.opener = opener
         self.project = os.environ.get("LAKERA_PROJECT_ID")
-        self.version = f"lakera-guard-v2@{datetime.date.today()}" + (f"+project:{self.project}" if self.project else "")
+        if not self.project:
+            raise RuntimeError("LAKERA_PROJECT_ID is required: it must name an Enforce-mode project with the "
+                               "default policy (Detect mode forces flagged=false)")
+        self.version = f"lakera-guard-v2@{datetime.date.today()}+project:{self.project}"
 
     def judge(self, messages, target, mode) -> Verdict:
         body = build_request(messages, target, mode)
-        if self.project:
-            body["project_id"] = self.project
+        body["project_id"] = self.project
         hdr = {"Authorization": f"Bearer {os.environ['LAKERA_GUARD_API_KEY']}"}
         return parse_response(post_json(URL, hdr, body, self.opener))
 
