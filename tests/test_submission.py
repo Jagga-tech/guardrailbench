@@ -63,11 +63,12 @@ def test_spot_check_catches_edited_verdict(tmp_path):
     assert len(p) == 1 and "a" in p[0] and "allow" in p[0] and "block" in p[0]
 
 
-def test_spot_check_ignores_errors(tmp_path):
+def test_spot_check_submitted_error_is_disagreement(tmp_path):
+    # Ruling 15: padding with "error" to dodge comparison is caught
     _, res = good(tmp_path)
     rec(res, "a")["decision"] = "error"
     p = spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3)
-    assert not any("disagree" in x for x in p) and any("error" in x for x in p)
+    assert p == ["disagree: a submitted error, re-run block"]
 
 
 def test_cli(tmp_path, capsys):
@@ -90,12 +91,12 @@ def test_spot_check_all_rerun_errors_is_problem(tmp_path):
     assert any(x.startswith("spot-check unverified") for x in p)
 
 
-def test_spot_check_all_submitted_errors_is_problem(tmp_path):
+def test_spot_check_all_submitted_errors_are_disagreements(tmp_path):
     _, res = good(tmp_path)
     for r in res:
         r["decision"] = "error"
     p = spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3)
-    assert any(x.startswith("spot-check unverified") for x in p)
+    assert sum(x.startswith("disagree") for x in p) == 3
 
 
 def test_spot_check_one_error_among_many_is_note(tmp_path):
@@ -103,8 +104,14 @@ def test_spot_check_one_error_among_many_is_note(tmp_path):
     out = tmp_path / "r.jsonl"
     run(FakeAdapter(rules=EVIL), cs, out)
     res = [json.loads(l) for l in out.read_text().splitlines()]
-    rec(res, "c0")["decision"] = "error"
-    p = spot_check(res, cs, FakeAdapter(rules=EVIL), k=6)
+
+    class OneDown(FakeAdapter):
+        def judge(self, messages, target, mode):
+            if messages[0]["content"] == "boom":
+                raise RuntimeError("down")
+            return super().judge(messages, target, mode)
+    cs[0] = mk("c0", "boom")
+    p = spot_check(res, cs, OneDown(), k=6)  # re-run-side error only
     assert len(p) == 1 and p[0].startswith("note:")
 
 
@@ -132,3 +139,22 @@ def test_cli_exit_1_on_problem(tmp_path, capsys):
     out.write_text("".join(json.dumps(r) + "\n" for r in res[:-1]))
     assert main(["verify-submission", "--results", str(out), "--cases", str(cp)]) == 1
     assert "missing case" in capsys.readouterr().out
+
+
+def test_spot_check_mode_and_score_must_match(tmp_path):
+    _, res = good(tmp_path)
+    rec(res, "b")["mode"] = "flattened"
+    rec(res, "c")["steps"][0]["score"] = 0.5  # fake scores 0.0
+    p = spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3)
+    assert any("b submitted mode flattened, re-run native" in x for x in p)
+    assert any("c submitted score 0.5, re-run 0.0" in x for x in p)
+    rec(res, "c")["steps"][0]["score"] = 0.0 + 1e-9  # within tolerance
+    assert not any(" c " in x for x in spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3))
+
+
+def test_check_complete_rejects_unknown_decision_and_mode(tmp_path):
+    _, res = good(tmp_path)
+    rec(res, "a")["decision"] = "maybe"
+    rec(res, "b")["mode"] = "hybrid"
+    p = check_complete(res, cases())
+    assert any("bad decision: a" in x for x in p) and any("bad mode: b" in x for x in p)
