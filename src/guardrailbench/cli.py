@@ -15,7 +15,18 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--out", type=Path, required=True)
     r.add_argument("--workers", type=int, default=4)
     r.add_argument("--timeout", type=float, default=30.0)
+    s = sub.add_parser("score")
+    s.add_argument("--results", type=Path, required=True)
+    s.add_argument("--cases", type=Path, required=True)
+    s.add_argument("--out", type=Path, required=True)
     args = ap.parse_args(argv)
+    if args.cmd == "score":
+        import json
+        from .metrics import report
+        results = [json.loads(l) for l in args.results.read_text(encoding="utf-8").splitlines() if l.strip()]
+        args.out.write_text(json.dumps(report(results, load_cases(args.cases)), indent=2), encoding="utf-8")
+        print(f"scored {len(results)} results -> {args.out}")
+        return 0
     if args.cmd == "run":
         from .adapters import ADAPTERS
         from .run import run
