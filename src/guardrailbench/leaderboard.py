@@ -21,18 +21,33 @@ def pct(v, ci=None):
     return s + (f" ({ci[0] * 100:.0f}–{ci[1] * 100:.0f}%)" if ci else "")
 
 
+def ms(v):
+    return "n/a" if v is None else f"{v:.0f} ms"
+
+
 def cell(rep: dict, mode: str, dim: str, key: str) -> str:
     g = rep.get(mode, {}).get(dim, {}).get(key)
-    if not g or g["n_attack"] + g["n_benign"] == 0:
+    if not g or g["n_attack"] + g["n_benign"] + g.get("errors", 0) == 0:
         nc = rep.get("not_claimed", {}).get(dim, {}).get(key)
         return "<td class=nc>not claimed</td>" if nc and nc["not_claimed"] else "<td class=na>n/a</td>"
+    errs = g.get("errors", 0)
     lines = [f"Detection {pct(g['detection'], g['detection_ci'])}",
              f"False block {pct(g['false_block'], g['false_block_ci'])}"]
     for k, label in (("at_fpr_1pct", "TPR@1% FPR"), ("at_fpr_0_1pct", "TPR@0.1% FPR")):
         t = g.get(k)
         if t:
             lines.append(f"{label} {pct(t['tpr'], t['ci'])}" + ("†" if t["low_confidence"] else ""))
+    lines += [f"n {g['n_attack']} attack / {g['n_benign']} benign",
+              f"errors {errs}/{g['n_attack'] + g['n_benign'] + errs}"
+              + (f" ({g['timeouts']} timeouts)" if g.get("timeouts") else ""),
+              f"Sanitize {pct(g.get('sanitize_rate'))}",
+              f"p50 {ms(g.get('p50_ms'))} / p95 {ms(g.get('p95_ms'))}"]
     return "<td>" + "<br>".join(e(x) for x in lines) + "</td>"
+
+
+def not_claimed(rep: dict, dim: str, key: str) -> str:
+    n = (rep.get("not_claimed", {}).get(dim, {}).get(key) or {}).get("not_claimed", 0)
+    return f"<br><span class=nc>not claimed: {n} cases</span>" if n else ""
 
 
 def load(results: Path) -> list[dict]:
@@ -68,7 +83,7 @@ def tables(items: list[dict], disclosures: dict) -> str:
                 d = disclosures.get(p)
                 out.append(f"<tr><th scope=row><a href=\"{quote(p)}.html\">{e(p)}</a> ({e(it['split'])})"
                            f"<br><span class=na>{meta_line(it)}</span>"
-                           + (f"<br><span class=d>{e(d)}</span>" if d else "")
+                           + (f"<br><span class=d>{e(d)}</span>" if d else "") + not_claimed(r, dim, key)
                            + f"</th>{cell(r, 'native', dim, key)}{cell(r, 'flattened', dim, key)}</tr>")
             out.append("</table></div>")
     return "".join(out)
