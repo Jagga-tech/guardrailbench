@@ -20,10 +20,17 @@ ToolCall and ToolOutput events, and the flow operator `->`. Coverage of the ship
                     chosen tool is appropriate (no tool allow-list exists without per-app knowledge).
   ingested_content  ToolOutput content -> prompt_injection
   trajectory        ToolOutput -> ToolCall flow where the output is an injection
-Field names are confirmed in invariant/analyzer/runtime/nodes.py: Message(role, content, tool_calls),
-ToolCall(function: Function(name, arguments: dict)), ToolOutput(content). `moderated` and `secrets` signatures are
-in invariant/analyzer/stdlib/invariant/detectors/{moderation,secrets}.py. Rule-language details beyond the README
-examples (a bare `msg.content` truthiness condition, passing a dict to a detector) are UNVERIFIED and never executed.
+Verified by execution (2026-11-05, throwaway venv with invariant-ai==0.3.5, transformers, torch; see
+tests/adapters/test_invariant_live.py): the policy parses with LocalPolicy.from_string and, for every native
+checkpoint, one attack fires its rule and one benign target does not. Findings from the installed source
+(site-packages/invariant/analyzer/): runtime/nodes.py text() only reads str, Contents, Message, ToolOutput and
+lists, so a detector given a dict (call.function.arguments) silently never fires and None content is skipped; hence
+the list comprehension over arguments.values() (ListComprehension is in language/ast.py), `str()`/`f""`/`list()`
+are not available in the rule language, and secrets() returns a list so it is wrapped in len(...) > 0. The
+`moderated` default threshold 0.5 (runtime/utils/moderation.py) did not flag three plainly violent/hateful
+sentences with the default KoalaAI/Text-Moderation model; 0.3 flags them and passed two benign sentences. 0.3 is an
+empirical pick from five sentences, not a validated operating point. Field names: runtime/nodes.py Message(role,
+content, tool_calls), ToolCall(function: Function(name, arguments: dict)), ToolOutput(content).
 Native: messages[:target] is `past`, [messages[target]] is `pending`; analyze_pending reports only errors whose
 bound events lie in `pending`. tool_definition has no documented trace event and is dropped. Flattened: one user
 message of to_text as pending, no past.
@@ -55,16 +62,15 @@ raise "Prompt injection in user message" if:
 raise "Moderated assistant output" if:
     (msg: Message)
     msg.role == "assistant"
-    msg.content
-    moderated(msg.content)
+    moderated(msg.content, default_threshold=0.3)
 
 raise "Injection text in tool call arguments" if:
     (call: ToolCall)
-    prompt_injection(call.function.arguments, threshold=0.7)
+    prompt_injection([v for v in call.function.arguments.values()], threshold=0.7)
 
 raise "Secret in tool call arguments" if:
     (call: ToolCall)
-    secrets(call.function.arguments)
+    len(secrets([v for v in call.function.arguments.values()])) > 0
 
 raise "Prompt injection in tool output" if:
     (output: ToolOutput)
