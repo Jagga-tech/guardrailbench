@@ -1,0 +1,8 @@
+.superpowers/
+cases/official/
+results/
+site/
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
