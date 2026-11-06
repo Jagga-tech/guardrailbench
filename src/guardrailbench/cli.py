@@ -86,7 +86,11 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         cases = load_cases(args.cases)
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        run(ADAPTERS[args.product](), cases, args.out, args.workers, args.timeout)
+        try:
+            run(ADAPTERS[args.product](), cases, args.out, args.workers, args.timeout)
+        except ValueError as e:  # resume refused: --out holds another product/version
+            print(str(e), file=sys.stderr)
+            return 2
         print(f"ran {len(cases)} cases -> {args.out}")
         return 0
     cases = load_cases(args.path)

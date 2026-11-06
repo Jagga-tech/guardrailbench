@@ -154,3 +154,97 @@ def test_resume_skips_done_ids(tmp_path):
     run(a, cases + [mk("c")], out)
     ids = [l["case_id"] for l in lines(out)]
     assert sorted(ids) == ["a", "b", "c"] and len(a.calls) == 1
+
+
+class Fixed(FakeAdapter):
+    def __init__(self, v, **kw):
+        super().__init__(**kw)
+        self.v = v
+
+    def judge(self, messages, target, mode):
+        return self.v
+
+
+def one_line(adapter, tmp_path, case=None):
+    out = tmp_path / "o.jsonl"
+    run(adapter, [case or mk("a")], out)
+    return lines(out)[0]
+
+
+def test_invalid_decision_is_error(tmp_path):
+    l = one_line(Fixed(Verdict("maybe")), tmp_path)
+    assert l["decision"] == "error" and "invalid decision: 'maybe'" in l["steps"][0]["error"]
+
+
+def test_sanitize_without_str_is_error(tmp_path):
+    l = one_line(Fixed(Verdict("sanitize", sanitized=None)), tmp_path)
+    assert l["decision"] == "error" and "sanitize" in l["steps"][0]["error"]
+
+
+def test_unserialisable_score_writes_error_record_and_run_continues(tmp_path):
+    class Odd(FakeAdapter):
+        def judge(self, messages, target, mode):
+            return Verdict("allow", score=object() if messages[0]["content"] == "odd" else float("nan"))
+    out = tmp_path / "o.jsonl"
+    run(Odd(), [mk("a", "odd"), mk("b"), mk("c", "fine")], out)
+    r = {l["case_id"]: l for l in lines(out)}
+    assert set(r) == {"a", "b", "c"} and all(x["decision"] == "error" for x in r.values())
+    assert r["a"]["steps"][0]["error"]
+
+
+def test_raw_written_and_coerced(tmp_path):
+    l = one_line(Fixed(Verdict("allow", raw={"id": "req-1", "when": object()})), tmp_path)
+    raw = l["steps"][0]["raw"]
+    assert raw["id"] == "req-1" and isinstance(raw["when"], str)
+    circ = {}
+    circ["self"] = circ
+    (tmp_path / "x").mkdir()
+    l = one_line(Fixed(Verdict("allow", raw=circ)), tmp_path / "x")
+    assert l["steps"][0]["raw"] is None and "raw dropped" in l["steps"][0]["raw_note"]
+
+
+def test_warmup_once_outside_timeout(tmp_path):
+    class W(FakeAdapter):
+        warmed = 0
+        def warmup(self):
+            time.sleep(0.2)  # longer than the per-call timeout
+            W.warmed += 1
+    out = tmp_path / "o.jsonl"
+    run(W(), [mk("a"), mk("b")], out, timeout_s=0.1)
+    assert W.warmed == 1 and all(l["decision"] == "allow" for l in lines(out))
+
+
+def test_latency_is_successful_attempt_only(tmp_path):
+    class Flaky(FakeAdapter):
+        n = 0
+        def judge(self, messages, target, mode):
+            Flaky.n += 1
+            if Flaky.n == 1:
+                time.sleep(0.2)
+                raise Retryable("429")
+            return Verdict("allow")
+    assert one_line(Flaky(), tmp_path)["steps"][0]["latency_ms"] < 150
+
+
+def test_resume_refuses_other_product_or_version(tmp_path):
+    out = tmp_path / "o.jsonl"
+    run(FakeAdapter(), [mk("a")], out)
+    other = FakeAdapter()
+    other.version = "1"
+    with pytest.raises(ValueError, match="other product/version"):
+        run(other, [mk("a"), mk("b")], out)
+    from guardrailbench.cli import main
+    cp = tmp_path / "c.jsonl"
+    cp.write_text("")
+    bad = tmp_path / "bad.jsonl"
+    bad.write_text(json.dumps({"case_id": "a", "product": "lakera", "product_version": "v"}) + "\n")
+    assert main(["run", "--product", "fake", "--cases", str(cp), "--out", str(bad)]) == 2
+
+
+def test_resume_adds_missing_newline(tmp_path):
+    out = tmp_path / "o.jsonl"
+    run(FakeAdapter(), [mk("a")], out)
+    out.write_text(out.read_text().rstrip("\n") + "\n" + '{"case_id": "b", "prod')  # torn last line
+    run(FakeAdapter(), [mk("a"), mk("b")], out)
+    good = [json.loads(l) for l in out.read_text().splitlines() if l.startswith('{"case_id": "b", "product"')]
+    assert len(good) == 1 and out.read_text().endswith("\n")
