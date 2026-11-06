@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutTimeout
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .case import BadCase, Case
+from .case import BadCase, Case, marker_index
 from .flatten import mode_for
 from .verdict import Adapter, Retryable, Verdict
 
@@ -41,14 +41,6 @@ def _call(adapter: Adapter, messages, target, mode, timeout_s) -> dict:
             "latency_ms": (time.perf_counter() - t0) * 1000, "error": err}
 
 
-def _marker_index(case: Case) -> int:
-    if case.marker:
-        for i, m in enumerate(case.messages):
-            if case.marker in json.dumps(m, ensure_ascii=False):
-                return i
-    return case.target
-
-
 def _judge_case(adapter, case: Case, mode: str, timeout_s) -> list[dict]:
     if case.checkpoint == "trajectory" and mode == "native":
         steps = []
@@ -57,7 +49,7 @@ def _judge_case(adapter, case: Case, mode: str, timeout_s) -> list[dict]:
             if steps[-1]["decision"] == "block":
                 break
         return steps
-    target = _marker_index(case) if case.checkpoint == "trajectory" else case.target
+    target = marker_index(case) if case.checkpoint == "trajectory" else case.target
     return [_call(adapter, case.messages, target, mode, timeout_s)]
 
 

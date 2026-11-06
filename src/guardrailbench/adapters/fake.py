@@ -6,10 +6,12 @@ from guardrailbench.verdict import Verdict
 
 
 class FakeAdapter:
+    """Blocks text containing any of `rules`. Default rules=() allows everything (Ruling 14)."""
+
     name = "fake"
     version = "0"
 
-    def __init__(self, rules=("GRB-MARKER-",), native_checkpoints=None, accepts_text=True):
+    def __init__(self, rules=(), native_checkpoints=None, accepts_text=True):
         self.rules = list(rules)
         self.native_checkpoints = frozenset(CHECKPOINTS if native_checkpoints is None else native_checkpoints)
         self.accepts_text = accepts_text

@@ -22,6 +22,9 @@ def mk(id, text="hi", checkpoint="prompt", label="benign", messages=None, target
                 canary="", marker=marker, deployment_card=None)
 
 
+EVIL = ("evil-",)
+
+
 def lines(p):
     return [json.loads(l) for l in p.read_text().splitlines()]
 
@@ -38,7 +41,7 @@ class Rec(FakeAdapter):
 
 def test_run_writes_one_line_per_case(tmp_path):
     out = tmp_path / "o.jsonl"
-    run(FakeAdapter(), [mk("a"), mk("b", "GRB-MARKER-X")], out)
+    run(FakeAdapter(rules=EVIL), [mk("a"), mk("b", "evil-X")], out)
     r = {l["case_id"]: l for l in lines(out)}
     assert set(r) == {"a", "b"}
     assert r["a"]["decision"] == "allow" and r["b"]["decision"] == "block"
@@ -56,15 +59,15 @@ def test_not_claimed_when_no_mode(tmp_path):
 
 
 def traj():
-    return [{"role": "user", "content": "one"}, {"role": "tool", "tool_call_id": "c", "content": "GRB-MARKER-T"},
+    return [{"role": "user", "content": "one"}, {"role": "tool", "tool_call_id": "c", "content": "evil-T"},
             {"role": "assistant", "content": "three"}, {"role": "user", "content": "four"}]
 
 
 def test_trajectory_blocked_if_any_step_blocked(tmp_path):
-    a = Rec()
+    a = Rec(rules=EVIL)
     # step 2 (index 1) blocks; fake judges only the target message
     out = tmp_path / "o.jsonl"
-    run(a, [mk("t", checkpoint="trajectory", messages=traj(), target=1, label="attack", marker="GRB-MARKER-T")], out)
+    run(a, [mk("t", checkpoint="trajectory", messages=traj(), target=1, label="attack", marker="evil-T")], out)
     l = lines(out)[0]
     assert l["decision"] == "block" and len(l["steps"]) == 2
     assert a.calls == [(1, 0, "native"), (2, 1, "native")]
@@ -73,17 +76,17 @@ def test_trajectory_blocked_if_any_step_blocked(tmp_path):
 def test_trajectory_three_steps_block_on_last(tmp_path):
     out = tmp_path / "o.jsonl"
     m = traj()[:3]
-    m[2] = {"role": "assistant", "content": "GRB-MARKER-T"}
+    m[2] = {"role": "assistant", "content": "evil-T"}
     m[1] = {"role": "user", "content": "ok"}
-    run(FakeAdapter(), [mk("t", checkpoint="trajectory", messages=m, target=2, label="attack", marker="GRB-MARKER-T")], out)
+    run(FakeAdapter(rules=EVIL), [mk("t", checkpoint="trajectory", messages=m, target=2, label="attack", marker="evil-T")], out)
     l = lines(out)[0]
     assert l["decision"] == "block" and len(l["steps"]) == 3
 
 
 def test_trajectory_flattened_scores_marker_step_only(tmp_path):
-    a = Rec(native_checkpoints={"prompt"})
+    a = Rec(rules=EVIL, native_checkpoints={"prompt"})
     out = tmp_path / "o.jsonl"
-    run(a, [mk("t", checkpoint="trajectory", messages=traj(), target=3, label="attack", marker="GRB-MARKER-T")], out)
+    run(a, [mk("t", checkpoint="trajectory", messages=traj(), target=3, label="attack", marker="evil-T")], out)
     l = lines(out)[0]
     assert a.calls == [(4, 1, "flattened")] and l["mode"] == "flattened" and l["decision"] == "block"
 
