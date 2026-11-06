@@ -25,12 +25,19 @@ LLM-backed check: AlignmentCheck calls an LLM through the OpenAI client with the
 custom_check_scanner.py (api.together.xyz/v1, Llama-4-Maverick, key from env TOGETHER_API_KEY). create_scanner()
 builds it with no arguments, so the endpoint is not configurable here; only TOGETHER_API_KEY is. Tests never call it.
 
-Known limits: AlignmentCheck renders the trace with str(message) ("Role.X: content"), which omits tool_calls,
-so tool-call names/arguments are passed in Message.tool_calls but may not reach the alignment LLM (read from
-source, UNVERIFIED at runtime). PromptGuard needs a Hugging Face login for the gated Prompt Guard weights.
+Tool calls: AlignmentCheck renders the trace with str(message) ("Role.X: content") and never reads
+Message.tool_calls (alignmentcheck_scanner.py _pre_process_trace, llamafirewall_data_types.py Message.__str__), so
+tool calls are put in the content, following the official example
+https://github.com/meta-llama/PurpleLlama/blob/main/LlamaFirewall/examples/demo_alignmentcheck.py : each agent
+action is AssistantMessage(content=json.dumps({"thought": ..., "action": <name>, "action_input": {...}})). The
+alignment system prompt also speaks of THOUGHT / ACTION / ACTION INPUT. We use the assistant's text as "thought";
+several calls in one turn become one JSON line each. Arguments that are a JSON string are parsed to an object.
+PromptGuard needs a Hugging Face login for the gated Prompt Guard weights.
 Heavy imports happen only in the factory path (first judge call).
 """
 from __future__ import annotations
+
+import json
 
 from guardrailbench.adapters import register
 from guardrailbench.flatten import to_text
@@ -40,8 +47,24 @@ VERSION = "llamafirewall==1.0.3"
 _ROLES = {"system", "user", "assistant", "tool"}
 
 
+def _args(a):
+    try:
+        return json.loads(a) if isinstance(a, str) else a
+    except ValueError:
+        return a
+
+
+def _content(m: dict) -> str:
+    """Assistant tool calls -> the demo_alignmentcheck.py JSON action convention; everything else is plain text."""
+    text, calls = m.get("content") or "", m.get("tool_calls") or []
+    if m["role"] != "assistant" or not calls:
+        return text
+    return "\n".join(json.dumps({"thought": text, "action": c["function"]["name"],
+                                 "action_input": _args(c["function"]["arguments"])}) for c in calls)
+
+
 def _msg(m: dict) -> dict:
-    return {"role": m["role"], "content": m.get("content") or "", "tool_calls": m.get("tool_calls")}
+    return {"role": m["role"], "content": _content(m), "tool_calls": None}
 
 
 def build_input(messages: list[dict], target: int, mode: str) -> dict:
