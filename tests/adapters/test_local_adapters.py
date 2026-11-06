@@ -78,11 +78,28 @@ def test_unknown_label_is_error():
     assert v.decision == "error"
 
 
+def _fake_tokenize(text):
+    """Whitespace tokenizer with (start, end) offsets, like return_offsets_mapping=True."""
+    import re as _re
+    return text, [m.span() for m in _re.finditer(r"\S+", text)]
+
+
+def test_hf_windows_are_raw_substrings_with_no_gaps():
+    # tag chars (U+E0041..), zero-width space, double spaces, newlines and a lone surrogate-free emoji must survive
+    tricky = "a\U000E0041\U000E0042  b\u200bc\nd \U0001F600 e" * 400
+    text, offsets = _fake_tokenize(tricky)
+    wins = make_windows(text, offsets, 510)
+    assert len(wins) > 1 and "".join(wins) == text
+    assert all(len([1 for _ in _fake_tokenize(w)[1]]) <= 510 for w in wins)
+    assert any("\U000E0041" in w for w in wins) and "\ufffd" not in "".join(wins) and "[UNK]" not in "".join(wins)
+
+
 def test_hf_classifier_long_input_chunks():
-    words = [f"w{i}" for i in range(1200)]
-    wins = make_windows(" ".join(words), str.split, " ".join, 510)
+    text, offsets = _fake_tokenize(" ".join(f"w{i}" for i in range(1200)))
+    wins = make_windows(text, offsets, 510)
     assert [len(w.split()) for w in wins] == [510, 510, 180]
-    assert make_windows("short text", str.split, " ".join, 510) == ["short text"]
+    assert "".join(wins) == text
+    assert make_windows("short text", [(0, 5), (6, 10)], 510) == ["short text"]
     # block if any window blocks; score = max window score
     a = get("protectai-deberta-v2")
     v = a.parse_output([
