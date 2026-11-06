@@ -15,3 +15,4 @@ def register(name: str):
 
 
 from guardrailbench.adapters import fake  # noqa: E402,F401  (registers "fake")
+from guardrailbench.adapters import hf_classifier, llama_guard  # noqa: E402,F401  (register local models)
