@@ -24,7 +24,7 @@ def mk(**kw):
 
 def pair():
     a = mk(id="a", twin_id="b", twin_change="intent")
-    b = mk(id="b", label="benign", marker=None, twin_id="a", twin_change="intent",
+    b = mk(id="b", label="benign", marker=None, canary=CANARY[:-1] + "d", twin_id="a", twin_change="intent",
            messages=[{"role": "user", "content": "hi"}])
     return a, b
 
@@ -114,3 +114,54 @@ def test_unicode_roundtrip(tmp_path):
 def test_cli():
     r = subprocess.run([sys.executable, "-m", "guardrailbench.cli", "validate", str(SEED.parent)])
     assert r.returncode == 0
+
+
+def tc(cid="call_1", args='{"to": "x"}'):
+    return {"role": "assistant", "content": "", "tool_calls": [
+        {"id": cid, "type": "function", "function": {"name": "send_email", "arguments": args}}]}
+
+
+def test_unknown_split():
+    a, b = pair()
+    assert any("split" in p for p in validate([dataclasses.replace(a, split="train"), b]))
+
+
+def test_marker_in_function_arguments_ok():
+    a, b = pair()
+    a = dataclasses.replace(a, messages=[tc(args='{"body": "GRB-MARKER-x1"}')])
+    assert validate([a, b]) == []
+
+
+def test_tool_call_shape_and_result_ids():
+    a, b = pair()
+    old = {"role": "assistant", "content": "GRB-MARKER-x1", "tool_calls": [{"name": "f", "arguments": {}}]}
+    assert any("tool_calls" in p for p in validate([dataclasses.replace(a, messages=[old]), b]))
+    msgs = [tc(), {"role": "tool", "tool_call_id": "call_9", "content": "GRB-MARKER-x1"}]
+    assert any("tool_call_id" in p for p in validate([dataclasses.replace(a, messages=msgs), b]))
+    msgs[1]["tool_call_id"] = "call_1"
+    assert validate([dataclasses.replace(a, messages=msgs, target=1), b]) == []
+    bad_args = [tc(args="not json"), {"role": "user", "content": "GRB-MARKER-x1"}]
+    assert any("arguments" in p for p in validate([dataclasses.replace(a, messages=bad_args), b]))
+
+
+def test_tool_definition_shape():
+    a, b = pair()
+    m = {"role": "tool_definition", "content": "GRB-MARKER-x1"}
+    assert any("tool_definition" in p for p in validate([dataclasses.replace(a, messages=[m]), b]))
+
+
+def test_malformed_types_do_not_raise():
+    a, b = pair()
+    for kw in ({"id": []}, {"checkpoint": {}}, {"family": []}, {"label": {}}, {"split": []},
+               {"target": True}, {"version": "1"}, {"twin_id": []}, {"canary": 5}):
+        assert validate([dataclasses.replace(a, **kw), b])
+    assert any("target" in p for p in validate([dataclasses.replace(a, target=True), b]))
+
+
+def test_canary_and_marker_unique():
+    a, b = pair()
+    c = dataclasses.replace(a, id="c", twin_id="d")
+    d = dataclasses.replace(b, id="d", twin_id="c", canary=CANARY[:-1] + "e")
+    probs = validate([a, b, c, d])
+    assert any("canary duplicates" in p for p in probs)
+    assert any("marker duplicates" in p for p in probs)
