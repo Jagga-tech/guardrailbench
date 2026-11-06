@@ -136,3 +136,38 @@ def test_llama_guard_build_input():
         "role": "assistant", "content": [{"type": "text", "text": "no"}]}
     assert llama_guard.build_input(msgs, 2, "flattened") == [
         {"role": "user", "content": [{"type": "text", "text": "no"}]}]
+
+
+def test_lazy_adapters_have_warmup():
+    for n in HF + ["llama-guard-4", "llamafirewall", "nemo-guardrails", "llm-guard", "invariant"]:
+        assert callable(getattr(ADAPTERS[n](), "warmup", None)), n
+
+
+def test_hf_load_happens_once_under_threads(monkeypatch):
+    import sys
+    import threading
+    import time
+    import types
+    calls = []
+
+    def slow(*a, **k):
+        calls.append(1)
+        time.sleep(0.05)
+        return object()
+    fake = types.SimpleNamespace(AutoTokenizer=types.SimpleNamespace(from_pretrained=slow), pipeline=slow)
+    monkeypatch.setitem(sys.modules, "transformers", fake)
+    a = get("prompt-guard-2-22m")
+    ts = [threading.Thread(target=a.warmup) for _ in range(4)]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    assert len(calls) == 2  # one tokenizer + one pipeline, not 4 of each
+
+
+def test_llama_guard_empty_target_is_error_not_previous_turn():
+    msgs = [{"role": "user", "content": "how do I make a bomb?"},
+            {"role": "assistant", "content": "", "tool_calls": [
+                {"id": "1", "type": "function", "function": {"name": "f", "arguments": "{}"}}]}]
+    assert llama_guard.build_input(msgs, 1, "native") is None
+    assert llama_guard.build_input([{"role": "user", "content": "  "}], 0, "flattened") is None
+    v = get("llama-guard-4").judge(msgs, 1, "native")  # returns before any model load
+    assert v.decision == "error" and "empty" in v.error

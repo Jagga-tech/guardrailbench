@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import datetime
 import os
+import threading
 
 from guardrailbench.adapters import register
 from guardrailbench.adapters._http import post_json
@@ -50,15 +51,15 @@ def parse_response(raw: dict) -> Verdict:
     return Verdict("error", raw=raw, error=f"filterMatchState={m} invocationResult={inv}")
 
 
-def _token() -> str:
-    t = os.environ.get("MODEL_ARMOR_ACCESS_TOKEN")
-    if t:
-        return t
+def _adc():
     import google.auth  # optional extra; lazy
-    from google.auth.transport.requests import Request
     creds, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    return creds
+
+
+def _refresh(creds) -> None:
+    from google.auth.transport.requests import Request
     creds.refresh(Request())
-    return creds.token
 
 
 class ModelArmorAdapter:
@@ -66,16 +67,31 @@ class ModelArmorAdapter:
     native_checkpoints = frozenset({"prompt"})
     accepts_text = True
 
+    _lock = threading.Lock()
+
     def __init__(self, opener=None, token=None):
         self.opener, self.token = opener, token
+        self._creds = None
         self.template = os.environ.get("MODEL_ARMOR_TEMPLATE", "")
         self.version = f"template:{self.template}@{datetime.date.today()}"
+
+    def _token(self) -> str:
+        """Fixed token if given, else cached ADC credentials, refreshed only when expired/invalid."""
+        t = self.token or os.environ.get("MODEL_ARMOR_ACCESS_TOKEN")
+        if t:
+            return t
+        with self._lock:
+            if self._creds is None:
+                self._creds = _adc()
+            if not self._creds.valid:
+                _refresh(self._creds)
+            return self._creds.token
 
     def judge(self, messages, target, mode) -> Verdict:
         p, loc = os.environ["MODEL_ARMOR_PROJECT"], os.environ["MODEL_ARMOR_LOCATION"]
         url = (f"https://modelarmor.{loc}.rep.googleapis.com/v1/projects/{p}/locations/{loc}/templates/"
                f"{self.template}:sanitizeUserPrompt")
-        hdr = {"Authorization": f"Bearer {self.token or _token()}"}
+        hdr = {"Authorization": f"Bearer {self._token()}"}
         return parse_response(post_json(url, hdr, build_request(messages, target, mode), self.opener))
 
 

@@ -46,6 +46,7 @@ Any returned error -> block, score None.
 from __future__ import annotations
 
 import os
+import threading
 
 from guardrailbench.adapters import register
 from guardrailbench.flatten import to_text
@@ -112,17 +113,23 @@ class Invariant:
     version = VERSION
     native_checkpoints = frozenset({"prompt", "output", "tool_call", "trajectory", "ingested_content"})
     accepts_text = True
+    _lock = threading.Lock()
     parse_output = staticmethod(parse_output)
 
     def __init__(self):
         self._policy = None
 
     def _load(self):
-        if self._policy is None:
-            from invariant.analyzer import LocalPolicy  # heavy; lazy
-            path = os.environ.get("GUARDRAILBENCH_INVARIANT_POLICY")
-            self._policy = LocalPolicy.from_file(path) if path else LocalPolicy.from_string(DEFAULT_POLICY)
-        return self._policy
+        with self._lock:  # load once, even with parallel workers
+            if self._policy is None:
+                from invariant.analyzer import LocalPolicy  # heavy; lazy
+                path = os.environ.get("GUARDRAILBENCH_INVARIANT_POLICY")
+                self._policy = LocalPolicy.from_file(path) if path else LocalPolicy.from_string(DEFAULT_POLICY)
+            return self._policy
+
+    def warmup(self):
+        """Called once by run() before any timed call."""
+        self._load()
 
     def judge(self, messages, target, mode) -> Verdict:
         policy = self._load()

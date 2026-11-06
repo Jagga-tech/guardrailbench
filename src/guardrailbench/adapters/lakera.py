@@ -69,8 +69,8 @@ def build_request(messages: list[dict], target: int, mode: str) -> dict:
 
 
 def parse_response(raw: dict) -> Verdict:
-    if "flagged" not in raw:
-        return Verdict("error", raw=raw, error="no 'flagged' in response")
+    if not isinstance(raw.get("flagged"), bool):
+        return Verdict("error", raw=raw, error="missing or non-bool 'flagged' in response")
     if not raw["flagged"] and any(b.get("detected") for b in raw.get("breakdown") or []):
         return Verdict("error", raw=raw, error="detect-mode project: flagged forced false")
     return Verdict("block" if raw["flagged"] else "allow", raw=raw)

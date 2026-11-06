@@ -14,8 +14,8 @@ Native checkpoints {"prompt", "tool_call", "trajectory", "ingested_content"} (RE
 inputs and untrusted content such as web data"; AlignmentCheck audits the agent's actions against the user goal over
 the trace). Wiring, our choice from those docs: USER -> PROMPT_GUARD, TOOL -> PROMPT_GUARD, ASSISTANT ->
 AGENT_ALIGNMENT. Native mode scans messages[target] with scan(message, trace=messages[:target]) using the
-Message types; flattened mode scans one UserMessage of to_text. tool_definition has no LlamaFirewall type and is
-dropped from the trace.
+Message types; flattened mode scans one UserMessage of to_text. tool_definition has no LlamaFirewall type: it is
+dropped from the trace, and a tool_definition target in native mode is an error (never a silent flatten).
 
 Decisions: BLOCK -> block; HUMAN_IN_THE_LOOP_REQUIRED -> block (AlignmentCheck returns it when it finds
 misalignment, so it is a flag, not an allow); ALLOW -> allow; status "error" (e.g. AlignmentCheck with no prior
@@ -37,6 +37,7 @@ Heavy imports happen only in the factory path (first judge call).
 """
 from __future__ import annotations
 
+import threading
 import json
 
 from guardrailbench.adapters import register
@@ -67,10 +68,12 @@ def _msg(m: dict) -> dict:
     return {"role": m["role"], "content": _content(m), "tool_calls": None}
 
 
-def build_input(messages: list[dict], target: int, mode: str) -> dict:
+def build_input(messages: list[dict], target: int, mode: str) -> dict | None:
     cur = messages[target]
-    if mode == "flattened" or cur["role"] not in _ROLES:
+    if mode == "flattened":
         return {"message": {"role": "user", "content": to_text(messages, target), "tool_calls": None}, "trace": None}
+    if cur["role"] not in _ROLES:
+        return None  # native mode cannot express this role; judge() reports an error, never a silent flatten
     trace = [_msg(m) for m in messages[:target] if m["role"] in _ROLES]
     return {"message": _msg(cur), "trace": trace or None}
 
@@ -92,27 +95,35 @@ class LlamaFirewallAdapter:
     version = VERSION
     native_checkpoints = frozenset({"prompt", "tool_call", "trajectory", "ingested_content"})
     accepts_text = True
+    _lock = threading.Lock()
     parse_output = staticmethod(parse_output)
 
     def __init__(self):
         self._fw = None
 
     def _load(self):
-        if self._fw is None:
-            from llamafirewall import LlamaFirewall, Role, ScannerType  # heavy; lazy
-            self._fw = LlamaFirewall(scanners={
-                Role.USER: [ScannerType.PROMPT_GUARD],
-                Role.TOOL: [ScannerType.PROMPT_GUARD],
-                Role.ASSISTANT: [ScannerType.AGENT_ALIGNMENT],
-                Role.SYSTEM: [],
-                Role.MEMORY: [],
-            })
-        return self._fw
+        with self._lock:  # load once, even with parallel workers
+            if self._fw is None:
+                from llamafirewall import LlamaFirewall, Role, ScannerType  # heavy; lazy
+                self._fw = LlamaFirewall(scanners={
+                    Role.USER: [ScannerType.PROMPT_GUARD],
+                    Role.TOOL: [ScannerType.PROMPT_GUARD],
+                    Role.ASSISTANT: [ScannerType.AGENT_ALIGNMENT],
+                    Role.SYSTEM: [],
+                    Role.MEMORY: [],
+                })
+            return self._fw
+
+    def warmup(self):
+        """Called once by run() before any timed call."""
+        self._load()
 
     def judge(self, messages, target, mode) -> Verdict:
+        inp = build_input(messages, target, mode)
+        if inp is None:
+            return Verdict("error", error=f"native mode: unsupported target role {messages[target]['role']!r}")
         import llamafirewall as lf
         fw = self._load()
-        inp = build_input(messages, target, mode)
 
         def conv(d):
             return lf.Message(role=lf.Role(d["role"]), content=d["content"], tool_calls=d["tool_calls"])

@@ -229,3 +229,44 @@ def test_bedrock_throttle_is_retryable_and_ok_path():
     c = Client()
     assert bedrock.BedrockGuardrailsAdapter(c).judge(MSGS, 1, "native").decision == "allow"
     assert c.kw["source"] == "INPUT"
+
+
+def test_bedrock_network_error_without_response_is_retryable():
+    class EndpointConnectionError(Exception):  # botocore BotoCoreError subclasses carry no .response
+        pass
+
+    class Client:
+        def apply_guardrail(self, **kw):
+            raise EndpointConnectionError("Could not connect to the endpoint URL")
+    with pytest.raises(Retryable):
+        bedrock.BedrockGuardrailsAdapter(Client()).judge(MSGS, 1, "native")
+
+
+@pytest.mark.parametrize("raw", [{"userPromptAnalysis": {}}, {"userPromptAnalysis": {"attackDetected": "false"}},
+                                 {"userPromptAnalysis": {"attackDetected": False}, "documentsAnalysis": [{}]},
+                                 {"userPromptAnalysis": {"attackDetected": False}, "documentsAnalysis": {}}])
+def test_azure_missing_or_non_bool_is_error(raw):
+    assert az.parse_response(raw).decision == "error"
+
+
+@pytest.mark.parametrize("raw", [{"flagged": None}, {"flagged": "true"}, {"flagged": 1}])
+def test_lakera_non_bool_flagged_is_error(raw):
+    assert lakera.parse_response(raw).decision == "error"
+
+
+def test_model_armor_caches_credentials_and_refreshes_only_when_invalid(monkeypatch):
+    class Creds:
+        valid, token, refreshes = False, None, 0
+    creds = Creds()
+    made = []
+
+    def refresh(c):
+        c.refreshes += 1
+        c.valid, c.token = True, f"t{c.refreshes}"
+    monkeypatch.setattr(ma, "_adc", lambda: made.append(1) or creds)
+    monkeypatch.setattr(ma, "_refresh", refresh)
+    monkeypatch.delenv("MODEL_ARMOR_ACCESS_TOKEN", raising=False)
+    a = ma.ModelArmorAdapter()
+    assert [a._token() for _ in range(3)] == ["t1"] * 3 and creds.refreshes == 1 and len(made) == 1
+    creds.valid = False  # expired
+    assert a._token() == "t2" and len(made) == 1
