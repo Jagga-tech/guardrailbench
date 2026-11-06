@@ -62,11 +62,19 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.cmd == "hash":
         from .integrity import split_hash
-        print(split_hash(args.path))
+        try:
+            print(split_hash(args.path))
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            return 2
         return 0
     if args.cmd == "scan":
-        from .integrity import scan_canaries
-        hits = scan_canaries(args.data, {c.canary for c in load_cases(args.cases)})
+        from .integrity import scan_canaries, split_canaries
+        try:
+            hits = scan_canaries(args.data, split_canaries(args.cases))
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            return 2
         for f, c in hits:
             print(f"{f}\t{c}")
         return 1 if hits else 0

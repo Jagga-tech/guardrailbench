@@ -1,7 +1,15 @@
 .superpowers/
 cases/official/
-results/*
+# raw run output (holds case text): never committed
+runs/
+*.jsonl
+!cases/practice/*.jsonl
+# results: only the aggregates (report.json, meta.json) are published
+results/**
+!results/**/
 !results/.gitkeep
+!results/*/*/report.json
+!results/*/*/meta.json
 site/
 __pycache__/
 *.egg-info/
