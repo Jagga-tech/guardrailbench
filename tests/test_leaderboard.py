@@ -114,3 +114,28 @@ def test_product_page_tiers_separate(tmp_path):
     h = (tmp_path / "site" / "z.html").read_text()
     main, unv = h.split("Unverified (self-reported)")
     assert "(other)" in main and "(dev)" not in main and "(dev)" in unv and "(other)" not in unv
+
+
+def test_cell_shows_n_errors_sanitize_latency_and_not_claimed(tmp_path):
+    res = tmp_path / "results"
+    put(res, "x")
+    rp = res / "x" / "dev" / "report.json"
+    rep = json.loads(rp.read_text())
+    g = dict(grp(), errors=12, timeouts=3, sanitize_rate=0.05, p50_ms=41.2, p95_ms=180.0)
+    rep["native"] = mode(g)
+    rp.write_text(json.dumps(rep))
+    build(res, tmp_path / "site", {})
+    h = (tmp_path / "site" / "index.html").read_text()
+    assert "n 100 attack / 100 benign" in h and "errors 12/212 (3 timeouts)" in h
+    assert "Sanitize 5%" in h and "p50 41 ms / p95 180 ms" in h and "not claimed: 4 cases" in h
+
+
+def test_all_errors_group_is_not_hidden_as_na(tmp_path):
+    res = tmp_path / "results"
+    put(res, "x")
+    rp = res / "x" / "dev" / "report.json"
+    rep = json.loads(rp.read_text())
+    rep["native"] = mode(dict(EMPTY, errors=200))
+    rp.write_text(json.dumps(rep))
+    build(res, tmp_path / "site", {})
+    assert "errors 200/200" in (tmp_path / "site" / "index.html").read_text()
