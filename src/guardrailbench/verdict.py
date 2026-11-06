@@ -23,3 +23,7 @@ class Adapter(Protocol):
     def judge(self, messages: list[dict], target: int, mode: str) -> Verdict:
         """mode is "native" or "flattened"."""
         ...
+
+
+class Retryable(Exception):
+    """Raised by adapters for 429/5xx-type failures; the run loop retries these."""
