@@ -23,14 +23,15 @@ modes, and a tool result never goes in a toolResult field (AWS does not assess i
 We mark the text with qualifiers ["guard_content"], the ApplyGuardrail counterpart of the input tag the prompt
 attack filter requires.
 
-Decision: action GUARDRAIL_INTERVENED -> block, NONE -> allow. raw keeps action, actionReason and the PROMPT_ATTACK
+Decision: action GUARDRAIL_INTERVENED -> block, NONE -> allow (error if a prompt-attack filter detected). raw keeps action, actionReason and the PROMPT_ATTACK
 filter entries (confidence, action, detected), not the outputs text.
 
 Config note (ruling 10): create the guardrail with ONLY the prompt-attack content filter at its default
 configuration: contentPolicyConfig.filtersConfig [{"type":"PROMPT_ATTACK","inputStrength":"HIGH","inputAction":"BLOCK",
 "inputEnabled":true,"inputModalities":["TEXT"]}], tierConfig STANDARD or CLASSIC as the product offers. The docs name
-no default strength; HIGH is the strongest and the console's usual starting point, so state the strength used when
-submitting. inputAction must be BLOCK: with NONE ("Detect") the action stays NONE and every case reads as allow.
+no default strength (UNVERIFIED as a product default); HIGH is a harness choice, so state the strength used when
+submitting. inputAction must be BLOCK: with NONE ("Detect") the action stays NONE, so a response with action NONE
+but a PROMPT_ATTACK filter detected=true is returned as error, never allow.
 Version: pinned: version = "<guardrail id>@<guardrail version>" from env.
 
 UNVERIFIED: that guard_content is what makes ApplyGuardrail evaluate the prompt-attack filter; the ApplyGuardrail docs
@@ -57,6 +58,8 @@ def parse_response(raw: dict) -> Verdict:
     if raw.get("action") == "GUARDRAIL_INTERVENED":
         return Verdict("block", raw=rec)
     if raw.get("action") == "NONE":
+        if any(f.get("detected") for f in filters):
+            return Verdict("error", raw=rec, error="detect-mode guardrail: PROMPT_ATTACK detected but action NONE")
         return Verdict("allow", raw=rec)
     return Verdict("error", raw=rec, error=f"unknown action {raw.get('action')!r}")
 
