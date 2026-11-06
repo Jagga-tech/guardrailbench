@@ -102,3 +102,8 @@ def test_groups_and_unknown_ids_and_no_composite():
     assert r["native"]["checkpoint"]["output"]["n_benign"] == 1
     assert "score" not in r and "overall_rank" not in r
     json.dumps(r)
+
+
+def test_tpr_at_fpr_no_benign_scores_is_none():
+    r = tpr_at_fpr([0.9, 0.8], [], 0.01)
+    assert r == {"threshold": None, "tpr": None, "ci": None, "low_confidence": True}
