@@ -58,7 +58,7 @@ def tables(items: list[dict], disclosures: dict) -> str:
     if not items:
         return "<p class=na>No results yet.</p>"
     out = []
-    for dim, title in (("family", "Family"), ("checkpoint", "Checkpoint")):
+    for dim, title in (("family", "Family"), ("checkpoint", "Checkpoint"), ("transform", "Transform")):
         for key in sorted({k for it in items for m in ("native", "flattened", "not_claimed")
                            for k in it["report"].get(m, {}).get(dim, {})}):
             out.append(f"<h3>{title} {e(key)}</h3><div class=w><table><tr><th>Product</th>"
@@ -74,6 +74,12 @@ def tables(items: list[dict], disclosures: dict) -> str:
     return "".join(out)
 
 
+def tiers(items: list[dict], disclosures: dict) -> str:
+    return ("<h2>Verified</h2>" + tables([i for i in items if i["verified"]], disclosures)
+            + "<h2>Unverified (self-reported)</h2>"
+            + tables([i for i in items if not i["verified"]], disclosures))
+
+
 def page(title: str, body: str) -> str:
     return (f"<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport "
             f"content=\"width=device-width,initial-scale=1\"><title>{e(title)}</title>"
@@ -84,14 +90,11 @@ def build(results_dir: Path, out_dir: Path, disclosures: dict[str, str]) -> None
     items = load(Path(results_dir))
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    body = (tables([i for i in items if i["verified"]], disclosures)
-            + "<h2>Unverified (self-reported)</h2>"
-            + tables([i for i in items if not i["verified"]], disclosures))
-    (out_dir / "index.html").write_text(page("GuardrailBench", "<h2>Verified</h2>" + body), encoding="utf-8")
+    (out_dir / "index.html").write_text(page("GuardrailBench", tiers(items, disclosures)), encoding="utf-8")
     for p in sorted({i["product"] for i in items}):
         mine = [i for i in items if i["product"] == p]
         body = "".join(f"<p>{e(i['split'])}: {'verified' if i['verified'] else 'unverified'}"
                        f"{', ' + meta_line(i) if i['meta'] else ''}</p>" for i in mine)
         if p in disclosures:
             body += f"<p class=d>{e(disclosures[p])}</p>"
-        (out_dir / f"{p}.html").write_text(page(p, body + tables(mine, disclosures)), encoding="utf-8")
+        (out_dir / f"{p}.html").write_text(page(p, body + tiers(mine, disclosures)), encoding="utf-8")
