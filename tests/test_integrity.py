@@ -80,3 +80,34 @@ def test_cli_hash_and_scan(tmp_path, capsys):
     (d / "dirty.txt").write_text(mk(1).canary)
     assert main(["scan", "--cases", str(tmp_path / "s.jsonl"), str(d)]) == 1
     assert capsys.readouterr().out.strip() == f"{d / 'dirty.txt'}\t{mk(1).canary}"
+
+
+def test_scan_and_hash_refuse_nothing(tmp_path, capsys):
+    d = tmp_path / "data"
+    d.mkdir()
+    (d / "x.txt").write_text("anything")
+    empty = tmp_path / "empty.jsonl"
+    empty.write_text("")
+    assert main(["scan", "--cases", str(empty), str(d)]) == 2
+    assert main(["scan", "--cases", str(tmp_path / "missing.jsonl"), str(d)]) == 2
+    broken = tmp_path / "broken.jsonl"
+    broken.write_text(json.dumps(dataclasses.asdict(mk(1))) + "\n{oops\n")
+    assert main(["scan", "--cases", str(broken), str(d)]) == 2
+    assert "refusing" in capsys.readouterr().err
+    with pytest.raises(ValueError):
+        scan_canaries([d], set())
+    with pytest.raises(ValueError, match="no cases"):
+        split_hash(empty)
+    assert main(["hash", str(empty)]) == 2
+
+
+def test_gitignore_keeps_raw_out_and_aggregates_in():
+    import subprocess
+    from pathlib import Path
+    root = Path(__file__).parent.parent
+    def ignored(p):
+        return subprocess.run(["git", "check-ignore", "-q", "--no-index", p], cwd=root).returncode == 0
+    for p in ("runs/x.jsonl", "raw.jsonl", "results/a/b/raw.jsonl", "cases/official/x.jsonl"):
+        assert ignored(p), p
+    for p in ("results/a/b/report.json", "results/a/b/meta.json", "cases/practice/seed.jsonl", "results/.gitkeep"):
+        assert not ignored(p), p
