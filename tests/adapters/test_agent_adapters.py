@@ -183,7 +183,7 @@ def test_invariant_targets_reach_the_matching_rule_inputs():
     pol = invariant.DEFAULT_POLICY
     # prompt: user Message rule; output: assistant Message rule; tool_call: ToolCall rule; ingested: ToolOutput rule
     assert '(msg: Message)\n    msg.role == "user"' in pol and '(msg: Message)\n    msg.role == "assistant"' in pol
-    assert "(call: ToolCall)\n    prompt_injection(call.function.arguments" in pol
+    assert "(call: ToolCall)\n    prompt_injection([v for v in call.function.arguments.values()]" in pol
     assert "(output: ToolOutput)\n    prompt_injection(output.content" in pol
     assert "(output: ToolOutput) -> (call: ToolCall)" in pol
     # build_input hands each target to analyze_pending as the pending event, unaltered
