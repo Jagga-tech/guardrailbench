@@ -11,6 +11,10 @@ def cases():
     return [mk("a", "GRB-MARKER-1", label="attack"), mk("b"), mk("c")]
 
 
+def rec(res, cid):
+    return next(r for r in res if r["case_id"] == cid)
+
+
 def good(tmp_path):
     out = tmp_path / "r.jsonl"
     run(FakeAdapter(), cases(), out)
@@ -37,10 +41,10 @@ def test_extra_and_duplicate_rejected(tmp_path):
 
 def test_missing_logs_rejected(tmp_path):
     _, res = good(tmp_path)
-    del res[0]["steps"]
-    res[1]["steps"] = []
-    res[2]["decision"] = "not_claimed"
-    res[2]["steps"] = []
+    del rec(res, "a")["steps"]
+    rec(res, "b")["steps"] = []
+    rec(res, "c")["decision"] = "not_claimed"
+    rec(res, "c")["steps"] = []
     p = check_complete(res, cases())
     assert len(p) == 2 and all("logs" in x for x in p)
 
@@ -54,14 +58,14 @@ def test_bad_json_line_reported(tmp_path):
 
 def test_spot_check_catches_edited_verdict(tmp_path):
     _, res = good(tmp_path)
-    res[0]["decision"] = "allow"  # was block
+    rec(res, "a")["decision"] = "allow"  # was block
     p = spot_check(res, cases(), FakeAdapter(), k=3)
     assert len(p) == 1 and "a" in p[0] and "allow" in p[0] and "block" in p[0]
 
 
 def test_spot_check_ignores_errors(tmp_path):
     _, res = good(tmp_path)
-    res[0]["decision"] = "error"
+    rec(res, "a")["decision"] = "error"
     p = spot_check(res, cases(), FakeAdapter(), k=3)
     assert not any("disagree" in x for x in p) and any("error" in x for x in p)
 
@@ -99,7 +103,7 @@ def test_spot_check_one_error_among_many_is_note(tmp_path):
     out = tmp_path / "r.jsonl"
     run(FakeAdapter(), cs, out)
     res = [json.loads(l) for l in out.read_text().splitlines()]
-    res[0]["decision"] = "error"
+    rec(res, "c0")["decision"] = "error"
     p = spot_check(res, cs, FakeAdapter(), k=6)
     assert len(p) == 1 and p[0].startswith("note:")
 
