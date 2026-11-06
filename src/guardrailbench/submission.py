@@ -46,11 +46,16 @@ def spot_check(results: list[dict], cases: list[Case], adapter, k: int = 50, see
         out = Path(d) / "rerun.jsonl"
         run(adapter, [c for c in cases if not isinstance(c, BadCase) and c.id in picked], out)
         again = {r["case_id"]: r["decision"] for r in load_results(out)[0]}
-    problems = []
+    problems, compared, errors = [], 0, 0
     for cid in sorted(picked):
         a, b = sub[cid], again.get(cid)
         if "error" in (a, b):
+            errors += 1
             problems.append(f"note: skipped {cid} (submitted {a}, re-run {b})")
-        elif a != b:
+            continue
+        compared += 1
+        if a != b:
             problems.append(f"disagree: {cid} submitted {a}, re-run {b}")
+    if compared == 0 or errors > len(picked) / 2:
+        problems.append(f"spot-check unverified: compared {compared} of {len(picked)} sampled, {errors} errors")
     return problems

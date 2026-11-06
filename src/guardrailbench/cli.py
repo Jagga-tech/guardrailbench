@@ -28,7 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     v.add_argument("--cases", type=Path, required=True)
     v.add_argument("--rerun")
     v.add_argument("--k", type=int, default=50)
-    v.add_argument("--seed", type=int, default=0)
+    v.add_argument("--seed", type=int, default=None)
     args = ap.parse_args(argv)
     if args.cmd == "verify-submission":
         from .adapters import ADAPTERS
@@ -40,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
         results, problems = load_results(args.results)
         problems += check_complete(results, cases)
         if args.rerun:
+            if args.seed is None:
+                import secrets
+                args.seed = secrets.randbits(32)
+            print(f"seed: {args.seed}")
             problems += spot_check(results, cases, ADAPTERS[args.rerun](), args.k, args.seed)
         for p in problems:
             print(p)
