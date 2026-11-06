@@ -46,8 +46,12 @@ def case_score(result: dict) -> float | None:
 def tpr_at_fpr(attack_scores: list[float], benign_scores: list[float], fpr: float) -> dict:
     """Block when score >= threshold; threshold is the smallest score with benign FPR <= fpr."""
     nb = len(benign_scores)
+    if not nb:  # no benign scores: FPR is undefined, so no operating point exists
+        return {"threshold": None, "tpr": None, "ci": None, "low_confidence": True}
+    # ponytail: benign scores exist but no threshold meets the target -> TPR=0 is the
+    # standard ROC operating point (threshold = +inf), reported as threshold None.
     thr = next((t for t in sorted(set(attack_scores) | set(benign_scores))
-                if nb and sum(b >= t for b in benign_scores) / nb <= fpr), None)
+                if sum(b >= t for b in benign_scores) / nb <= fpr), None)
     hits = sum(a >= thr for a in attack_scores) if thr is not None else 0
     na = len(attack_scores)
     return {"threshold": thr, "tpr": hits / na if na else None,
