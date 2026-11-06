@@ -23,6 +23,10 @@ def main(argv: list[str] | None = None) -> int:
     sc = sub.add_parser("scan")
     sc.add_argument("--cases", type=Path, required=True)
     sc.add_argument("data", type=Path, nargs="+")
+    lb = sub.add_parser("leaderboard")
+    lb.add_argument("--results", type=Path, required=True)
+    lb.add_argument("--out", type=Path, required=True)
+    lb.add_argument("--disclosures", type=Path)
     v = sub.add_parser("verify-submission")
     v.add_argument("--results", type=Path, required=True)
     v.add_argument("--cases", type=Path, required=True)
@@ -49,6 +53,13 @@ def main(argv: list[str] | None = None) -> int:
             print(p)
         # notes (skipped errors) are informational, not failures
         return 1 if any(not p.startswith("note:") for p in problems) else 0
+    if args.cmd == "leaderboard":
+        import json
+        from .leaderboard import build
+        disc = json.loads(args.disclosures.read_text(encoding="utf-8")) if args.disclosures else {}
+        build(args.results, args.out, disc)
+        print(f"leaderboard -> {args.out}")
+        return 0
     if args.cmd == "hash":
         from .integrity import split_hash
         print(split_hash(args.path))
