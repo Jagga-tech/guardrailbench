@@ -1,6 +1,7 @@
 .superpowers/
 cases/official/
-results/
+results/*
+!results/.gitkeep
 site/
 __pycache__/
 *.egg-info/

@@ -17,7 +17,7 @@ EMPTY = {"n_attack": 0, "n_benign": 0, "detection": None, "detection_ci": None, 
 
 
 def mode(g):
-    return {"all": g, "family": {"1": g}, "checkpoint": {"input": g}, "transform": {}}
+    return {"all": g, "family": {"1": g}, "checkpoint": {"input": g}, "transform": {"none": g, "base64": g}}
 
 
 def put(root, product, verified=True, flat_claimed=True, low=False, native=True, meta=True):
@@ -88,3 +88,29 @@ def test_missing_meta_is_unverified_and_product_page(tmp_path):
     build(res, tmp_path / "s2", {})
     p = (tmp_path / "s2" / "z.html").read_text()
     assert "1.2.3" in p and "2026-11-01" in p
+
+
+def test_transform_tables(tmp_path):
+    h = html(tmp_path)
+    assert "Transform none" in h and "Transform base64" in h
+
+
+def test_empty_results_dir(tmp_path):
+    (tmp_path / "results").mkdir()
+    build(tmp_path / "results", tmp_path / "site", {})
+    assert "No results yet" in (tmp_path / "site" / "index.html").read_text()
+
+
+def test_product_page_tiers_separate(tmp_path):
+    res = tmp_path / "results"
+    put(res, "z")
+    d = res / "z" / "other"
+    (d.parent / "dev").rename(d)  # reuse files as unverified split
+    put(res, "z2", verified=False)
+    (res / "z" / "dev").mkdir()
+    (res / "z" / "dev" / "report.json").write_text((d / "report.json").read_text())
+    (res / "z" / "dev" / "meta.json").write_text('{"verified": false}')
+    build(res, tmp_path / "site", {})
+    h = (tmp_path / "site" / "z.html").read_text()
+    main, unv = h.split("Unverified (self-reported)")
+    assert "(other)" in main and "(dev)" not in main and "(dev)" in unv and "(other)" not in unv
