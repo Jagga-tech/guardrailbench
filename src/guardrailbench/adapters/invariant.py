@@ -27,9 +27,11 @@ checkpoint, one attack fires its rule and one benign target does not. Findings f
 lists, so a detector given a dict (call.function.arguments) silently never fires and None content is skipped; hence
 the list comprehension over arguments.values() (ListComprehension is in language/ast.py), `str()`/`f""`/`list()`
 are not available in the rule language, and secrets() returns a list so it is wrapped in len(...) > 0. The
-`moderated` default threshold 0.5 (runtime/utils/moderation.py) did not flag three plainly violent/hateful
-sentences with the default KoalaAI/Text-Moderation model; 0.3 flags them and passed two benign sentences. 0.3 is an
-empirical pick from five sentences, not a validated operating point. Field names: runtime/nodes.py Message(role,
+detector thresholds are the library defaults (Controller Ruling 10: we never tune thresholds); `moderated`
+(default model KoalaAI/Text-Moderation, threshold 0.5, runtime/utils/moderation.py) did not flag three plainly
+violent/hateful sentences when probed, but does flag a self-harm and an explicit-sexual sentence, so the live test
+uses the self-harm one for the "output" attack. The shipped policy inspects assistant output; how much it catches
+is the product's own default behaviour. Field names: runtime/nodes.py Message(role,
 content, tool_calls), ToolCall(function: Function(name, arguments: dict)), ToolOutput(content).
 Native: messages[:target] is `past`, [messages[target]] is `pending`; analyze_pending reports only errors whose
 bound events lie in `pending`. tool_definition has no documented trace event and is dropped. Flattened: one user
@@ -57,16 +59,16 @@ from invariant.detectors import prompt_injection, moderated, secrets
 raise "Prompt injection in user message" if:
     (msg: Message)
     msg.role == "user"
-    prompt_injection(msg.content, threshold=0.7)
+    prompt_injection(msg.content)
 
 raise "Moderated assistant output" if:
     (msg: Message)
     msg.role == "assistant"
-    moderated(msg.content, default_threshold=0.3)
+    moderated(msg.content)
 
 raise "Injection text in tool call arguments" if:
     (call: ToolCall)
-    prompt_injection([v for v in call.function.arguments.values()], threshold=0.7)
+    prompt_injection([v for v in call.function.arguments.values()])
 
 raise "Secret in tool call arguments" if:
     (call: ToolCall)
@@ -74,11 +76,11 @@ raise "Secret in tool call arguments" if:
 
 raise "Prompt injection in tool output" if:
     (output: ToolOutput)
-    prompt_injection(output.content, threshold=0.7)
+    prompt_injection(output.content)
 
 raise "Tool call after prompt injection in tool output" if:
     (output: ToolOutput) -> (call: ToolCall)
-    prompt_injection(output.content, threshold=0.7)
+    prompt_injection(output.content)
 '''
 
 # checkpoint -> rule messages in DEFAULT_POLICY that inspect it (tests assert these exist)
