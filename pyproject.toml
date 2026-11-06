@@ -11,6 +11,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest"]
+hf = ["transformers", "torch"]
 
 [project.scripts]
 guardrailbench = "guardrailbench.cli:main"
