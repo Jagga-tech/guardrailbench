@@ -10,7 +10,6 @@ CASES = Path(__file__).parent.parent / "cases" / "practice"
 def test_seed_end_to_end_with_fake(tmp_path, capsys):
     raw = tmp_path / "raw.jsonl"
     rep_dir = tmp_path / "results" / "fake" / "practice"
-    rep_dir.mkdir(parents=True)
     report = rep_dir / "report.json"
     site = tmp_path / "site"
     assert main(["validate", str(CASES)]) == 0

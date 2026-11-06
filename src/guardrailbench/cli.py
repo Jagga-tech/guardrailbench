@@ -74,6 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         import json
         from .metrics import report
         results = [json.loads(l) for l in args.results.read_text(encoding="utf-8").splitlines() if l.strip()]
+        args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report(results, load_cases(args.cases)), indent=2), encoding="utf-8")
         print(f"scored {len(results)} results -> {args.out}")
         return 0
@@ -84,6 +85,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"unknown product {args.product!r}; known: {', '.join(sorted(ADAPTERS))}", file=sys.stderr)
             return 2
         cases = load_cases(args.cases)
+        args.out.parent.mkdir(parents=True, exist_ok=True)
         run(ADAPTERS[args.product](), cases, args.out, args.workers, args.timeout)
         print(f"ran {len(cases)} cases -> {args.out}")
         return 0
