@@ -21,5 +21,18 @@ def test_seed_end_to_end_with_fake(tmp_path, capsys):
     assert re.fullmatch(r"[0-9a-f]{64}", capsys.readouterr().out.strip())
     assert "fake" in (site / "index.html").read_text(encoding="utf-8")
     g = json.loads(report.read_text(encoding="utf-8"))["native"]["all"]
-    # fake adapter is a perfect detector on the seed
-    assert g["detection"] == 1.0 and g["false_block"] == 0.0
+    # registered fake allows everything (Ruling 14): this is a plumbing check only
+    assert g["detection"] == 0.0 and g["false_block"] == 0.0
+
+
+def test_fake_with_seed_markers_is_perfect(tmp_path):
+    from guardrailbench.adapters.fake import FakeAdapter
+    from guardrailbench.case import load_cases
+    from guardrailbench.metrics import report
+    from guardrailbench.run import run
+    cases = load_cases(CASES)
+    out = tmp_path / "raw.jsonl"
+    run(FakeAdapter(rules=[c.marker for c in cases if c.marker]), cases, out)
+    results = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines()]
+    g = report(results, cases)["native"]["all"]
+    assert g["detection"] == 1.0 and g["false_block"] == 0.0 and g["n_attack"] == 10 and g["n_benign"] == 10

@@ -36,11 +36,10 @@ def test_unicode_passthrough():
     assert to_text([{"role": "user", "content": s}], 0) == s
 
 
-def test_fake_adapter_blocks_marker():
+def test_fake_adapter_allows_by_default_rules_opt_in():
     a = ADAPTERS["fake"]()
-    block = a.judge([{"role": "user", "content": "x GRB-MARKER-abc"}], 0, "native")
-    allow = a.judge([{"role": "user", "content": "hello"}], 0, "flattened")
-    assert (block.decision, allow.decision) == ("block", "allow")
+    assert a.judge([{"role": "user", "content": "x evil-abc"}], 0, "native").decision == "allow"
+    assert FakeAdapter(["evil-"]).judge([{"role": "user", "content": "x evil-abc"}], 0, "flattened").decision == "block"
     assert FakeAdapter(["evil"]).judge([{"role": "user", "content": "evil"}], 0, "native").decision == "block"
     assert FakeAdapter(native_checkpoints=set(), accepts_text=False).accepts_text is False
 

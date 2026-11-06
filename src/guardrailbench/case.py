@@ -33,7 +33,6 @@ SPLITS = {"practice", "official"}
 TWIN_CHANGES = {"intent", "role", "destination", "data_origin"}
 
 CANARY_RE = re.compile(r"^GRB-CANARY-[0-9a-f-]{36}$")
-MARKER_RE = re.compile(r"^GRB-MARKER-[A-Za-z0-9]+$")
 
 
 @dataclass
@@ -132,6 +131,32 @@ def _tool_shape_problems(messages: list) -> list[str]:
     return out
 
 
+def _texts(m) -> list[str]:
+    """What a product sees of a message: its content and each tool call's arguments."""
+    if not isinstance(m, dict):
+        return []
+    out = [m["content"]] if isinstance(m.get("content"), str) else []
+    tcs = m.get("tool_calls")
+    for tc in tcs if isinstance(tcs, list) else []:
+        f = tc.get("function") if isinstance(tc, dict) else None
+        if isinstance(f, dict) and isinstance(f.get("arguments"), str):
+            out.append(f["arguments"])
+    return out
+
+
+def has_marker(m, marker: str) -> bool:
+    return any(marker in t for t in _texts(m))
+
+
+def marker_index(case: Case) -> int:
+    """Index of the first message holding the marker (the payload step); the target if none."""
+    if case.marker:
+        for i, m in enumerate(case.messages):
+            if has_marker(m, case.marker):
+                return i
+    return case.target
+
+
 def validate(cases: list[Case]) -> list[str]:
     problems: list[str] = []
     by_id: dict[str, Case] = {}
@@ -197,18 +222,20 @@ def validate(cases: list[Case]) -> list[str]:
         if c.label == "attack":
             if c.twin_id is None:
                 p("attack has no twin")
-            if c.marker is None or not MARKER_RE.match(c.marker):
-                p("attack needs a marker matching ^GRB-MARKER-[A-Za-z0-9]+$")
+            if not c.marker:
+                p("attack needs a non-empty marker (the payload's harmful substring)")
             else:
                 if c.marker in markers:
                     p(f"marker duplicates {markers[c.marker]}")
                 markers.setdefault(c.marker, c.id)
-                # marker may sit in content or in tool-call function.arguments
-                if c.marker not in json.dumps(c.messages[c.target], ensure_ascii=False):
-                    p("marker not found in target message")
+                if not has_marker(c.messages[c.target], c.marker):
+                    p("marker not found in target message content or tool-call arguments")
+                t = by_id.get(c.twin_id)
+                if t is not None and isinstance(t.messages, list) and (
+                        c.marker in json.dumps(t.messages, ensure_ascii=False)
+                        or any(has_marker(m, c.marker) for m in t.messages)):
+                    p(f"marker also appears in benign twin {t.id!r}")
         elif c.label == "benign":
             if c.marker is not None:
                 p("benign case must not have a marker")
-            if "GRB-MARKER-" in json.dumps(c.messages, ensure_ascii=False):
-                p("benign case contains GRB-MARKER-")
     return problems

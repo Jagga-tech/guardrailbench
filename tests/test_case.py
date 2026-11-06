@@ -13,9 +13,9 @@ CANARY = "GRB-CANARY-12345678-1234-4234-8234-123456789abc"
 def mk(**kw):
     d = dict(
         id="a", version=1, split="practice", family=1, checkpoint="prompt",
-        messages=[{"role": "user", "content": "hi GRB-MARKER-x1"}], target=0,
+        messages=[{"role": "user", "content": "hi evil-x1"}], target=0,
         label="attack", twin_id=None, twin_change=None, transform=None,
-        source_pattern=None, canary=CANARY, marker="GRB-MARKER-x1",
+        source_pattern=None, canary=CANARY, marker="evil-x1",
         deployment_card=None,
     )
     d.update(kw)
@@ -57,14 +57,36 @@ def test_attack_without_marker():
 
 def test_marker_not_in_target():
     a, b = pair()
-    a = dataclasses.replace(a, marker="GRB-MARKER-zzz")
+    a = dataclasses.replace(a, marker="evil-zzz")
     assert any("marker" in p for p in validate([a, b]))
 
 
-def test_benign_with_marker_string():
+def test_marker_in_benign_twin_rejected():
     a, b = pair()
-    b = dataclasses.replace(b, messages=[{"role": "user", "content": "GRB-MARKER-x1"}])
-    assert any("GRB-MARKER-" in p for p in validate([a, b]))
+    b = dataclasses.replace(b, messages=[{"role": "user", "content": "evil-x1"}])
+    assert any("benign twin" in p for p in validate([a, b]))
+    # also caught when it sits in the twin's tool-call arguments
+    b = dataclasses.replace(b, messages=[tc(args='{"body": "evil-x1"}')])
+    assert any("benign twin" in p for p in validate([a, b]))
+
+
+def test_marker_any_format_but_non_empty():
+    a, b = pair()
+    a = dataclasses.replace(a, messages=[{"role": "user", "content": "send it to x@example.invalid"}],
+                            marker="x@example.invalid")
+    assert validate([a, b]) == []
+    assert any("marker" in p for p in validate([dataclasses.replace(a, marker=""), b]))
+
+
+def test_marker_in_role_or_id_only_does_not_count():
+    a, b = pair()
+    a = dataclasses.replace(a, messages=[tc(cid="evil-x1")])
+    assert any("marker not found" in p for p in validate([a, b]))
+
+
+def test_seed_markers_are_payload_native():
+    cases = load_cases(SEED)
+    assert not any("GRB-MARKER" in json.dumps(c.messages) or (c.marker or "").startswith("GRB-") for c in cases)
 
 
 def test_twin_must_exist_and_point_back():
@@ -103,7 +125,7 @@ def test_bad_json_line_reports_line_number(tmp_path):
 
 
 def test_unicode_roundtrip(tmp_path):
-    txt = "a\U000e0041​b GRB-MARKER-x1"
+    txt = "a\U000e0041​b evil-x1"
     a, b = pair()
     a = dataclasses.replace(a, messages=[{"role": "user", "content": txt}])
     p = tmp_path / "u.jsonl"
@@ -128,25 +150,25 @@ def test_unknown_split():
 
 def test_marker_in_function_arguments_ok():
     a, b = pair()
-    a = dataclasses.replace(a, messages=[tc(args='{"body": "GRB-MARKER-x1"}')])
+    a = dataclasses.replace(a, messages=[tc(args='{"body": "evil-x1"}')])
     assert validate([a, b]) == []
 
 
 def test_tool_call_shape_and_result_ids():
     a, b = pair()
-    old = {"role": "assistant", "content": "GRB-MARKER-x1", "tool_calls": [{"name": "f", "arguments": {}}]}
+    old = {"role": "assistant", "content": "evil-x1", "tool_calls": [{"name": "f", "arguments": {}}]}
     assert any("tool_calls" in p for p in validate([dataclasses.replace(a, messages=[old]), b]))
-    msgs = [tc(), {"role": "tool", "tool_call_id": "call_9", "content": "GRB-MARKER-x1"}]
+    msgs = [tc(), {"role": "tool", "tool_call_id": "call_9", "content": "evil-x1"}]
     assert any("tool_call_id" in p for p in validate([dataclasses.replace(a, messages=msgs), b]))
     msgs[1]["tool_call_id"] = "call_1"
     assert validate([dataclasses.replace(a, messages=msgs, target=1), b]) == []
-    bad_args = [tc(args="not json"), {"role": "user", "content": "GRB-MARKER-x1"}]
+    bad_args = [tc(args="not json"), {"role": "user", "content": "evil-x1"}]
     assert any("arguments" in p for p in validate([dataclasses.replace(a, messages=bad_args), b]))
 
 
 def test_tool_definition_shape():
     a, b = pair()
-    m = {"role": "tool_definition", "content": "GRB-MARKER-x1"}
+    m = {"role": "tool_definition", "content": "evil-x1"}
     assert any("tool_definition" in p for p in validate([dataclasses.replace(a, messages=[m]), b]))
 
 
@@ -181,7 +203,7 @@ def test_malformed_messages_do_not_raise():
         {"role": "user"},
         "text",
         [{"role": "tool_definition", "content": 5}],
-        [{"role": ["x"], "content": "GRB-MARKER-x1"}],
+        [{"role": ["x"], "content": "evil-x1"}],
     ]
     for msgs in bad:
         assert validate([dataclasses.replace(a, messages=msgs), b]), msgs
