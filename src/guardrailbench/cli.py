@@ -23,7 +23,28 @@ def main(argv: list[str] | None = None) -> int:
     sc = sub.add_parser("scan")
     sc.add_argument("--cases", type=Path, required=True)
     sc.add_argument("data", type=Path, nargs="+")
+    v = sub.add_parser("verify-submission")
+    v.add_argument("--results", type=Path, required=True)
+    v.add_argument("--cases", type=Path, required=True)
+    v.add_argument("--rerun")
+    v.add_argument("--k", type=int, default=50)
+    v.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
+    if args.cmd == "verify-submission":
+        from .adapters import ADAPTERS
+        from .submission import check_complete, load_results, spot_check
+        if args.rerun and args.rerun not in ADAPTERS:
+            print(f"unknown product {args.rerun!r}; known: {', '.join(sorted(ADAPTERS))}", file=sys.stderr)
+            return 2
+        cases = load_cases(args.cases)
+        results, problems = load_results(args.results)
+        problems += check_complete(results, cases)
+        if args.rerun:
+            problems += spot_check(results, cases, ADAPTERS[args.rerun](), args.k, args.seed)
+        for p in problems:
+            print(p)
+        # notes (skipped errors) are informational, not failures
+        return 1 if any(not p.startswith("note:") for p in problems) else 0
     if args.cmd == "hash":
         from .integrity import split_hash
         print(split_hash(args.path))
