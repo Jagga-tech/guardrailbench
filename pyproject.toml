@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guardrailbench"
+version = "0.1.0"
+description = "Open benchmark for AI guardrail products"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+hf = ["transformers", "torch"]
+llamafirewall = ["llamafirewall==1.0.3"]
+nemo = ["nemoguardrails==0.24.1"]
+llmguard = ["llm-guard==0.3.16"]
+invariant = ["invariant-ai[extras]==0.3.5"]
+bedrock = ["boto3"]
+modelarmor = ["google-auth", "requests"]
+
+[project.scripts]
+guardrailbench = "guardrailbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
