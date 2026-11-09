@@ -14,6 +14,7 @@ GuardrailBench is an open, vendor-neutral benchmark of AI-agent guardrail produc
 - [Write an adapter](guides/write-an-adapter.md): connect a product the harness does not know yet
 - [Submit results](guides/submit.md): practice-split results, verification, and what maintainers run
 - [Reliability track](guides/reliability.md): consistency, stability, load, long inputs and failures
+- [Official runs](official-runs.md): which tests are open, which only maintainers run, and how a round works
 
 ## Reference
 

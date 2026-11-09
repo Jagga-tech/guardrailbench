@@ -53,7 +53,7 @@ guardrailbench verify-submission --results runs/NAME/practice.jsonl --cases case
 
 The command prints the random seed it used, re-runs `k` cases, and reports any case where the decision, the mode or the score differs. Cases where the re-run itself errors are skipped, and if too few can be compared the spot check is reported as unverified.
 
-Practice-split runs stay on the unverified tier unless maintainers verify them. Official-split runs are done by maintainers on their own infrastructure, on the hidden split whose SHA-256 fingerprint is published in `cases/OFFICIAL_SHA256`. Vendors never receive that split.
+Practice-split runs stay on the unverified tier unless maintainers verify them. Official-split runs are done by maintainers on their own infrastructure, on the hidden split whose SHA-256 fingerprint is published in `cases/OFFICIAL_SHA256`. Vendors never receive that split. How a round works is in [official runs](../official-runs.md).
 
 ## Rules
 

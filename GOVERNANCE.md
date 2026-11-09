@@ -21,7 +21,7 @@ Day-to-day changes are decided in pull requests by maintainer approval. Changes 
 
 ## Vendor participation rules
 
-These follow the spirit of AMTSO testing standards.
+These follow the spirit of AMTSO testing standards. How an official round is run is in [docs/official-runs.md](docs/official-runs.md).
 
 - **Notice.** Vendors are told before their product is tested and before results are published.
 - **Free participation.** There is no fee to be tested or to take part.
