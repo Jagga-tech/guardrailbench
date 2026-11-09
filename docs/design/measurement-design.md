@@ -1,6 +1,6 @@
 # How GuardrailBench measures products
 
-This replaces the headline measurement in the main design (`2026-11-05-guardrailbench-design.md`, "Metrics"). The cases do not change. What changes is how a product is configured and how its verdicts are scored.
+This replaces the headline measurement in the main design (`guardrailbench-design.md`, "Metrics"). The cases do not change. What changes is how a product is configured and how its verdicts are scored.
 
 ## The problem
 

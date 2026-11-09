@@ -1017,7 +1017,7 @@ Cite from this table. Each entry was taken from the maintainers' research notes;
 | | Agent session smuggling (Unit 42) | A remote agent slips extra instructions into a stateful session. |
 | | Morris II (arXiv 2403.02817) | Self-replicating prompts spreading between assistants through shared stores. |
 | | Prompt Infection (arXiv 2410.07283) | Injection spreading between agents inside one system. |
-| | Magentic-One orchestrator hijack (arXiv 2503.12188) | Malicious file content making an orchestrator run arbitrary code. |
+| | Multi-agent orchestrator hijack (arXiv 2503.12188) | Malicious file content making an orchestrator run arbitrary code. |
 | | Trust Cascade (EMNLP 2026) | Delegation strips the markers that showed where text came from. |
 | | Agent-card name collision (arXiv 2609.27624) | Two agents with the same name; clients pick the wrong one. |
 | 8 Memory poisoning | SpAIware (2024) | Injected instruction written to long-term memory, leaking all later chats. |
