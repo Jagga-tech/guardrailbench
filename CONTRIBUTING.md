@@ -22,6 +22,8 @@ uv run guardrailbench validate cases/practice
 uv run guardrailbench casegen lint cases/practice/v1.jsonl
 ```
 
+Optional: after installing [pre-commit](https://pre-commit.com/), `pre-commit install` runs ruff and basic whitespace checks on each commit (see `.pre-commit-config.yaml`). The user docs start at [docs/index.md](docs/index.md), and the design documents are in [docs/design/](docs/design/guardrailbench-design.md).
+
 ## Contribute an adapter
 
 An adapter turns one case into a product's own API request and the response into a verdict. Rules:
@@ -40,7 +42,7 @@ Open an issue with the "Case report" template. Give the case id, what is wrong (
 
 ## Submit results
 
-- Run the **practice split** with your own keys and compute.
+- Run the **practice split** with your own keys and compute. The steps are in [docs/guides/submit.md](docs/guides/submit.md).
 - Open a pull request with the per-case logs (the `runs/` output) and the report. Logs are required.
 - If you ran more than once, submit every attempt, not only the best.
 - Practice-split results go on the **unverified tier**, clearly labelled.
