@@ -3,7 +3,7 @@
 <p align="center">
   <strong>[ <a href="https://jagga-tech.github.io/guardrailbench/">Website</a> ]</strong>
   <strong>[ <a href="https://jagga-tech.github.io/guardrailbench/">Leaderboard</a> ]</strong>
-  <strong>[ <a href="docs/design/measurement-design.md">Method</a> ]</strong>
+  <strong>[ <a href="https://jagga-tech.github.io/guardrailbench/method.html">Method</a> ]</strong>
   <strong>[ <a href="docs/index.md">Docs</a> ]</strong>
 </p>
 
