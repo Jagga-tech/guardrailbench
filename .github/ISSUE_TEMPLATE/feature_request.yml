@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest a change to the harness, scoring, CLI or docs.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Changes to scoring, the case format or the adapter rules need an open issue and at least a week for comment (see GOVERNANCE.md). This is the place to start one.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve
+      description: What you are trying to do and what gets in the way today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like to see
+      description: A rough idea is enough. Say whether it would change published scores.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered

@@ -12,7 +12,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 hf = ["transformers", "torch"]
 llamafirewall = ["llamafirewall==1.0.3"]
 nemo = ["nemoguardrails==0.24.1"]
@@ -29,3 +29,12 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+extend-exclude = ["cases", "web"]
+
+[tool.ruff.lint]
+# Errors that are real bugs (syntax, undefined names, bad comparisons). Style rules are left off
+# until the codebase is formatted in a separate change.
+select = ["E9", "F63", "F7", "F82"]
