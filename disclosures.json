@@ -1,1 +1,3 @@
-{}
+{
+  "llm-judge": "Reference baseline, not a product: a general chat model asked to allow or block."
+}

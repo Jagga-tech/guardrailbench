@@ -8,7 +8,7 @@
       "version": "string",
       "organisation": "string",
       "date": "YYYY-MM-DD, date of the run",
-      "badges": "list of: open_source, maintainer_run, self_reported, affiliated",
+      "badges": "list of: open_source, maintainer_run, self_reported, affiliated, baseline (a reference baseline such as llm-judge, not a product)",
       "logs": "https URL of the per-case logs",
       "site": "https URL of the product page, optional"
     },

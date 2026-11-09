@@ -14,7 +14,8 @@
     open_source: ['open source', 'badge--open'],
     maintainer_run: ['maintainer run', 'badge--run'],
     self_reported: ['self-reported', 'badge--self'],
-    affiliated: ['affiliated', 'badge--aff']
+    affiliated: ['affiliated', 'badge--aff'],
+    baseline: ['baseline', 'badge--base']
   };
   var EMPTY = 'No published results yet — first results follow legal review and outside review of the hidden split.';
   var state = { board: tabs[0].dataset.board, cp: 'all', reading: 'strict', data: null };

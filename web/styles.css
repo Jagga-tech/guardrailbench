@@ -314,6 +314,7 @@ code { font-family: var(--font-outlier); font-size: 0.9em; overflow-wrap: anywhe
 .badge--run { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-ink); }
 .badge--self { border-style: dashed; }
 .badge--aff { border-style: double; border-width: 3px; padding: 0 3px; }
+.badge--base { border-style: dotted; }
 .notes { display: grid; gap: var(--space-md); padding-top: var(--space-md); border-top: var(--rule-hair) solid var(--color-rule-2); font-size: var(--text-sm); }
 .legend { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-xl); }
 .legend li { display: flex; align-items: center; gap: var(--space-xs); }
