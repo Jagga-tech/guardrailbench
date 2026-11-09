@@ -158,3 +158,25 @@ def test_check_complete_rejects_unknown_decision_and_mode(tmp_path):
     rec(res, "b")["mode"] = "hybrid"
     p = check_complete(res, cases())
     assert any("bad decision: a" in x for x in p) and any("bad mode: b" in x for x in p)
+
+
+def test_card_track_rows_accepted_and_rerun_uses_track(tmp_path):
+    out = tmp_path / "r.jsonl"
+    run(FakeAdapter(rules=EVIL), cases(), out, track="card")
+    res = [json.loads(l) for l in out.read_text().splitlines()]
+    assert all(r["decision"] == "not_applicable" for r in res)
+    assert check_complete(res, cases()) == []
+    ok = [p for p in spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3) if not p.startswith("note")]
+    assert not any(p.startswith("disagree") for p in ok)
+
+
+def test_unsure_decision_accepted(tmp_path):
+    _, res = good(tmp_path)
+    rec(res, "b")["decision"] = "unsure"
+    assert check_complete(res, cases()) == []
+
+
+def test_spot_check_rejects_mixed_tracks(tmp_path):
+    _, res = good(tmp_path)
+    rec(res, "b")["track"] = "card"
+    assert any("one track" in p for p in spot_check(res, cases(), FakeAdapter(rules=EVIL), k=3))

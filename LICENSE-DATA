@@ -1,0 +1,26 @@
+GuardrailBench data and documentation license
+
+The test cases in cases/ and the documentation in docs/ are licensed under
+the Creative Commons Attribution 4.0 International license (CC BY 4.0).
+
+  Full text: https://creativecommons.org/licenses/by/4.0/legalcode
+  Summary:   https://creativecommons.org/licenses/by/4.0/
+
+You may share and adapt the material for any purpose, including commercial
+use, if you give appropriate credit, link to the license, and say if you
+made changes.
+
+The source code is licensed separately under Apache-2.0. See LICENSE.
+
+Request: do not train on the cases
+----------------------------------
+GuardrailBench is a test set. Training on it makes the scores meaningless.
+We ask that nobody include the cases in training, fine-tuning, or
+tuning data for any model or guard product.
+
+Every case carries a unique canary string that starts with "GRB-CANARY-".
+Please do not remove it. If you build a training corpus, filter out any
+document that contains the string "GRB-CANARY-". Maintainers may scan
+models and products for these strings and publish the result.
+
+This request is a strong norm, not an extra license condition.

@@ -31,6 +31,10 @@ FAMILIES = {
 LABELS = {"attack", "benign"}
 SPLITS = {"practice", "official"}
 TWIN_CHANGES = {"intent", "role", "destination", "data_origin"}
+SECTORS = frozenset({"finance", "health", "legal", "government", "education", "retail", "travel_hospitality",
+                     "logistics", "manufacturing", "energy_utilities", "telecom", "software_it", "hr",
+                     "insurance", "real_estate_construction", "media_marketing", "nonprofit",
+                     "research_science", "agriculture", "general"})
 
 CANARY_RE = re.compile(r"^GRB-CANARY-[0-9a-f-]{36}$")
 
@@ -52,6 +56,7 @@ class Case:
     canary: str
     marker: str | None
     deployment_card: dict | None
+    sector: str | None = None
 
 
 @dataclass
@@ -80,12 +85,24 @@ def load_cases(path: Path) -> list[Case]:
                 where = f"{f.name}:{n}"
                 try:
                     d = json.loads(line)
-                    if not isinstance(d, dict) or set(d) != names:
+                    # sector is optional on load so files written before it existed still load
+                    if not isinstance(d, dict) or set(d) not in (names, names - {"sector"}):
                         raise ValueError(f"fields must be exactly {sorted(names)}")
                     out.append(Case(**d))
                 except ValueError as e:  # JSONDecodeError is a ValueError
                     out.append(_bad(where, str(e)))
     return out
+
+
+CARD_FIELDS = {"agent_job": str, "allowed_tools": list, "allowed_destinations": list,
+               "user_role": str, "rules": list}
+
+
+def _card_ok(card) -> bool:
+    # An empty list or string in a card means "not stated", not "nothing allowed".
+    return (isinstance(card, dict) and set(card) == set(CARD_FIELDS)
+            and all(isinstance(card[k], t) for k, t in CARD_FIELDS.items())
+            and all(isinstance(x, str) for k in ("allowed_tools", "allowed_destinations", "rules") for x in card[k]))
 
 
 def _is(v, t) -> bool:
@@ -179,12 +196,15 @@ def validate(cases: list[Case]) -> list[str]:
         bad = [n for n, t in types if not _is(getattr(c, n), t)]
         for n in bad:
             p(f"{n} has wrong type")
-        for n in ("twin_id", "twin_change", "transform", "source_pattern", "canary", "marker"):
+        for n in ("twin_id", "twin_change", "transform", "source_pattern", "canary", "marker", "sector"):
             if getattr(c, n) is not None and not isinstance(getattr(c, n), str):
                 p(f"{n} must be a string or null")
                 bad.append(n)
-        if c.deployment_card is not None and not isinstance(c.deployment_card, dict):
-            p("deployment_card must be an object or null")
+        if c.deployment_card is not None and not _card_ok(c.deployment_card):
+            p("deployment_card must be null or exactly " + ", ".join(CARD_FIELDS))
+            bad.append("deployment_card")
+        if c.sector is not None and c.sector not in SECTORS:
+            p(f"unknown sector {c.sector!r}")
         if bad:
             continue
         if c.split not in SPLITS:
@@ -219,6 +239,11 @@ def validate(cases: list[Case]) -> list[str]:
                 p(f"twin {c.twin_id!r} has the same label")
             if c.twin_change not in TWIN_CHANGES:
                 p(f"unknown twin_change {c.twin_change!r}")
+            if t is not None and c.deployment_card != t.deployment_card and (
+                    c.twin_change != "role" or not (_card_ok(c.deployment_card) and _card_ok(t.deployment_card))
+                    or {k: v for k, v in c.deployment_card.items() if k != "user_role"}
+                    != {k: v for k, v in t.deployment_card.items() if k != "user_role"}):
+                p("twin deployment_card differs; only a role twin may differ, and only in user_role")
         if c.label == "attack":
             if c.twin_id is None:
                 p("attack has no twin")
@@ -231,7 +256,8 @@ def validate(cases: list[Case]) -> list[str]:
                 if not has_marker(c.messages[c.target], c.marker):
                     p("marker not found in target message content or tool-call arguments")
                 t = by_id.get(c.twin_id)
-                if t is not None and isinstance(t.messages, list) and (
+                # role and data_origin twins keep the payload and change only its context
+                if c.twin_change in ("intent", "destination") and t is not None and isinstance(t.messages, list) and (
                         c.marker in json.dumps(t.messages, ensure_ascii=False)
                         or any(has_marker(m, c.marker) for m in t.messages)):
                     p(f"marker also appears in benign twin {t.id!r}")

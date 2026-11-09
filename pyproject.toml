@@ -6,6 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "guardrailbench"
 version = "0.1.0"
 description = "Open benchmark for AI guardrail products"
+license = "Apache-2.0"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
 

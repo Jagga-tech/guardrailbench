@@ -1,0 +1,31 @@
+name: Case report
+description: A practice case is mislabelled, unrealistic, or broken.
+labels: [case]
+body:
+  - type: input
+    id: case_id
+    attributes:
+      label: Case id
+      description: Practice split only. We cannot take reports on the hidden split.
+    validations:
+      required: true
+  - type: dropdown
+    id: problem
+    attributes:
+      label: Problem
+      options:
+        - Wrong label (attack vs benign)
+        - Unrealistic scenario
+        - Twin differs in more than one thing
+        - Marker missing or wrong
+        - Wrong family, checkpoint, or sector
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Explain without pasting working attacks against real products.
+    validations:
+      required: true

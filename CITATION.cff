@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use GuardrailBench, please cite it as below."
+title: "GuardrailBench"
+version: "1.0.0-rc1"
+license: Apache-2.0
+repository-code: "https://github.com/Jagga-tech/guardrailbench"
+abstract: "An open, vendor-neutral benchmark of AI-agent guardrail products."
+type: software
+authors:
+  - name: "GuardrailBench maintainers"

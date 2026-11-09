@@ -30,7 +30,7 @@ def test_fake_with_seed_markers_is_perfect(tmp_path):
     from guardrailbench.case import load_cases
     from guardrailbench.metrics import report
     from guardrailbench.run import run
-    cases = load_cases(CASES)
+    cases = load_cases(CASES / "seed.jsonl")
     out = tmp_path / "raw.jsonl"
     run(FakeAdapter(rules=[c.marker for c in cases if c.marker]), cases, out)
     results = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines()]

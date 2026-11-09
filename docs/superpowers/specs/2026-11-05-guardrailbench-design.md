@@ -101,6 +101,8 @@ Every attack case has a benign twin that changes exactly one thing. For example,
 
 ## Metrics
 
+> Updated 2026-11-07: the headline measurement (pair score, a card track, three outcomes, outcome scoring for multi-step cases) is now in [2026-11-07-measurement-design.md](2026-11-07-measurement-design.md). The list below is kept as supporting detail.
+
 - Detection rate at fixed false-positive rates of 1% and 0.1%, where the product gives a score. Otherwise, detection rate and false-block rate at the product's default threshold.
 - False-block rate on benign twins, with 95% confidence intervals (Wilson).
 - Everything broken down by family, checkpoint, transform and domain pack.

@@ -139,3 +139,54 @@ def test_all_errors_group_is_not_hidden_as_na(tmp_path):
     rp.write_text(json.dumps(rep))
     build(res, tmp_path / "site", {})
     assert "errors 200/200" in (tmp_path / "site" / "index.html").read_text()
+
+
+def test_leaderboard_shows_pair_score_and_unsure(tmp_path):
+    res = tmp_path / "results"
+    put(res, "x")
+    rp = res / "x" / "dev" / "report.json"
+    rep = json.loads(rp.read_text())
+    P = {"n": 10, "correct": 7, "over_block": 1, "miss": 1, "inverted": 1, "score": 0.7, "score_ci": [0.4, 0.89]}
+    for m in ("native", "flattened"):
+        for key in ("all",):
+            rep[m][key].update(pairs={"strict": P, "lenient": dict(P, score=0.8)}, unsure_rate=0.1)
+        for dim in ("family", "checkpoint", "transform"):
+            for g in rep[m][dim].values():
+                g.update(pairs={"strict": P, "lenient": dict(P, score=0.8)}, unsure_rate=0.1)
+    rp.write_text(json.dumps(rep))
+    build(res, tmp_path / "site", {})
+    h = (tmp_path / "site" / "index.html").read_text()
+    for w in ("Pair score", "strict", "lenient", "Unsure", "70%", "80%"):
+        assert w in h
+
+
+def test_not_applicable_rendered(tmp_path):
+    na = dict(EMPTY, not_applicable=5)
+    from guardrailbench.leaderboard import cell
+    assert "not applicable" in cell({"native": mode(na)}, "native", "family", "1")
+    assert "not applicable" not in cell({"native": mode(EMPTY)}, "native", "family", "1")
+
+
+def test_headline_shows_split_and_track_and_skips_empty_pairs(tmp_path):
+    res = tmp_path / "results"
+    put(res, "x")
+    rp = res / "x" / "dev" / "report.json"
+    rep = json.loads(rp.read_text())
+    P = {"n": 10, "correct": 7, "over_block": 1, "miss": 1, "inverted": 1, "score": 0.7, "score_ci": [0.4, 0.89]}
+    rep["track"] = "card"
+    rep["native"]["checkpoint"]["input"].update(pairs={"strict": P, "lenient": P}, unsure_rate=0.1)
+    rep["flattened"]["checkpoint"]["input"].update(
+        pairs={"strict": dict(P, n=0, score=None, score_ci=None), "lenient": dict(P, n=0, score=None, score_ci=None)})
+    rp.write_text(json.dumps(rep))
+    build(res, tmp_path / "site", {})
+    h = (tmp_path / "site" / "index.html").read_text()
+    assert "x (dev, card)" in h
+    assert h.count("<td>flattened</td>") == 0
+
+
+def test_score_records_track_and_refuses_mixed(tmp_path):
+    from guardrailbench.cli import main
+    rows = [{"case_id": "nope", "track": "card"}, {"case_id": "nope2", "track": "none"}]
+    r = tmp_path / "r.jsonl"
+    r.write_text("\n".join(json.dumps(x) for x in rows))
+    assert main(["score", "--results", str(r), "--cases", "cases/practice", "--out", str(tmp_path / "o.json")]) == 2

@@ -70,6 +70,16 @@ def test_marker_in_benign_twin_rejected():
     assert any("benign twin" in p for p in validate([a, b]))
 
 
+def test_marker_in_twin_allowed_for_role_and_data_origin_only():
+    a, b = pair()
+    b = dataclasses.replace(b, messages=[{"role": "user", "content": "hi evil-x1"}])
+    for change in ("role", "data_origin"):
+        assert validate([dataclasses.replace(a, twin_change=change), dataclasses.replace(b, twin_change=change)]) == []
+    for change in ("intent", "destination"):
+        probs = validate([dataclasses.replace(a, twin_change=change), dataclasses.replace(b, twin_change=change)])
+        assert any("benign twin" in p for p in probs)
+
+
 def test_marker_any_format_but_non_empty():
     a, b = pair()
     a = dataclasses.replace(a, messages=[{"role": "user", "content": "send it to x@example.invalid"}],
@@ -207,3 +217,33 @@ def test_malformed_messages_do_not_raise():
     ]
     for msgs in bad:
         assert validate([dataclasses.replace(a, messages=msgs), b]), msgs
+
+
+CARD = {"agent_job": "Support bot.", "allowed_tools": ["search"], "allowed_destinations": ["a.example"],
+        "user_role": "customer", "rules": ["Never share keys."]}
+
+
+def test_card_schema_valid():
+    a, b = pair()
+    a.deployment_card = dict(CARD)
+    b.deployment_card = dict(CARD)
+    assert validate([a, b]) == []
+
+
+def test_card_schema_rejects_extra_field():
+    for bad in ({**CARD, "extra": 1}, {k: v for k, v in CARD.items() if k != "rules"},
+                {**CARD, "allowed_tools": "search"}, {**CARD, "agent_job": 3}, {**CARD, "rules": [1]}):
+        a, b = pair()
+        a.deployment_card = b.deployment_card = bad
+        assert any("deployment_card" in p for p in validate([a, b])), bad
+
+
+def test_card_role_twin_only_user_role_differs():
+    a, b = pair()
+    a.deployment_card = dict(CARD)
+    b.deployment_card = {**CARD, "user_role": "admin"}
+    assert any("deployment_card" in p for p in validate([a, b]))  # twin_change is intent
+    a.twin_change = b.twin_change = "role"
+    assert validate([a, b]) == []
+    b.deployment_card = {**CARD, "user_role": "admin", "rules": []}
+    assert any("deployment_card" in p for p in validate([a, b]))

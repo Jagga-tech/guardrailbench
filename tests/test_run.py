@@ -231,7 +231,7 @@ def test_resume_refuses_other_product_or_version(tmp_path):
     run(FakeAdapter(), [mk("a")], out)
     other = FakeAdapter()
     other.version = "1"
-    with pytest.raises(ValueError, match="other product/version"):
+    with pytest.raises(ValueError, match="other product/version/track"):
         run(other, [mk("a"), mk("b")], out)
     from guardrailbench.cli import main
     cp = tmp_path / "c.jsonl"
@@ -248,3 +248,99 @@ def test_resume_adds_missing_newline(tmp_path):
     run(FakeAdapter(), [mk("a"), mk("b")], out)
     good = [json.loads(l) for l in out.read_text().splitlines() if l.startswith('{"case_id": "b", "product"')]
     assert len(good) == 1 and out.read_text().endswith("\n")
+
+
+def test_decide_prefers_marker_step_sanitized():
+    steps = [{"target": 0, "decision": "sanitize", "sanitized": "a"},
+             {"target": 2, "decision": "sanitize", "sanitized": "b"}]
+    assert runmod._decide(steps, 2) == ("sanitize", "b")
+    assert runmod._decide(steps) == ("sanitize", "a")
+    assert runmod._decide(steps, 9) == ("sanitize", "a")
+
+
+def test_decide_unsure_priority():
+    def s(d):
+        return {"target": 0, "decision": d, "sanitized": "x" if d == "sanitize" else None}
+    assert runmod._decide([s("sanitize"), s("unsure")]) == ("unsure", None)
+    assert runmod._decide([s("unsure"), s("error")])[0] == "error"
+    assert runmod._decide([s("unsure"), s("block")])[0] == "block"
+
+
+def test_trajectory_continues_after_unsure(tmp_path):
+    class U(FakeAdapter):
+        def judge(self, messages, target, mode):
+            return Verdict("unsure" if target == 1 else "allow")
+    l = one_line(U(), tmp_path, mk("t", checkpoint="trajectory", messages=traj(), target=3))
+    assert [s["decision"] for s in l["steps"]] == ["allow", "unsure", "allow", "allow"]
+    assert l["decision"] == "unsure"
+
+
+class CardAd(FakeAdapter):
+    accepts_card = True
+
+    def __init__(self):
+        super().__init__()
+        self.cards = []
+
+    def judge(self, messages, target, mode, card=None):
+        self.cards.append(card)
+        return super().judge(messages, target, mode)
+
+
+CARD = {"agent_job": "j", "allowed_tools": [], "allowed_destinations": [], "user_role": "u", "rules": []}
+
+
+def test_card_track_not_applicable(tmp_path):
+    ad = Rec()
+    out = tmp_path / "o.jsonl"
+    run(ad, [mk("a"), mk("b")], out, track="card")
+    assert ad.calls == []
+    assert all(r["decision"] == "not_applicable" and r["track"] == "card" and r["steps"] == [] for r in lines(out))
+
+
+def test_card_track_passes_card(tmp_path):
+    ad = CardAd()
+    c = mk("a")
+    c.deployment_card = CARD
+    run(ad, [c], tmp_path / "o.jsonl", track="card")
+    assert ad.cards == [CARD]
+    ad2 = CardAd()
+    run(ad2, [c], tmp_path / "o2.jsonl")  # no-context track: no card
+    assert ad2.cards == [None]
+
+
+def test_track_recorded_and_resume_refuses_mixed(tmp_path):
+    out = tmp_path / "o.jsonl"
+    run(FakeAdapter(), [mk("a")], out)
+    assert lines(out)[0]["track"] == "none"
+    with pytest.raises(ValueError, match="track"):
+        run(FakeAdapter(), [mk("a"), mk("b")], out, track="card")
+    from guardrailbench.cli import main
+    cp = tmp_path / "c.jsonl"
+    cp.write_text("")
+    assert main(["run", "--product", "fake", "--cases", str(cp), "--out", str(out), "--track", "card"]) == 2
+
+
+def test_hanging_call_times_out_and_returns_promptly(tmp_path):
+    import threading
+    import time
+    from guardrailbench import run as runmod
+    from guardrailbench.adapters.fake import FakeAdapter
+
+    gate = threading.Event()
+
+    class Hang(FakeAdapter):
+        def judge(self, messages, target, mode, **kw):
+            gate.wait(30)
+
+    runmod._sleep, old = (lambda s: None), runmod._sleep
+    try:
+        t0 = time.time()
+        step = runmod._call(Hang(), [{"role": "user", "content": "x"}], 0, "native", 0.2)
+        assert time.time() - t0 < 3
+        assert step["decision"] == "error" and step["error"].startswith("timeout")
+        assert all(t.daemon for t in threading.enumerate() if t is not threading.main_thread() and t.is_alive()
+                   and t.name.startswith("Thread-"))
+    finally:
+        runmod._sleep = old
+        gate.set()

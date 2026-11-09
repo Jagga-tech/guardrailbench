@@ -10,7 +10,7 @@ from .case import BadCase, Case
 from .metrics import case_score
 from .run import run
 
-DECISIONS = {"allow", "block", "sanitize", "error", "not_claimed"}
+DECISIONS = {"allow", "block", "sanitize", "error", "not_claimed", "unsure", "not_applicable"}
 MODES = {"native", "flattened", "not_claimed"}
 
 
@@ -37,7 +37,7 @@ def check_complete(results: list[dict], cases: list[Case]) -> list[str]:
     problems += [f"duplicate case: {i} ({n} lines)" for i, n in sorted(ids.items(), key=str) if n > 1]
     for r in results:
         steps = r.get("steps")
-        if not isinstance(steps, list) or (not steps and r.get("decision") != "not_claimed"):
+        if not isinstance(steps, list) or (not steps and r.get("decision") not in ("not_claimed", "not_applicable")):
             problems.append(f"missing logs: {r.get('case_id')}")
         if r.get("decision") not in DECISIONS:
             problems.append(f"bad decision: {r.get('case_id')} {r.get('decision')!r}")
@@ -65,10 +65,14 @@ def spot_check(results: list[dict], cases: list[Case], adapter, k: int = 50, see
     only re-run-side errors are skipped as notes."""
     sub = {r.get("case_id"): r for r in results}
     common = sorted(c.id for c in cases if not isinstance(c, BadCase) and c.id in sub)
+    tracks = {r.get("track", "none") for r in results}
+    if len(tracks) != 1:
+        return [f"submitted rows must share one track, found {sorted(map(str, tracks))}"]
     picked = set(random.Random(seed).sample(common, min(k, len(common))))
     with tempfile.TemporaryDirectory() as d:
         out = Path(d) / "rerun.jsonl"
-        run(adapter, [c for c in cases if not isinstance(c, BadCase) and c.id in picked], out)
+        run(adapter, [c for c in cases if not isinstance(c, BadCase) and c.id in picked], out,
+            track=tracks.pop())
         again = {r["case_id"]: r for r in load_results(out)[0]}
     problems, compared, errors = [], 0, 0
     for cid in sorted(picked):

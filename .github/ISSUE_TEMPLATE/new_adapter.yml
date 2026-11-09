@@ -1,0 +1,35 @@
+name: New adapter
+description: Propose an adapter for a guardrail product.
+labels: [adapter]
+body:
+  - type: input
+    id: product
+    attributes:
+      label: Product and version
+    validations:
+      required: true
+  - type: textarea
+    id: docs
+    attributes:
+      label: Documentation links
+      description: Pages that say which fields the product inspects.
+    validations:
+      required: true
+  - type: textarea
+    id: capability
+    attributes:
+      label: Capability sheet
+      description: Checkpoints the product supports natively. Mark anything you could not verify as UNVERIFIED.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Rules
+      options:
+        - label: Library or API defaults only, no tuning
+          required: true
+        - label: Only fields the docs say the product inspects
+          required: true
+        - label: Can be tested without a sales contact, or terms allow publishing results
+          required: true

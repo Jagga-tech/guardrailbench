@@ -25,13 +25,38 @@ def ms(v):
     return "n/a" if v is None else f"{v:.0f} ms"
 
 
+def pair_score(pr: dict) -> str:
+    return " / ".join(f"{k} {pct(pr[k]['score'], pr[k]['score_ci'])}" for k in ("strict", "lenient"))
+
+
+def headline(items: list[dict]) -> str:
+    """Pair score (strict / lenient) and unsure rate per checkpoint; detail tables follow."""
+    rows = []
+    for it in items:
+        for m in ("native", "flattened"):
+            for k, g in sorted(it["report"].get(m, {}).get("checkpoint", {}).items()):
+                if g.get("pairs", {}).get("strict", {}).get("n", 0) > 0:
+                    tr = it["report"].get("track")
+                    rows.append(f"<tr><th scope=row>{e(it['product'])} ({e(it['split'])}"
+                                f"{', ' + e(tr) if tr else ''})</th><td>{e(m)}</td><td>{e(k)}</td>"
+                                f"<td>{e(pair_score(g['pairs']))} (n {g['pairs']['strict']['n']})</td>"
+                                f"<td>{e(pct(g.get('unsure_rate')))}</td></tr>")
+    return ("<h3>Pair score by checkpoint</h3><div class=w><table><tr><th>Product</th><th>Mode</th>"
+            "<th>Checkpoint</th><th>Pair score</th><th>Unsure</th></tr>" + "".join(rows) + "</table></div>"
+            if rows else "")
+
+
 def cell(rep: dict, mode: str, dim: str, key: str) -> str:
     g = rep.get(mode, {}).get(dim, {}).get(key)
+    if g and g["n_attack"] + g["n_benign"] + g.get("errors", 0) == 0 and g.get("not_applicable"):
+        return "<td class=nc>not applicable</td>"
     if not g or g["n_attack"] + g["n_benign"] + g.get("errors", 0) == 0:
         nc = rep.get("not_claimed", {}).get(dim, {}).get(key)
         return "<td class=nc>not claimed</td>" if nc and nc["not_claimed"] else "<td class=na>n/a</td>"
     errs = g.get("errors", 0)
-    lines = [f"Detection {pct(g['detection'], g['detection_ci'])}",
+    pr = g.get("pairs", {})
+    pr = pr if pr.get("strict", {}).get("n", 0) > 0 else {}
+    lines = ([f"Pair score {pair_score(pr)}", f"Unsure {pct(g.get('unsure_rate'))}"] if pr else []) + [f"Detection {pct(g['detection'], g['detection_ci'])}",
              f"False block {pct(g['false_block'], g['false_block_ci'])}"]
     for k, label in (("at_fpr_1pct", "TPR@1% FPR"), ("at_fpr_0_1pct", "TPR@0.1% FPR")):
         t = g.get(k)
@@ -72,8 +97,8 @@ def meta_line(it: dict) -> str:
 def tables(items: list[dict], disclosures: dict) -> str:
     if not items:
         return "<p class=na>No results yet.</p>"
-    out = []
-    for dim, title in (("family", "Family"), ("checkpoint", "Checkpoint"), ("transform", "Transform")):
+    out = [headline(items)]
+    for dim, title in (("family", "Family"), ("checkpoint", "Checkpoint"), ("transform", "Transform"), ("sector", "Sector")):
         for key in sorted({k for it in items for m in ("native", "flattened", "not_claimed")
                            for k in it["report"].get(m, {}).get(dim, {})}):
             out.append(f"<h3>{title} {e(key)}</h3><div class=w><table><tr><th>Product</th>"

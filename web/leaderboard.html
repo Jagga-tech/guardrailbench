@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuardrailBench leaderboard</title>
+<meta name="description" content="The GuardrailBench leaderboard. No results are published yet.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="container">
+    <a class="brand" href="./" aria-label="GuardrailBench home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+      <span>GuardrailBench</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="method.html">Method</a></li>
+        <li><a href="leaderboard.html" aria-current="page">Leaderboard</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <header class="pagehead">
+      <h1>No published results yet</h1>
+      <p class="lead">First results follow legal review and outside review of the hidden split.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">How to submit</a>
+        <a class="btn" href="method.html">Read the method</a>
+      </div>
+    </header>
+  </div>
+
+  <section class="section--s" aria-labelledby="cols-title">
+    <div class="container grid">
+      <div class="head">
+        <h2 id="cols-title">What each row will show</h2>
+        <p class="lead">One row per product, configuration and track, scored on the hidden split.</p>
+      </div>
+      <div class="cols scroll" tabindex="0" role="region" aria-label="Leaderboard table, empty">
+        <table class="register">
+          <thead><tr><th scope="col">Product</th><th scope="col">Configuration</th><th scope="col">Track</th><th scope="col">Pair score, strict</th><th scope="col">Pair score, lenient</th><th scope="col">Unsure rate</th><th scope="col">Not claimed</th><th scope="col">Latency</th></tr></thead>
+          <tbody><tr class="empty"><td colspan="8"><span class="empty-title">Nothing published</span>Rows appear here after the first official round.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--s" aria-labelledby="def-title">
+    <div class="container grid">
+      <div class="head head--side">
+        <h2 id="def-title">The columns</h2>
+      </div>
+      <div class="body--side defs">
+        <dl>
+            <div><dt>Product</dt><dd>The product and the version tested.</dd></div>
+            <div><dt>Configuration</dt><dd>Out of the box, or vendor-tuned with a logged, attested config.</dd></div>
+            <div><dt>Track</dt><dd>No context or deployment card.</dd></div>
+            <div><dt>Pair score, strict</dt><dd>Pairs correct when unsure counts as stop, with a 95% interval.</dd></div>
+            <div><dt>Pair score, lenient</dt><dd>Pairs correct when unsure counts as go.</dd></div>
+            <div><dt>Unsure rate</dt><dd>How often the product would not decide.</dd></div>
+            <div><dt>Not claimed</dt><dd>Checkpoints the product cannot see.</dd></div>
+            <div><dt>Latency</dt><dd>Median and 95th percentile.</dd></div>
+        </dl>
+        <p>No overall winner. Self-reported practice results get their own labelled tier.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="footer-about">
+      <a class="brand" href="./" aria-label="GuardrailBench home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+        <span>GuardrailBench</span>
+      </a>
+      <p>An open benchmark for AI-agent guardrails.</p>
+    </div>
+    <nav aria-labelledby="f-site">
+      <h2 id="f-site">Site</h2>
+      <ul>
+        <li><a href="./">Home</a></li>
+        <li><a href="method.html">Method</a></li>
+        <li><a href="leaderboard.html">Leaderboard</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-project">
+      <h2 id="f-project">Project</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-lic">
+      <h2 id="f-lic">Licences</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE">Code: Apache-2.0</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE-DATA">Data: CC BY 4.0</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
