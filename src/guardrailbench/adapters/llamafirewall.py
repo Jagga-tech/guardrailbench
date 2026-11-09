@@ -34,6 +34,22 @@ alignment system prompt also speaks of THOUGHT / ACTION / ACTION INPUT. We use t
 several calls in one turn become one JSON line each. Arguments that are a JSON string are parsed to an object.
 PromptGuard needs a Hugging Face login for the gated Prompt Guard weights.
 Heavy imports happen only in the factory path (first judge call).
+
+Card track (accepts_card): the trace is the documented way to give LlamaFirewall context (README: "The Trace
+object is simply a list of messages that represents a conversation history"; SystemMessage is one of its message
+types). In the installed 1.0.3 wheel, AlignmentCheckScanner._pre_process_trace joins str(message) for every message
+of the trace, whatever its role, and that text is the TRACE section of the prompt sent to the alignment model. So
+a system message in the trace is read. On the card track the shared card text (guardrailbench.card) is put first
+in the trace as one system message; all five card fields are used, as text. Limits, stated plainly:
+- Only AlignmentCheck reads the trace, so the card reaches assistant-turn targets only. PromptGuard (user and tool
+  turns) classifies the one message and ignores the trace, and flattened mode has no trace: no card there.
+- The alignment prompt tells the model to judge the action against the USER MESSAGE. The vendor does not say a
+  system message is treated as policy. We pass the card where a deployment would put it and add no instruction of
+  our own; what the model makes of it is the product's behaviour.
+- A case's own system message was already part of the trace on the no-context track; that is unchanged.
+A null or all-empty card adds no message. UNVERIFIED live: read from the wheel's source, not executed
+(AlignmentCheck needs a Together API key, which was not used). fail_mode is not set: the README documents no
+failure behaviour.
 """
 from __future__ import annotations
 
@@ -41,6 +57,7 @@ import threading
 import json
 
 from guardrailbench.adapters import register
+from guardrailbench.card import card_text
 from guardrailbench.flatten import to_text
 from guardrailbench.verdict import Verdict
 
@@ -68,13 +85,17 @@ def _msg(m: dict) -> dict:
     return {"role": m["role"], "content": _content(m), "tool_calls": None}
 
 
-def build_input(messages: list[dict], target: int, mode: str) -> dict | None:
+def build_input(messages: list[dict], target: int, mode: str, card: dict | None = None) -> dict | None:
+    """card (card track only): its text becomes a leading system message of the trace. Flattened mode has no
+    trace, so the card is not used there."""
     cur = messages[target]
     if mode == "flattened":
         return {"message": {"role": "user", "content": to_text(messages, target), "tool_calls": None}, "trace": None}
     if cur["role"] not in _ROLES:
         return None  # native mode cannot express this role; judge() reports an error, never a silent flatten
     trace = [_msg(m) for m in messages[:target] if m["role"] in _ROLES]
+    if text := card_text(card):
+        trace.insert(0, {"role": "system", "content": text, "tool_calls": None})
     return {"message": _msg(cur), "trace": trace or None}
 
 
@@ -95,6 +116,7 @@ class LlamaFirewallAdapter:
     version = VERSION
     native_checkpoints = frozenset({"prompt", "tool_call", "trajectory", "ingested_content"})
     accepts_text = True
+    accepts_card = True
     _lock = threading.Lock()
     parse_output = staticmethod(parse_output)
 
@@ -118,8 +140,8 @@ class LlamaFirewallAdapter:
         """Called once by run() before any timed call."""
         self._load()
 
-    def judge(self, messages, target, mode) -> Verdict:
-        inp = build_input(messages, target, mode)
+    def judge(self, messages, target, mode, card=None) -> Verdict:
+        inp = build_input(messages, target, mode, card)
         if inp is None:
             return Verdict("error", error=f"native mode: unsupported target role {messages[target]['role']!r}")
         import llamafirewall as lf

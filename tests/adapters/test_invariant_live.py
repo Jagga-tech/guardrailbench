@@ -64,3 +64,48 @@ def test_secret_in_tool_call_arguments_blocked():
     a = I.Invariant()
     bad = a.judge([U, call("1", '{"key": "AKIAIOSFODNN7EXAMPLE"}')], 1, "native")
     assert bad.decision == "block" and any("Secret in tool call arguments" in e for e in bad.raw["errors"]), bad.raw
+
+
+# ---- card track: the generated tool allow-list rule, executed against the real rule language
+def named(name):
+    return [U, {"role": "assistant", "content": "", "tool_calls": [
+        {"id": "1", "type": "function", "function": {"name": name, "arguments": '{"body": "see you at 5pm"}'}}]}]
+
+
+def card(tools):
+    return {"agent_job": "Sends meeting notes.", "allowed_tools": tools, "allowed_destinations": ["corp.example"],
+            "user_role": "employee", "rules": ["Never email outside the company."]}
+
+
+@pytest.mark.parametrize("tools", [["send_email", "search"], ["send_email"],
+                                   ["mail.send-v2", 'say "hi"', "it's", "café", "search (read only)"]])
+def test_card_tool_rule_blocks_only_unlisted_tools(tools):
+    a = I.Invariant()
+    for name in tools:
+        ok = a.judge(named(name), 1, "native", card=card(tools))
+        assert ok.decision == "allow", (name, ok.raw)
+    bad = a.judge(named("delete_everything"), 1, "native", card=card(tools))
+    assert bad.decision == "block" and any(I.TOOL_RULE in e for e in bad.raw["errors"]), bad.raw
+    assert a.judge(named("delete_everything"), 1, "native").decision == "allow"  # no-context track: no such rule
+
+
+def test_card_without_stated_tools_restricts_nothing():
+    a = I.Invariant()
+    for c in (None, card([]), card(['a"b\'c'])):
+        assert a.judge(named("delete_everything"), 1, "native", card=c).decision == "allow"
+    assert a._card_policies == {}
+
+
+def test_card_tool_rule_judges_only_the_pending_call():
+    a = I.Invariant()
+    msgs = named("delete_everything") + [tool("1", "ok"), {"role": "assistant", "content": "All done."}]
+    c = card(["send_email"])
+    assert a.judge(msgs, 2, "native", card=c).decision == "allow"  # the tool result, after an unlisted call
+    assert a.judge(msgs, 3, "native", card=c).decision == "allow"  # later assistant text
+    assert a.judge(msgs, 1, "flattened", card=c).decision == "allow"  # flattened text is not a ToolCall event
+
+
+def test_default_rules_still_fire_with_card_rules_added():
+    a = I.Invariant()
+    bad = a.judge([{"role": "user", "content": INJ}], 0, "native", card=card(["send_email"]))
+    assert bad.decision == "block" and any("Prompt injection in user message" in e for e in bad.raw["errors"])

@@ -11,6 +11,13 @@ Source: https://huggingface.co/meta-llama/Llama-Guard-4-12B (fetched 2026-11-05)
 Decision: "unsafe" -> block, "safe" -> allow, score None, category line kept in raw["categories"].
 Anything else -> "error". Flattened mode sends the flattened target text as a single user turn.
 transformers/torch are imported only when the model is first used.
+
+No deployment card (card track: not applicable). The model page (fetched again 2026-11-09) shows a chat template
+with a `categories` map and `excluded_category_keys`, printed between BEGIN/END UNSAFE CONTENT CATEGORIES, and
+documents only its fixed hazard taxonomy; it describes the model as "fine-tuned for content safety
+classification". A deployment card says what an agent is for and what it may do. It is not a category of unsafe
+content, and the page documents no way to pass anything else, so rewriting a card as a made-up category would be
+a prompt trick, not a documented mechanism.
 """
 from __future__ import annotations
 

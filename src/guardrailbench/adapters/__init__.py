@@ -18,6 +18,7 @@ from guardrailbench.adapters import fake  # noqa: E402,F401  (registers "fake")
 from guardrailbench.adapters import hf_classifier, llama_guard  # noqa: E402,F401  (register local models)
 from guardrailbench.adapters import llamafirewall, nemo, llm_guard, invariant  # noqa: E402,F401  (agent guardrails)
 from guardrailbench.adapters import lakera, azure_prompt_shields, bedrock, model_armor, openai_moderation  # noqa: E402,F401  (cloud APIs)
+from guardrailbench.adapters import llm_judge  # noqa: E402,F401  (reference baseline, not a product)
 
 import importlib  # noqa: E402
 import os  # noqa: E402

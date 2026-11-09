@@ -127,7 +127,7 @@ def run(adapter: Adapter, cases: list[Case], out: Path, workers: int = 4, timeou
     todo = [c for c in cases if not isinstance(c, BadCase) and c.id not in done]
     lock = threading.Lock()
     warmup = getattr(adapter, "warmup", None)
-    if todo and callable(warmup):
+    if todo and callable(warmup) and (track != "card" or card_mode):  # no model load just to write not_applicable
         warmup()  # load models once, outside any per-call timeout
 
     with out.open("a", encoding="utf-8") as fh:
