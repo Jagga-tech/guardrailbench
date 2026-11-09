@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice and official splits | GuardrailBench</title>
+<meta name="description" content="GuardrailBench has a public practice split you run yourself and a hidden official split only maintainers run.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<script src="../site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="container">
+    <a class="brand" href="../" aria-label="GuardrailBench home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+      <span>GuardrailBench</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="../">Leaderboards</a></li>
+        <li class="menu"><details><summary class="is-current">Benchmarks</summary>
+          <ul>
+            <li><a href="../benchmarks/core.html">Core: no context</a></li>
+            <li><a href="../benchmarks/card.html">Card track</a></li>
+            <li><a href="../benchmarks/reliability.html">Reliability</a></li>
+            <li><a href="../benchmarks/splits.html" aria-current="page">Practice and official splits</a></li>
+          </ul></details></li>
+        <li class="menu menu--end"><details><summary>About</summary>
+          <ul>
+            <li><a href="../about.html">About GuardrailBench</a></li>
+            <li><a href="../method.html">Method</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+            <li><a href="../citations.html">Citations</a></li>
+            <li><a href="../submit.html">Submit</a></li>
+          </ul></details></li>
+        <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <header class="pagehead">
+      <h1>Practice and official splits</h1>
+      <p class="lead">You run the public split, we run the hidden one.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="../method.html">Method</a>
+        <a class="btn" href="https://github.com/Jagga-tech/guardrailbench">GitHub</a>
+        <a class="btn" href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a>
+      </div>
+    </header>
+    <div class="doc">
+      <article class="article bench">
+    <section id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">Overview</h2>
+      <p>Public test sets mislead: detectors have been trained on the benchmarks that ranked them. GuardrailBench copies the SWE-bench model. You run the public practice split; the maintainers run the hidden official split.</p>
+      <p>Results: the <a href="../#practice">Practice (self-reported)</a> tab of the leaderboard.</p>
+    </section>
+    <section id="two" aria-labelledby="two-h">
+      <h2 id="two-h">Two splits</h2>
+      <div class="elev elev--2">
+        <div>
+          <h3>Practice split, public</h3>
+          <p>Run it with your own keys, then submit verdicts and logs as a pull request.</p>
+          <p><a href="../submit.html">How to submit</a></p>
+        </div>
+        <div>
+          <h3>Official split, hidden</h3>
+          <p>Only maintainers run it. Its SHA-256 is published before each round.</p>
+          <p><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Vendor rules</a></p>
+        </div>
+      </div>
+    </section>
+    <section id="counts" aria-labelledby="counts-h">
+      <h2 id="counts-h">Case counts</h2>
+      <div class="scroll" tabindex="0" role="region" aria-label="Cases per split">
+        <table class="register">
+          <thead><tr><th scope="col">Split</th><th scope="col" class="r">Attack and twin pairs</th><th scope="col" class="r">Normal cases</th><th scope="col" class="r">Cases</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Practice</th><td class="num r">131</td><td class="num r">309</td><td class="num r">571 + 20 seed</td></tr>
+            <tr><th scope="row">Official</th><td class="num r">749</td><td class="num r">1,691</td><td class="num r">3,189</td></tr>
+            <tr><th scope="row">v1 in all</th><td class="num r">880</td><td class="num r">2,000</td><td class="num r">3,760</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Per-family and per-checkpoint counts are in the <a href="https://github.com/Jagga-tech/guardrailbench#cases">README</a>.</p>
+    </section>
+    <section id="contamination" aria-labelledby="contamination-h">
+      <h2 id="contamination-h">Keeping the official split clean</h2>
+      <ul>
+        <li>Maintainers write the official split, hold it and run it on their own infrastructure. Vendors never receive it.</li>
+        <li>Before each round the SHA-256 of the frozen official split is published, so anyone can check later that no case changed after results came in.</li>
+        <li>Every case carries a canary string that shows if it leaks into training data. Vendors are asked to state their training sources.</li>
+        <li>The official split is refreshed on a schedule, and retired cases move to the practice split.</li>
+        <li>Self-reported practice results sit on a separate, labelled tier until maintainers re-run a random sample.</li>
+      </ul>
+    </section>
+    <section id="sectors" aria-labelledby="sectors-h">
+      <h2 id="sectors-h">Twenty sectors</h2>
+      <p>Every v1 case is tagged with one of 20 sectors, and reports break results down by sector with no weighting between them. A pair&rsquo;s twin shares its attack&rsquo;s sector. The 20 seed cases have none and show as &ldquo;unknown&rdquo;.</p>
+      <p>Agriculture, education, energy and utilities, finance, general, government, health, HR, insurance, legal, logistics, manufacturing, media and marketing, nonprofit, real estate and construction, research and science, retail, software and IT, telecom, travel and hospitality.</p>
+    </section>
+    <section id="authors" aria-labelledby="authors-h">
+      <h2 id="authors-h">Who wrote the cases</h2>
+      <p>Written fresh, never copied from public datasets. Model-drafted, machine-checked and cross-reviewed; human review of a verified subset is still to come. Non-English cases have had no native-speaker check.</p>
+    </section>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="footer-about">
+      <a class="brand" href="../" aria-label="GuardrailBench home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+        <span>GuardrailBench</span>
+      </a>
+      <p>An open benchmark for AI-agent guardrails.</p>
+      <p class="muted">&copy; 2026 GuardrailBench maintainers</p>
+    </div>
+    <nav aria-labelledby="f-site">
+      <h2 id="f-site">Site</h2>
+      <ul>
+        <li><a href="../">Leaderboards</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../method.html">Method</a></li>
+        <li><a href="../submit.html">Submit</a></li>
+        <li><a href="../citations.html">Citations</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-project">
+      <h2 id="f-project">Project</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-lic">
+      <h2 id="f-lic">Licences</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE">Code: Apache-2.0</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE-DATA">Data: CC BY 4.0</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

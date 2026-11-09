@@ -14,6 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="site.js" defer></script>
+<script src="leaderboard.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -21,7 +23,7 @@
 <div class="notice">
   <div class="container">
     <p>Pre-release. No results are published yet.</p>
-    <a href="#status">What happens next</a>
+    <a href="about.html#status">What happens next</a>
   </div>
 </div>
 <header class="bar">
@@ -32,202 +34,168 @@
     </a>
     <nav aria-label="Main">
       <ul class="nav">
-        <li><a href="method.html">Method</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
-        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="./" aria-current="page">Leaderboards</a></li>
+        <li class="menu"><details><summary>Benchmarks</summary>
+          <ul>
+            <li><a href="benchmarks/core.html">Core: no context</a></li>
+            <li><a href="benchmarks/card.html">Card track</a></li>
+            <li><a href="benchmarks/reliability.html">Reliability</a></li>
+            <li><a href="benchmarks/splits.html">Practice and official splits</a></li>
+          </ul></details></li>
+        <li class="menu menu--end"><details><summary>About</summary>
+          <ul>
+            <li><a href="about.html">About GuardrailBench</a></li>
+            <li><a href="method.html">Method</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="citations.html">Citations</a></li>
+            <li><a href="submit.html">Submit</a></li>
+          </ul></details></li>
+        <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
   </div>
 </header>
 
 <main id="main">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="container">
-      <h1 id="hero-title">Does the guard know the difference?</h1>
-      <p class="lead">An open, vendor-neutral benchmark for prompt-injection firewalls, agent guards and MCP gateways.</p>
-      <div class="actions">
-        <a class="btn btn--primary" href="method.html">Read the method</a>
-        <a class="btn" href="https://github.com/Jagga-tech/guardrailbench#usage">Run the practice split</a>
-        <a class="textlink" href="https://github.com/Jagga-tech/guardrailbench">View on GitHub</a>
-      </div>
+  <div class="container lb">
+    <header class="pagehead">
+      <h1>Official Leaderboards</h1>
+      <p class="lead">Guardrail products scored on attacks and their harmless twins. Nothing is published yet.</p>
+    </header>
 
-      <figure class="run" aria-labelledby="run-cap">
-        <ol>
-          <li><span class="cp-name">prompt</span><span class="cp-count num">163</span></li>
-          <li><span class="cp-name">ingested content</span><span class="cp-count num">311</span></li>
-          <li><span class="cp-name">tool definition</span><span class="cp-count num">40</span></li>
-          <li><span class="cp-name">tool call</span><span class="cp-count num">210</span></li>
-          <li><span class="cp-name">memory write</span><span class="cp-count num">46</span></li>
-          <li><span class="cp-name">output</span><span class="cp-count num">35</span></li>
-        </ol>
-        <div class="traj"><span>trajectory, the whole run: <span class="num">75</span></span></div>
-        <figcaption id="run-cap">Seven checkpoints in an agent’s run, with v1 attack cases at each.</figcaption>
-      </figure>
+    <div class="tabs" role="tablist" aria-label="Leaderboards">
+        <button class="tab" type="button" role="tab" id="tab-official-none" data-board="official-none" data-kind="detection" data-desc="Hidden split, run by the maintainers. The guard sees each case and nothing else." data-empty="Rows appear after the first official round." aria-controls="lb-panel" aria-selected="true">Official &middot; No context</button>
+        <button class="tab" type="button" role="tab" id="tab-official-card" data-board="official-card" data-kind="detection" data-desc="Hidden split, run by the maintainers. The guard is configured from each case&rsquo;s deployment card." data-empty="Products that cannot take a policy will show as not applicable." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Official &middot; Card</button>
+        <button class="tab" type="button" role="tab" id="tab-reliability" data-board="reliability" data-kind="reliability" data-desc="Consistency, stability, load, long inputs and failure on the hidden split. The reading filter does not apply." data-empty="Rows appear after the first official round." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Reliability</button>
+        <button class="tab" type="button" role="tab" id="tab-practice" data-board="practice" data-kind="detection" data-desc="Public practice split, run and reported by the submitter. Unverified until maintainers re-run a sample." data-empty="Submissions are pull requests with per-case logs. See Submit." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Practice (self-reported)</button>
     </div>
-  </section>
-
-  <section class="section" aria-labelledby="why-title">
-    <div class="container grid">
-      <div class="head head--side">
-        <h2 id="why-title">Why it exists</h2>
+    <div id="lb-panel" role="tabpanel" aria-labelledby="tab-official-none" class="bench">
+      <p class="lb-desc" id="lb-desc">Hidden split, run by the maintainers. The guard sees each case and nothing else.</p>
+      <form class="controls" onsubmit="return false">
+        <label class="field"><span>Checkpoint</span>
+          <select id="f-cp">
+            <option value="all">All checkpoints</option>
+            <option value="prompt">prompt</option>
+            <option value="ingested_content">ingested content</option>
+            <option value="tool_definition">tool definition</option>
+            <option value="tool_call">tool call</option>
+            <option value="memory_write">memory write</option>
+            <option value="output">output</option>
+            <option value="trajectory">trajectory</option>
+          </select>
+        </label>
+        <fieldset class="field" id="f-reading">
+          <legend>Reading</legend>
+          <div class="seg">
+            <label><input type="radio" name="reading" value="strict" checked>Strict</label>
+            <label><input type="radio" name="reading" value="lenient">Lenient</label>
+          </div>
+        </fieldset>
+        <div class="compare">
+          <button class="btn" type="button" disabled aria-describedby="cmp-note" title="Available when results are published">Compare results</button>
+          <small id="cmp-note">Available when results are published.</small>
+        </div>
+      </form>
+      <div class="scroll" tabindex="0" role="region" aria-label="Results table">
+        <table class="register results" id="lb-table">
+          <caption class="visually-hidden">Official, no context: all checkpoints, strict reading</caption>
+          <thead><tr><th scope="col">Product</th><th scope="col">Pair score<small>strict</small></th><th scope="col">Unsure</th><th scope="col">Detection<small>strict</small></th><th scope="col">False block<small>strict</small></th><th scope="col">Organisation</th><th scope="col">Version</th><th scope="col">Date</th><th scope="col">Logs</th></tr></thead>
+          <tbody><tr class="empty"><td colspan="9"><div><span class="empty-title">Nothing published</span><p>No published results yet &mdash; first results follow legal review and outside review of the hidden split.</p><p>Rows appear after the first official round.</p></div></td></tr></tbody>
+        </table>
       </div>
-      <ul class="rows body--side">
-        <li>
-          <h3>Other benchmarks test the agent</h3>
-          <p>AgentDojo and InjecAgent score the model, not the guard.</p>
+      <div class="notes">
+        <p>Each entry reports pair score: the share of attack/twin pairs where the attack is stopped and its harmless twin is allowed.</p>
+        <ul class="legend" aria-label="Badges">
+          <li><span class="badge badge--open">open source</span> open-source product</li>
+          <li><span class="badge badge--run">maintainer run</span> run by the maintainers on the hidden split</li>
+          <li><span class="badge badge--self">self-reported</span> practice split, unverified</li>
+          <li><span class="badge badge--aff">affiliated</span> maintainer-affiliated product, conflict disclosed</li>
+        </ul>
+        <details>
+          <summary>What the columns mean</summary>
+          <div class="defs">
+            <dl>
+              <div><dt>Product</dt><dd>The product and the version tested, out of the box. A vendor-tuned setup with a logged, attested config is shown as its own, labelled row.</dd></div>
+              <div><dt>Pair score</dt><dd>Pairs correct under the chosen reading, with a 95% interval. Strict counts unsure as stop, lenient as go.</dd></div>
+              <div><dt>Unsure</dt><dd>How often the product would not decide.</dd></div>
+              <div><dt>Detection, False block</dt><dd>Attacks stopped, and twins and normal cases stopped. Supporting detail only.</dd></div>
+              <div><dt>Not claimed</dt><dd>A checkpoint the product cannot see. Shown plainly, not counted as a miss.</dd></div>
+            </dl>
+            <p>No overall winner. Self-reported practice results get their own labelled tab.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <section class="section--s" aria-labelledby="bench-title">
+    <div class="container grid">
+      <div class="head">
+        <h2 id="bench-title">Benchmarks</h2>
+      </div>
+      <ul class="cards">
+        <li class="card">
+          <p class="big">3,189<small>cases</small></p>
+          <h3>Official split</h3>
+          <p>Hidden. Written, held and run only by the maintainers.</p>
+          <a href="benchmarks/splits.html#two">Read more<span class="visually-hidden"> about the official split</span></a>
         </li>
-        <li>
-          <h3>Public test sets get learned</h3>
-          <p>Some detectors trained on the set that ranked them. Ours stays hidden.</p>
+        <li class="card">
+          <p class="big">571<small>cases + 20 seed</small></p>
+          <h3>Practice split</h3>
+          <p>Public. Run it with your own keys and submit the logs.</p>
+          <a href="benchmarks/splits.html#counts">Read more<span class="visually-hidden"> about the practice split</span></a>
         </li>
-        <li>
-          <h3>Blocking everything looks safe</h3>
-          <p>Blocking normal work counts as much as a miss.</p>
+        <li class="card">
+          <p class="big">7<small>checkpoints</small></p>
+          <h3>No-context track</h3>
+          <p>The guard sees each case and nothing else.</p>
+          <a href="benchmarks/core.html">Read more<span class="visually-hidden"> about the no-context track</span></a>
+        </li>
+        <li class="card">
+          <p class="big">5<small>card fields</small></p>
+          <h3>Card track</h3>
+          <p>A deployment card on every case: job, tools, destinations, role, rules.</p>
+          <a href="benchmarks/card.html">Read more<span class="visually-hidden"> about the card track</span></a>
+        </li>
+        <li class="card">
+          <p class="big">5<small>tests</small></p>
+          <h3>Reliability track</h3>
+          <p>Consistency, stability, load, long input and failure.</p>
+          <a href="benchmarks/reliability.html">Read more<span class="visually-hidden"> about the reliability track</span></a>
+        </li>
+        <li class="card">
+          <p class="big">20<small>sectors</small></p>
+          <h3>Sectors</h3>
+          <p>Every v1 case is tagged with a sector, from agriculture to travel.</p>
+          <a href="benchmarks/splits.html#sectors">Read more<span class="visually-hidden"> about the sectors</span></a>
         </li>
       </ul>
     </div>
   </section>
 
-  <section class="section--l" aria-labelledby="pair-title">
+  <section class="section--s" aria-labelledby="news-title">
     <div class="container grid">
       <div class="head">
-        <h2 id="pair-title">One score: the pair</h2>
-        <p class="lead">Each attack has a twin that changes one thing: intent, role, destination or data origin.</p>
+        <h2 id="news-title">News</h2>
       </div>
-      <div class="pair">
-        <table class="matrix">
-          <caption class="visually-hidden">The four outcomes for an attack and its twin</caption>
-          <thead>
-            <tr><th scope="col"><span class="visually-hidden">Attack</span></th><th scope="col">Twin allowed</th><th scope="col">Twin stopped</th></tr>
-          </thead>
-          <tbody>
-            <tr><th scope="row">Attack stopped</th><td class="correct"><strong>Correct</strong><span>The only outcome that counts</span></td><td><strong>Over-blocks</strong><span>Cannot tell them apart</span></td></tr>
-            <tr><th scope="row">Attack allowed</th><td><strong>Misses</strong><span>Lets both through</span></td><td><strong>Wrong way round</strong><span>Stops the harmless one</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="pair-notes">
-        <div>
-          <h3>Strict and lenient</h3>
-          <p>Strict counts an “unsure” verdict as a stop, lenient as a go. Both are shown.</p>
-        </div>
-        <div>
-          <h3>No composite score</h3>
-          <p>Results stay split by checkpoint, family and track.</p>
-        </div>
-      </div>
+      <ol class="news">
+        <li><time datetime="2026-11">Nov 2026</time><p>v1 case set released: 880 attack and twin pairs plus 2,000 normal cases. <a href="benchmarks/splits.html">Case counts</a></p></li>
+        <li><time datetime="2026-11">Nov 2026</time><p>Measurement design: pair score, strict and lenient readings, and the card track. <a href="method.html">Method</a></p></li>
+        <li><time datetime="2026-11">Nov 2026</time><p>Reliability track added: consistency, stability, load, long inputs and failure. <a href="benchmarks/reliability.html">Reliability</a></p></li>
+        <li><time datetime="2026-11">Nov 2026</time><p>Repository opened. <a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></p></li>
+      </ol>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="fam-title">
+  <section class="section--s" aria-labelledby="ack-title">
     <div class="container grid">
       <div class="head">
-        <h2 id="fam-title">Ten attack families</h2>
-        <p class="lead">880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors.</p>
-      </div>
-      <div class="cols scroll" tabindex="0" role="region" aria-label="Attack families table">
-        <table class="register">
-          <thead>
-            <tr><th scope="col">Family</th><th scope="col">Checkpoints</th><th scope="col" class="r">Pairs</th></tr>
-          </thead>
-          <tbody>
-            <tr><th scope="row">Direct injection and jailbreaks</th><td>prompt</td><td class="num r">79</td></tr>
-            <tr><th scope="row">Encoding and obfuscation</th><td>prompt, ingested content</td><td class="num r">92</td></tr>
-            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td></tr>
-            <tr><th scope="row">Dangerous tool calls</th><td>tool call</td><td class="num r">124</td></tr>
-            <tr><th scope="row">Data exfiltration</th><td>tool call, output, trajectory</td><td class="num r">98</td></tr>
-            <tr><th scope="row">MCP and supply-chain poisoning</th><td>tool definition, ingested content</td><td class="num r">68</td></tr>
-            <tr><th scope="row">Agent-to-agent attacks</th><td>ingested content, trajectory</td><td class="num r">64</td></tr>
-            <tr><th scope="row">Memory poisoning</th><td>memory write, trajectory</td><td class="num r">64</td></tr>
-            <tr><th scope="row">Resource abuse</th><td>tool call, trajectory</td><td class="num r">58</td></tr>
-            <tr><th scope="row">Attacks on the guard itself</th><td>prompt, ingested content</td><td class="num r">58</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section class="section--l" aria-labelledby="tracks-title">
-    <div class="container grid">
-      <div class="head">
-        <h2 id="tracks-title">Three tracks</h2>
-      </div>
-      <div class="elev">
-        <div>
-          <h3>No context</h3>
-          <p>The guard sees the case and nothing else.</p>
-        </div>
-        <div>
-          <h3>Deployment card</h3>
-          <p>The guard also gets the agent’s job, tools and rules.</p>
-        </div>
-        <div>
-          <h3>Reliability</h3>
-          <ul>
-            <li>Consistency</li>
-            <li>Stability</li>
-            <li>Load</li>
-            <li>Long inputs</li>
-            <li>Errors and timeouts</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="join-title">
-    <div class="container grid">
-      <div class="head">
-        <h2 id="join-title">How to take part</h2>
-        <p class="lead">Modelled on SWE-bench: you run the public split, we run the hidden one.</p>
-      </div>
-      <div class="elev elev--2">
-        <div>
-          <h3>Practice split, public</h3>
-          <p>Run it with your own keys, then submit verdicts and logs as a pull request.</p>
-          <p><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">How to submit</a></p>
-        </div>
-        <div>
-          <h3>Official split, hidden</h3>
-          <p>Only maintainers run it. Its SHA-256 is published before each round.</p>
-          <p><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Vendor rules</a></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="band" id="status" aria-labelledby="status-title">
-    <div class="container status">
-      <h2 id="status-title">Pre-release</h2>
-      <p class="lead">First results after legal review and an outside review of the hidden split.</p>
-      <div class="actions">
-        <a class="btn" href="leaderboard.html">See the leaderboard columns</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="faq-title">
-    <div class="container grid">
-      <div class="head head--side">
-        <h2 id="faq-title">Questions</h2>
-      </div>
-      <div class="rows faq body--side">
-        <details>
-          <summary>Who wrote the cases?</summary>
-          <p>Written fresh, never copied from public datasets. Model-drafted, machine-checked and cross-reviewed; human review is still to come.</p>
-        </details>
-        <details>
-          <summary>Can vendors see the hidden split?</summary>
-          <p>No. Vendors get the practice split only.</p>
-        </details>
-        <details>
-          <summary>What if a product cannot see tool calls?</summary>
-          <p>That checkpoint shows “not claimed”, not a miss.</p>
-        </details>
-        <details>
-          <summary>Does a good score make an agent safe?</summary>
-          <p>No. A guard is one layer of defence.</p>
-        </details>
+        <h2 id="ack-title">Acknowledgements</h2>
+        <p>GuardrailBench takes no payment for placement. No sponsors yet.</p>
       </div>
     </div>
   </section>
@@ -241,19 +209,24 @@
         <span>GuardrailBench</span>
       </a>
       <p>An open benchmark for AI-agent guardrails.</p>
+      <p class="muted">&copy; 2026 GuardrailBench maintainers</p>
     </div>
     <nav aria-labelledby="f-site">
       <h2 id="f-site">Site</h2>
       <ul>
-        <li><a href="./">Home</a></li>
+        <li><a href="./">Leaderboards</a></li>
+        <li><a href="about.html">About</a></li>
         <li><a href="method.html">Method</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
+        <li><a href="submit.html">Submit</a></li>
+        <li><a href="citations.html">Citations</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
     <nav aria-labelledby="f-project">
       <h2 id="f-project">Project</h2>
       <ul>
         <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>
@@ -266,7 +239,7 @@
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE-DATA">Data: CC BY 4.0</a></li>
       </ul>
     </nav>
-      </div>
+  </div>
 </footer>
 </body>
 </html>

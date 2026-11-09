@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script src="site.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -22,9 +23,26 @@
     </a>
     <nav aria-label="Main">
       <ul class="nav">
-        <li><a href="method.html" aria-current="page">Method</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
-        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="./">Leaderboards</a></li>
+        <li class="menu"><details><summary>Benchmarks</summary>
+          <ul>
+            <li><a href="benchmarks/core.html">Core: no context</a></li>
+            <li><a href="benchmarks/card.html">Card track</a></li>
+            <li><a href="benchmarks/reliability.html">Reliability</a></li>
+            <li><a href="benchmarks/splits.html">Practice and official splits</a></li>
+          </ul></details></li>
+        <li class="menu menu--end"><details><summary class="is-current">About</summary>
+          <ul>
+            <li><a href="about.html">About GuardrailBench</a></li>
+            <li><a href="method.html" aria-current="page">Method</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="citations.html">Citations</a></li>
+            <li><a href="submit.html">Submit</a></li>
+          </ul></details></li>
+        <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
   </div>
@@ -167,19 +185,24 @@
         <span>GuardrailBench</span>
       </a>
       <p>An open benchmark for AI-agent guardrails.</p>
+      <p class="muted">&copy; 2026 GuardrailBench maintainers</p>
     </div>
     <nav aria-labelledby="f-site">
       <h2 id="f-site">Site</h2>
       <ul>
-        <li><a href="./">Home</a></li>
+        <li><a href="./">Leaderboards</a></li>
+        <li><a href="about.html">About</a></li>
         <li><a href="method.html">Method</a></li>
-        <li><a href="leaderboard.html">Leaderboard</a></li>
+        <li><a href="submit.html">Submit</a></li>
+        <li><a href="citations.html">Citations</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
     <nav aria-labelledby="f-project">
       <h2 id="f-project">Project</h2>
       <ul>
         <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
         <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>

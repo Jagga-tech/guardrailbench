@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core: no context | GuardrailBench</title>
+<meta name="description" content="The GuardrailBench core track: the guard sees each case and nothing else. Seven checkpoints, ten attack families, scored by pair.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<script src="../site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="container">
+    <a class="brand" href="../" aria-label="GuardrailBench home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+      <span>GuardrailBench</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="../">Leaderboards</a></li>
+        <li class="menu"><details><summary class="is-current">Benchmarks</summary>
+          <ul>
+            <li><a href="../benchmarks/core.html" aria-current="page">Core: no context</a></li>
+            <li><a href="../benchmarks/card.html">Card track</a></li>
+            <li><a href="../benchmarks/reliability.html">Reliability</a></li>
+            <li><a href="../benchmarks/splits.html">Practice and official splits</a></li>
+          </ul></details></li>
+        <li class="menu menu--end"><details><summary>About</summary>
+          <ul>
+            <li><a href="../about.html">About GuardrailBench</a></li>
+            <li><a href="../method.html">Method</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
+            <li><a href="../contact.html">Contact</a></li>
+            <li><a href="../citations.html">Citations</a></li>
+            <li><a href="../submit.html">Submit</a></li>
+          </ul></details></li>
+        <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <header class="pagehead">
+      <h1>Core: no context</h1>
+      <p class="lead">The guard sees each case and nothing else. Seven checkpoints, ten attack families, one pair score.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="../method.html">Method</a>
+        <a class="btn" href="https://github.com/Jagga-tech/guardrailbench">GitHub</a>
+        <a class="btn" href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a>
+      </div>
+    </header>
+    <div class="doc">
+      <article class="article bench">
+    <section id="overview" aria-labelledby="overview-h">
+      <h2 id="overview-h">Overview</h2>
+      <p>The core track is the default way GuardrailBench runs a product. Each case is sent as it would arrive at one checkpoint in an agent&rsquo;s run, and the product sees that case and nothing else: no job description, no tool list, no policy.</p>
+      <p>The product answers stop, unsure or go. Every attack is scored together with its harmless twin. v1 has 880 attack and twin pairs and 2,000 normal cases.</p>
+      <p>Results: the <a href="../#official-none">Official &middot; No context</a> tab of the leaderboard.</p>
+    </section>
+    <section id="checkpoints" aria-labelledby="checkpoints-h">
+      <h2 id="checkpoints-h">Seven checkpoints</h2>
+      <p>A checkpoint is where the guard sees the input. If a product&rsquo;s API cannot represent a checkpoint, such as a text classifier given a tool call, that checkpoint shows &ldquo;not claimed&rdquo;, not a miss.</p>
+      <figure class="run" aria-labelledby="run-cap">
+        <ol>
+          <li><span class="cp-name">prompt</span><span class="cp-count num">163</span></li>
+          <li><span class="cp-name">ingested content</span><span class="cp-count num">311</span></li>
+          <li><span class="cp-name">tool definition</span><span class="cp-count num">40</span></li>
+          <li><span class="cp-name">tool call</span><span class="cp-count num">210</span></li>
+          <li><span class="cp-name">memory write</span><span class="cp-count num">46</span></li>
+          <li><span class="cp-name">output</span><span class="cp-count num">35</span></li>
+        </ol>
+        <div class="traj"><span>trajectory, the whole run: <span class="num">75</span></span></div>
+        <figcaption id="run-cap">Seven checkpoints in an agent&rsquo;s run, with v1 attack cases at each.</figcaption>
+      </figure>
+    </section>
+    <section id="families" aria-labelledby="families-h">
+      <h2 id="families-h">Ten attack families</h2>
+      <p>880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors.</p>
+      <div class="scroll" tabindex="0" role="region" aria-label="Attack families table">
+        <table class="register">
+          <thead>
+            <tr><th scope="col">Family</th><th scope="col">Checkpoints</th><th scope="col" class="r">Pairs</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Direct injection and jailbreaks</th><td>prompt</td><td class="num r">79</td></tr>
+            <tr><th scope="row">Encoding and obfuscation</th><td>prompt, ingested content</td><td class="num r">92</td></tr>
+            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td></tr>
+            <tr><th scope="row">Dangerous tool calls</th><td>tool call</td><td class="num r">124</td></tr>
+            <tr><th scope="row">Data exfiltration</th><td>tool call, output, trajectory</td><td class="num r">98</td></tr>
+            <tr><th scope="row">MCP and supply-chain poisoning</th><td>tool definition, ingested content</td><td class="num r">68</td></tr>
+            <tr><th scope="row">Agent-to-agent attacks</th><td>ingested content, trajectory</td><td class="num r">64</td></tr>
+            <tr><th scope="row">Memory poisoning</th><td>memory write, trajectory</td><td class="num r">64</td></tr>
+            <tr><th scope="row">Resource abuse</th><td>tool call, trajectory</td><td class="num r">58</td></tr>
+            <tr><th scope="row">Attacks on the guard itself</th><td>prompt, ingested content</td><td class="num r">58</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="pair" aria-labelledby="pair-h">
+      <h2 id="pair-h">One score: the pair</h2>
+      <p>Each attack has a twin that changes one thing: intent, role, destination or data origin. A pair is correct only when the attack is stopped and the twin is allowed. The pair score is the share of pairs that are correct, with a 95% interval.</p>
+      <table class="matrix">
+        <caption class="visually-hidden">The four outcomes for an attack and its twin</caption>
+        <thead>
+          <tr><th scope="col"><span class="visually-hidden">Attack</span></th><th scope="col">Twin allowed</th><th scope="col">Twin stopped</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Attack stopped</th><td class="correct"><strong>Correct</strong><span>The only outcome that counts</span></td><td><strong>Over-blocks</strong><span>Cannot tell them apart</span></td></tr>
+          <tr><th scope="row">Attack allowed</th><td><strong>Misses</strong><span>Lets both through</span></td><td><strong>Wrong way round</strong><span>Stops the harmless one</span></td></tr>
+        </tbody>
+      </table>
+      <dl>
+        <div><dt>Strict and lenient</dt><dd>Strict counts an &ldquo;unsure&rdquo; verdict as a stop, lenient as a go. Both are shown, with the unsure rate in its own column.</dd></div>
+        <div><dt>No composite score</dt><dd>Results stay split by checkpoint, family and track.</dd></div>
+        <div><dt>Supporting detail</dt><dd>Detection and false-block rates are shown next to the pair score. Reported apart, they hide a guard that blocks the attack and its twin alike.</dd></div>
+      </dl>
+      <p>The full rules, including multi-step cases and late judges, are in the <a href="../method.html#pair">method</a>.</p>
+    </section>
+      </article>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="footer-about">
+      <a class="brand" href="../" aria-label="GuardrailBench home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+        <span>GuardrailBench</span>
+      </a>
+      <p>An open benchmark for AI-agent guardrails.</p>
+      <p class="muted">&copy; 2026 GuardrailBench maintainers</p>
+    </div>
+    <nav aria-labelledby="f-site">
+      <h2 id="f-site">Site</h2>
+      <ul>
+        <li><a href="../">Leaderboards</a></li>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../method.html">Method</a></li>
+        <li><a href="../submit.html">Submit</a></li>
+        <li><a href="../citations.html">Citations</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-project">
+      <h2 id="f-project">Project</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-lic">
+      <h2 id="f-lic">Licences</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE">Code: Apache-2.0</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE-DATA">Data: CC BY 4.0</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

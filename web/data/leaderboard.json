@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "updated": null,
+  "about": "Results shown on the home page. Every list is empty: no results are published yet. Rates are fractions from 0 to 1. A checkpoint missing from by_checkpoint means the product does not claim it.",
+  "schema": {
+    "entry": {
+      "product": "string",
+      "version": "string",
+      "organisation": "string",
+      "date": "YYYY-MM-DD, date of the run",
+      "badges": "list of: open_source, maintainer_run, self_reported, affiliated",
+      "logs": "https URL of the per-case logs",
+      "site": "https URL of the product page, optional"
+    },
+    "detection_entry": {
+      "by_checkpoint": {
+        "<all | prompt | ingested_content | tool_definition | tool_call | memory_write | output | trajectory>": {
+          "unsure": "rate",
+          "strict": { "pair_score": "rate", "ci": ["low", "high"], "detection": "rate", "false_block": "rate" },
+          "lenient": { "pair_score": "rate", "ci": ["low", "high"], "detection": "rate", "false_block": "rate" }
+        }
+      }
+    },
+    "reliability_entry": {
+      "flip_rate": { "<all | checkpoint>": "rate" },
+      "instability_worst": { "variant": "reflow | prefix | rename", "value": "rate" },
+      "p95_ms_32": "milliseconds at 32 parallel workers",
+      "long_input": { "chars": "longest padded length", "detection": "rate", "control_false_block": "rate" },
+      "errors": { "count": "integer", "rate": "rate" }
+    }
+  },
+  "boards": {
+    "official-none": { "split": "official", "track": "none", "kind": "detection", "results": [] },
+    "official-card": { "split": "official", "track": "card", "kind": "detection", "results": [] },
+    "reliability": { "split": "official", "track": "reliability", "kind": "reliability", "results": [] },
+    "practice": { "split": "practice", "track": "none", "kind": "detection", "results": [] }
+  }
+}

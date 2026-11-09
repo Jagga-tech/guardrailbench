@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About GuardrailBench</title>
+<meta name="description" content="Why GuardrailBench exists, what it measures and does not measure, and where it stands.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="container">
+    <a class="brand" href="./" aria-label="GuardrailBench home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+      <span>GuardrailBench</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="./">Leaderboards</a></li>
+        <li class="menu"><details><summary>Benchmarks</summary>
+          <ul>
+            <li><a href="benchmarks/core.html">Core: no context</a></li>
+            <li><a href="benchmarks/card.html">Card track</a></li>
+            <li><a href="benchmarks/reliability.html">Reliability</a></li>
+            <li><a href="benchmarks/splits.html">Practice and official splits</a></li>
+          </ul></details></li>
+        <li class="menu menu--end"><details><summary class="is-current">About</summary>
+          <ul>
+            <li><a href="about.html" aria-current="page">About GuardrailBench</a></li>
+            <li><a href="method.html">Method</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="citations.html">Citations</a></li>
+            <li><a href="submit.html">Submit</a></li>
+          </ul></details></li>
+        <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="container">
+    <header class="pagehead">
+      <h1>About GuardrailBench</h1>
+      <p class="lead">An open, vendor-neutral benchmark for prompt-injection firewalls, agent guards and MCP gateways.</p>
+    </header>
+  </div>
+
+  <section class="section--s" aria-labelledby="why-title">
+    <div class="container grid">
+      <div class="head head--side">
+        <h2 id="why-title">Why it exists</h2>
+      </div>
+      <ul class="rows body--side">
+        <li>
+          <h3>Other benchmarks test the agent</h3>
+          <p>AgentDojo and InjecAgent score the model, not the guard.</p>
+        </li>
+        <li>
+          <h3>Public test sets get learned</h3>
+          <p>Some detectors trained on the set that ranked them. Ours stays hidden.</p>
+        </li>
+        <li>
+          <h3>Blocking everything looks safe</h3>
+          <p>Blocking normal work counts as much as a miss.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section--s" aria-labelledby="what-title">
+    <div class="container grid">
+      <div class="head">
+        <h2 id="what-title">What it measures</h2>
+        <p class="lead">Each attack is scored with a harmless twin, at seven checkpoints, across ten attack families, in three tracks.</p>
+      </div>
+      <div class="elev">
+        <div>
+          <h3>No context</h3>
+          <p>The guard sees the case and nothing else.</p>
+          <p><a href="benchmarks/core.html">Core track</a></p>
+        </div>
+        <div>
+          <h3>Deployment card</h3>
+          <p>The guard also gets the agent&rsquo;s job, tools and rules.</p>
+          <p><a href="benchmarks/card.html">Card track</a></p>
+        </div>
+        <div>
+          <h3>Reliability</h3>
+          <ul>
+            <li>Consistency</li>
+            <li>Stability</li>
+            <li>Load</li>
+            <li>Long inputs</li>
+            <li>Errors and timeouts</li>
+          </ul>
+          <p><a href="benchmarks/reliability.html">Reliability track</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--s" aria-labelledby="not-title">
+    <div class="container grid">
+      <div class="head head--side">
+        <h2 id="not-title">What it does not measure</h2>
+      </div>
+      <div class="body--side bench">
+        <ul>
+          <li>Hallucination and factual accuracy.</li>
+          <li>Toxicity and general content safety, such as hate speech or self-harm.</li>
+          <li>Whether the agent or model itself resists attacks. AgentDojo and similar benchmarks do that.</li>
+          <li>An overall best guardrail. There is no composite score across tracks or checkpoints.</li>
+          <li>Whether a guard is a full security boundary. It is one layer.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" id="status" aria-labelledby="status-title">
+    <div class="container status">
+      <h2 id="status-title">Pre-release</h2>
+      <p class="lead">First results after legal review and an outside review of the hidden split.</p>
+      <div class="actions">
+        <a class="btn" href="./">See the leaderboards</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-title">
+    <div class="container grid">
+      <div class="head head--side">
+        <h2 id="faq-title">Questions</h2>
+      </div>
+      <div class="rows faq body--side">
+        <details>
+          <summary>Who wrote the cases?</summary>
+          <p>Written fresh, never copied from public datasets. Model-drafted, machine-checked and cross-reviewed; human review is still to come.</p>
+        </details>
+        <details>
+          <summary>Can vendors see the hidden split?</summary>
+          <p>No. Vendors get the practice split only.</p>
+        </details>
+        <details>
+          <summary>What if a product cannot see tool calls?</summary>
+          <p>That checkpoint shows &ldquo;not claimed&rdquo;, not a miss.</p>
+        </details>
+        <details>
+          <summary>Does a good score make an agent safe?</summary>
+          <p>No. A guard is one layer of defence.</p>
+        </details>
+        <details>
+          <summary>How do I take part?</summary>
+          <p>Run the practice split and <a href="submit.html">submit</a> the logs. For the official split, <a href="contact.html">contact the maintainers</a>.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="footer-about">
+      <a class="brand" href="./" aria-label="GuardrailBench home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 9h26v5h-26zM5 16h6v13h-6zM18 3h6v26h-6z"/></svg>
+        <span>GuardrailBench</span>
+      </a>
+      <p>An open benchmark for AI-agent guardrails.</p>
+      <p class="muted">&copy; 2026 GuardrailBench maintainers</p>
+    </div>
+    <nav aria-labelledby="f-site">
+      <h2 id="f-site">Site</h2>
+      <ul>
+        <li><a href="./">Leaderboards</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="method.html">Method</a></li>
+        <li><a href="submit.html">Submit</a></li>
+        <li><a href="citations.html">Citations</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-project">
+      <h2 id="f-project">Project</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench">GitHub</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Governance</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/SECURITY.md">Security</a></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="f-lic">
+      <h2 id="f-lic">Licences</h2>
+      <ul>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE">Code: Apache-2.0</a></li>
+        <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/LICENSE-DATA">Data: CC BY 4.0</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
