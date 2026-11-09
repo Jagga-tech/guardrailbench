@@ -32,7 +32,7 @@ All keys are optional. A result with no `meta.json`, or without `"verified": tru
 guardrailbench leaderboard --results results --out site --disclosures disclosures.json
 ```
 
-The output is `site/index.html` plus one `site/<product>.html` per product. `disclosures.json` maps a product name to a one-line disclosure, shown next to its row (for example a maintainer affiliation, see [GOVERNANCE.md](../../GOVERNANCE.md)). It is `{}` while there are none.
+The output is `site/index.html` plus one `site/<product>.html` per product. `disclosures.json` maps a product name to a one-line disclosure, shown next to its row (for example a maintainer affiliation, see [GOVERNANCE.md](../../GOVERNANCE.md)). It also labels `llm-judge` as a reference baseline, not a product.
 
 ## What the page shows
 
@@ -40,5 +40,7 @@ The output is `site/index.html` plus one `site/<product>.html` per product. `dis
 - A headline table of the pair score per product and checkpoint, strict and lenient, with the unsure rate and the track.
 - Detail tables per family, checkpoint, transform and sector. Each cell shows native and flattened results separately: pair score, unsure rate, detection and false-block rate with intervals, errors, sanitize rate and latency.
 - Cells for checkpoints a product cannot represent say "not claimed". On the card track, products that take no card say "not applicable".
+
+The home page of the site is drawn from `web/data/leaderboard.json`, where each entry has a `badges` list. The `baseline` badge marks a reference baseline such as `llm-judge`, so it is not read as a product.
 
 There is no overall rank and no composite score. See [metrics](metrics.md).

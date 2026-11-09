@@ -18,6 +18,7 @@ GuardrailBench is an open, vendor-neutral benchmark of AI-agent guardrail produc
 ## Reference
 
 - [Case format](reference/case-format.md): fields, checkpoints, families, twins, deployment cards, sectors
+- [Which products take a deployment card](reference/deployment-cards.md): the mechanism per product, and what was checked
 - [Metrics](reference/metrics.md): decisions, strict and lenient, pair score, native and flattened
 - [Command line](reference/cli.md): every command and flag
 - [Cases in v1](reference/cases-v1.md): counts by family, checkpoint and sector, and known limitations

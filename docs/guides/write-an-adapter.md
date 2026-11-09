@@ -24,7 +24,7 @@ class MyAdapter:
 - `messages` is the conversation in OpenAI chat format and `target` the index of the message to judge. `mode` is `"native"` or `"flattened"`. See [the case format](../reference/case-format.md).
 - Return a `Verdict(decision, score=None, sanitized=None, raw={}, latency_ms=0.0, error=None)`. `decision` is `allow`, `block`, `sanitize`, `unsure` or `error`. Return `unsure` when the product abstains. A `sanitize` must carry the rewritten text in `sanitized`.
 - Raise `Retryable` (from `guardrailbench.verdict`) for 429 or 5xx style failures. The run loop retries up to three times with backoff. Any other exception becomes an `error` row.
-- Optional attributes: `accepts_card = True` to receive `card=<deployment card>` on the card track; `fail_mode = "open"` or `"closed"` for how the product behaves on errors; `warmup()` to load models once before the run.
+- Optional attributes: `accepts_card = True` to receive `card=<deployment card>` on the card track (see below); `fail_mode = "open"` or `"closed"` for how the product behaves on errors, set only if the product documents it; `warmup()` to load models once before the run.
 
 How the run decides the mode: a case whose checkpoint is in `native_checkpoints` is sent with `mode="native"`. Otherwise it is sent flattened if `accepts_text` is true (use `guardrailbench.flatten.to_text(messages, target)`), and recorded as `not_claimed` if not. See [metrics](../reference/metrics.md).
 
@@ -39,6 +39,33 @@ These are the same as in [CONTRIBUTING.md](../../CONTRIBUTING.md).
 - Mark any claim you could not verify as `UNVERIFIED` in a comment and in the pull request.
 - Keep the file small. Extra dependencies go in an optional extra in `pyproject.toml`, and heavy imports happen lazily.
 - Add a test that runs without network access or keys. The cloud adapters take an injectable `opener` for this; see `tests/adapters/test_cloud_adapters.py`.
+
+## Accept a deployment card
+
+On the card track (`run --track card`) an adapter with `accepts_card = True` gets each case's deployment card as a keyword argument. Without the attribute the product is recorded as `not_applicable` and `judge` is never called.
+
+```python
+from guardrailbench.card import card_text
+
+
+class MyAdapter:
+    accepts_card = True
+
+    def judge(self, messages, target, mode, card=None):
+        policy = card_text(card)   # "" when there is no card or nothing is stated
+        ...
+```
+
+Rules for card support:
+
+- Pass the card only through a way the product's documentation gives for policy or context: a policy field, a rule language, a documented prompt. Cite the page in the module docstring. If there is no such way, do not set `accepts_card`.
+- If the product takes text, use `card_text(card)` as it is. Every product gets the same wording.
+- An empty field means "not stated". It must never become a restriction: no "allowed tools: none", no rule built from an empty list. `guardrailbench.card.stated_tools(card)` returns `[]` when no tools are stated.
+- `card` is `None` for a case without a card, and on the no-context track. A missing or all-empty card must give the product exactly the input it gets on the no-context track. Add a test for that.
+- Use only the card fields the mechanism can express honestly, and say in the docstring which fields you left out and why.
+- Change nothing else on the card track. Thresholds and settings stay at the defaults.
+
+`src/guardrailbench/adapters/invariant.py` (rules) and `nemo.py` (a documented prompt) are worked examples. The table of what each built-in adapter does is in [which products take a deployment card](../reference/deployment-cards.md).
 
 ## Register it
 

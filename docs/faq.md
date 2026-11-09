@@ -47,6 +47,18 @@ Some products return more than allow or block: a challenge, a flag for review, a
 
 In the core (no-context) track a product gets the case and nothing else. In the card track it also gets the case's deployment card: the agent's job, its allowed tools and destinations, the user's role and the policy rules, taken from the case's system message. Products that accept a policy are configured from the card. Products that cannot take one show "not applicable", not zero. See [case format](reference/case-format.md).
 
+## Which products can take a card?
+
+Of the built-in adapters: NeMo Guardrails (the card goes into its self-check prompts), Invariant (the card's allowed tools become a rule) and LlamaFirewall (the card goes into the trace, which only its alignment check reads). The hosted APIs, the text classifiers, Llama Guard and LLM Guard have no documented way to take a per-case policy, so they show "not applicable". The full table, with what was checked, is in [which products take a deployment card](reference/deployment-cards.md).
+
+## Why not just put the card in front of the text for every product?
+
+Because that would test our prompt, not the product. A product gets the card only through a way its own documentation gives for policy or context. A classifier trained to spot injections has no such input, and pasting a policy in front of the text would change what it is classifying.
+
+## What is llm-judge?
+
+A reference baseline, not a product. It asks a general chat model whether to allow or block, with a short fixed prompt, and adds the card on the card track. Running it on both tracks with the same model shows what the card is worth to a reader that can use it. It carries a "baseline" badge on the leaderboard. See [which products take a deployment card](reference/deployment-cards.md#the-llm-judge-baseline).
+
 ## What does "not claimed" mean?
 
 The product cannot represent that checkpoint, for example a text classifier given a tool call. It is not counted as a miss. The leaderboard says so plainly, because telling buyers which products cannot see tool calls is part of the point. If the product takes text, the case can still be run flattened, and flattened results are never mixed with native ones.

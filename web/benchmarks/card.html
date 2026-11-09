@@ -90,6 +90,18 @@
       <h2 id="na-h">Products without a policy</h2>
       <p>A product that cannot take a policy shows &ldquo;not applicable&rdquo; in this track, not zero. Its core-track result still stands.</p>
     </section>
+    <section id="who" aria-labelledby="who-h">
+      <h2 id="who-h">Which products can take a card</h2>
+      <p>A product gets the card only through a way its own documentation gives for policy or context. Every product that takes the card as text gets the same wording.</p>
+      <dl>
+        <div><dt>NeMo Guardrails</dt><dd>Yes. The card text goes into its self-check prompts as the deployment&rsquo;s policy. All fields.</dd></div>
+        <div><dt>Invariant</dt><dd>Yes. <code>allowed_tools</code> becomes a rule that blocks any other tool. The other fields cannot be written as sound rules and are left out.</dd></div>
+        <div><dt>LlamaFirewall</dt><dd>In part. The card text goes into the trace as a system message, which only AlignmentCheck reads, so it reaches agent actions and not user messages or tool results.</dd></div>
+        <div><dt>Everything else</dt><dd>Not applicable. The hosted APIs keep their policy in a resource set up ahead of time, not in the request. The text classifiers, Llama Guard and LLM Guard have no input for an agent&rsquo;s job, tools or rules.</dd></div>
+        <div><dt><code>llm-judge</code></dt><dd>A reference baseline, not a product: a general chat model asked to allow or block, with and without the card. It shows what the card is worth to a reader that can use it.</dd></div>
+      </dl>
+      <p>The mechanism for each product, and what has been checked against the real library: <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/deployment-cards.md">deployment cards reference</a>.</p>
+    </section>
     <section id="run" aria-labelledby="run-h">
       <h2 id="run-h">Running it</h2>
       <pre><code>guardrailbench run --track card --product P --cases cases/practice --out runs/P/practice-card.jsonl</code></pre>
