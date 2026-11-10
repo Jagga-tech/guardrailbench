@@ -11,6 +11,7 @@ GuardrailBench is an open, vendor-neutral benchmark of AI-agent guardrail produc
 ## Guides
 
 - [Run a product](guides/run-a-product.md): validate, run, score, and build a page
+- [Add your product](guides/add-your-product.md): the one-hour path for a guardrail company, from install to results
 - [Write an adapter](guides/write-an-adapter.md): connect a product the harness does not know yet
 - [Submit results](guides/submit.md): practice-split results, verification, and what maintainers run
 - [Reliability track](guides/reliability.md): consistency, stability, load, long inputs and failures

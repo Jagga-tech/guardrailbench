@@ -26,7 +26,7 @@ Optional: after installing [pre-commit](https://pre-commit.com/), `pre-commit in
 
 ## Contribute an adapter
 
-An adapter turns one case into a product's own API request and the response into a verdict. Rules:
+An adapter turns one case into a product's own API request and the response into a verdict. To add your own product, start from `examples/adapter_template.py` and follow [docs/guides/add-your-product.md](docs/guides/add-your-product.md). Rules:
 
 - Send only fields the product's documentation says it inspects. Do not decode or clean the input first.
 - Use the library or API defaults. No tuning, no custom thresholds chosen to help the product.

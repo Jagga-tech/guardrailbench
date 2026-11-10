@@ -2,6 +2,8 @@
 
 An adapter turns one case into a product's own API request and the response into a verdict. It is a small Python class with a few attributes and one method.
 
+If your product is a guardrail with an HTTP check endpoint, start from `examples/adapter_template.py` and follow [add your product](add-your-product.md). This page is the full reference.
+
 ## The interface
 
 From `guardrailbench.verdict`:

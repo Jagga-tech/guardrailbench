@@ -20,6 +20,10 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 - `guardrailbench.card`: one plain-text rendering of a deployment card, used by every adapter that passes the card as text. Empty fields produce nothing.
 - `llm-judge`: a reference baseline, not a product. It asks any OpenAI-compatible chat model to allow or block, and gets the card on the card track. A "baseline" badge marks it on the leaderboard.
 - `docs/official-runs.md`: which tests are open and which only maintainers run, how a round works, and the known weak points.
+- `examples/adapter_template.py`: a copy-and-fill adapter for a guardrail with an HTTP check endpoint. It runs through `GUARDRAILBENCH_PLUGINS` without changing the repository.
+- `docs/guides/add-your-product.md`: the one-hour path for a guardrail company, from install to sending results.
+- `vendor-report`: a report on a hidden-split run that can be sent to the product's vendor. It holds totals and breakdowns, and the ids of public practice cases that failed in the same way. It never holds a hidden case.
+- `docs/official-runs.md`: a section on what a vendor is told before a round, after the run, in a dispute and after publication.
 - `.pre-commit-config.yaml` (ruff, end-of-file and trailing-whitespace hooks) and a minimal `[tool.ruff]` setting in `pyproject.toml`. `ruff` is part of the `dev` extra.
 
 ### Changed

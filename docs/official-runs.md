@@ -21,11 +21,33 @@ Load and latency are closed because they depend on the machine and the network. 
 1. **Freeze.** The official split for the round is frozen and its SHA-256 is published in `cases/OFFICIAL_SHA256` before any product is run.
 2. **Notice.** Each vendor is told its product is in the round and the window in which runs happen. The exact day is not announced.
 3. **Run.** Every product is run once, with its default configuration, through the public adapter in this repository. Product versions are recorded. Self-hosted products are pinned to a version. Hosted products cannot be pinned, so the run date is recorded.
-4. **Review.** Vendors see their own results and can report anomalies before publication, as [GOVERNANCE.md](../GOVERNANCE.md) describes. If the harness was wrong, it is fixed and the run is repeated. The first run's logs are kept and the row is marked as a re-run.
+4. **Review.** Vendors see their own results, as a report without hidden cases (see [what a vendor is told](#what-a-vendor-is-told)), and can report anomalies before publication, as [GOVERNANCE.md](../GOVERNANCE.md) describes. If the harness was wrong, it is fixed and the run is repeated. The first run's logs are kept and the row is marked as a re-run.
 5. **Publish.** Scores, per-case logs and the run environment are published together.
 6. **Retire.** The cases of the round are published and move to the practice split. The next round uses new cases.
 
 Every attempt counts. There is no "best of" run.
+
+## What a vendor is told
+
+**Before a round.** The vendor is told that its product is in the round, the window in which the runs happen, and which adapter in this repository will be used. The exact day is not announced. The adapter is public, so the vendor can read it, run it on the practice split, and send a fix before the window opens. [Add your product](guides/add-your-product.md) shows how to run it.
+
+**After the run, before publication.** The vendor gets a report on its own product, made with `guardrailbench vendor-report` (see [the command line reference](reference/cli.md#vendor-report)). It holds:
+
+- the headline numbers with their intervals, the same ones `score` computes;
+- counts and rates by checkpoint, attack family, sector, twin change, mode (native or flattened) and outcome (correct, over-block, miss, inverted);
+- for each attack family and checkpoint where the product missed attacks or stopped benign twins, the ids of public practice cases the product got wrong in the same way. These come from the product's run on the practice split, so the vendor can reproduce that kind of failure on cases it is allowed to see. If no practice case failed that way, the report says so.
+
+The report holds no hidden case: no id, no text, no deployment card and no product response. The command has no option to add them.
+
+**Disputes.** If a vendor thinks a group of results is wrong, it says which group and why. A maintainer who is not affiliated with any product, or the independent reviewer, then checks the cases in that group again.
+
+- If the harness or the adapter was wrong, it is fixed and the run is repeated, as step 4 says.
+- If a case has the wrong label, the case is dropped for every product and all scores are computed again.
+- A small number of disputed cases may be shown to the vendor, but only if those cases are then retired for every product, so no product is scored on them again. The disclosure is recorded in the published results.
+
+A dispute does not give a vendor a veto. Results from a valid run are published.
+
+**After publication.** Once the round's split is retired, its cases and all per-case logs are public (steps 5 and 6). The vendor can then see every case and what its product answered.
 
 ## Known weak points and what we do about them
 

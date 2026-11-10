@@ -104,6 +104,8 @@ All commands and flags: [command line reference](docs/reference/cli.md). Step by
 
 Run the public practice split with your own keys and open a pull request with per-case logs. Practice results go on a clearly labelled unverified tier. Official-split runs are done only by maintainers, and a result becomes verified after maintainers re-run a random sample. See [submit results](docs/guides/submit.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
+If you make a guardrail, [add your product](docs/guides/add-your-product.md) takes about an hour: copy the adapter template, run the practice split, send the results.
+
 ## Status
 
 Pre-release (1.0.0-rc1). There are no published leaderboard results yet. Human review of the cases is pending, so no case is marked "Verified" yet.

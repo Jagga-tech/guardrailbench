@@ -33,7 +33,11 @@ A guardrail is one layer of defence, not a full security boundary.
 
 ## How do I add a product?
 
-Write an adapter, a small class that turns a case into the product's API request and the response into a verdict. See [write an adapter](guides/write-an-adapter.md). You can run a private adapter without changing the repository, or open a pull request to add it.
+Write an adapter, a small class that turns a case into the product's API request and the response into a verdict. [Add your product](guides/add-your-product.md) is the one-hour path with a template to copy, and [write an adapter](guides/write-an-adapter.md) has the full interface. You can run a private adapter without changing the repository, or open a pull request to add it.
+
+## How do I learn what my product got wrong on the hidden split?
+
+Before results are published you get a report on your own product. It gives the numbers by checkpoint, attack family, sector and outcome, and for each weak group it names public practice cases your product got wrong in the same way, so you can reproduce the failure. It does not show hidden cases. Those are published when the round's split is retired. See [what a vendor is told](official-runs.md#what-a-vendor-is-told).
 
 ## How often is the benchmark refreshed?
 
