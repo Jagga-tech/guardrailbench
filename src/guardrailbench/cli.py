@@ -29,6 +29,12 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--results", type=Path, required=True)
     s.add_argument("--cases", type=Path, required=True)
     s.add_argument("--out", type=Path, required=True)
+    vr = sub.add_parser("vendor-report")
+    vr.add_argument("--results", type=Path, required=True)
+    vr.add_argument("--cases", type=Path, required=True)
+    vr.add_argument("--practice-results", type=Path)
+    vr.add_argument("--practice-cases", type=Path)
+    vr.add_argument("--out", type=Path, required=True)
     sub.add_parser("hash").add_argument("path", type=Path)
     sc = sub.add_parser("scan")
     sc.add_argument("--cases", type=Path, required=True)
@@ -139,6 +145,27 @@ def main(argv: list[str] | None = None) -> int:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(rep, indent=2), encoding="utf-8")
         print(f"scored {len(results)} results -> {args.out}")
+        return 0
+    if args.cmd == "vendor-report":
+        import json
+        from .vendor_report import build, render
+        if (args.practice_results is None) != (args.practice_cases is None):
+            print("give --practice-results and --practice-cases together", file=sys.stderr)
+            return 2
+
+        def rows(path):
+            return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+        try:
+            rep = build(rows(args.results), load_cases(args.cases),
+                        rows(args.practice_results) if args.practice_results else None,
+                        load_cases(args.practice_cases) if args.practice_cases else None)
+        except ValueError as e:
+            print(str(e), file=sys.stderr)
+            return 2
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "vendor-report.json").write_text(json.dumps(rep, indent=2), encoding="utf-8")
+        (args.out / "vendor-report.md").write_text(render(rep), encoding="utf-8")
+        print(f"vendor report -> {args.out / 'vendor-report.md'}")
         return 0
     if args.cmd == "reliability":
         from .adapters import ADAPTERS

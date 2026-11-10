@@ -28,6 +28,18 @@ guardrailbench score --results RUNS.jsonl --cases PATH --out REPORT.json
 
 Turns a results file into a report. See [metrics](metrics.md) for every field. Writes `track` into the report, and exits with code 2 if the file mixes tracks.
 
+## vendor-report
+
+```
+guardrailbench vendor-report --results RUNS.jsonl --cases PATH --out DIR [--practice-results PRACTICE_RUNS.jsonl --practice-cases cases/practice]
+```
+
+For maintainers, after an official run. Writes `DIR/vendor-report.json` and `DIR/vendor-report.md`: a report on one product's hidden-split run that can be sent to its vendor. It holds totals only: the numbers `score` computes for each mode, and counts and rates by checkpoint, family, sector, twin change and outcome. It then lists every family and checkpoint with a miss, an over-block or an inverted pair.
+
+With `--practice-results` and `--practice-cases` (the same product's run on the public practice split), each of those groups also names the practice cases the product got wrong in the same way, or says there are none. The JSON holds every id, and the Markdown shows the first five per outcome.
+
+Nothing from the cases given with `--cases` is written: no id, text, marker, canary, card or product response. No flag changes that. The command exits with code 2 if the practice cases are not all marked `split: practice`, if they share an id with the `--cases` set, if the two runs are for different products or tracks, or if a results file mixes products or tracks. How the report is used is in [official runs](../official-runs.md#what-a-vendor-is-told).
+
 ## reliability
 
 ```
@@ -83,4 +95,4 @@ guardrailbench casegen agree --drafts DIR --verdicts FILE
 
 ## Environment
 
-`GUARDRAILBENCH_PLUGINS=module_a,module_b` imports each module after the built-in adapters, so a private adapter can call `register`. See [write an adapter](../guides/write-an-adapter.md).
+`GUARDRAILBENCH_PLUGINS=module_a,module_b` imports each module after the built-in adapters, so a private adapter can call `register`. See [write an adapter](../guides/write-an-adapter.md) and the template in `examples/adapter_template.py`.
