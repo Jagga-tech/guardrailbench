@@ -11,7 +11,7 @@ Sources (fetched 2026-11-05, tag v0.3.16):
 
 Native checkpoints {"prompt", "output"}: input scanners inspect the prompt, output scanners the model output. The
 docs describe no tool-call, trajectory or retrieved-content inspection, so none is claimed.
-Scanner set (our choice; the docs prescribe none): input = InvisibleText, Secrets(REDACT_PARTIAL),
+Scanner set (our choice; the docs prescribe none): input = InvisibleText, Secrets (default redaction),
 PromptInjection() [library defaults: threshold 0.92, FULL; Ruling 10, no tuned thresholds], Toxicity(); output = Sensitive(redact=True),
 Toxicity(), MaliciousURLs(). NoRefusal is left out on purpose: a refusal is the safe output.
 Native: target user -> scan_prompt(that text); target assistant -> scan_output(prompt=previous user text,
@@ -70,7 +70,7 @@ class LLMGuard:
                 from llm_guard.input_scanners import InvisibleText, PromptInjection, Secrets, Toxicity  # heavy; lazy
                 from llm_guard.output_scanners import MaliciousURLs, Sensitive
                 from llm_guard.output_scanners import Toxicity as OutToxicity
-                self._in = [InvisibleText(), Secrets(redact_mode=Secrets.REDACT_PARTIAL),
+                self._in = [InvisibleText(), Secrets(),
                             PromptInjection(), Toxicity()]
                 self._out = [Sensitive(redact=True), OutToxicity(), MaliciousURLs()]
 

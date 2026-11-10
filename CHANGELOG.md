@@ -33,6 +33,10 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 - `run --track card` no longer loads a product's models when the product takes no card and every row will be "not applicable".
 
+### Fixed
+
+- The `llm-guard` adapter crashed on load: it read `Secrets.REDACT_PARTIAL`, which does not exist in llm-guard 0.3.16. It now uses the scanner's default redaction. The adapter has still not been run end to end.
+
 ### Removed
 
 - Internal task plans, which were never part of the public docs.
