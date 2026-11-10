@@ -22,8 +22,7 @@ Load and latency are closed because they depend on the machine and the network. 
 2. **Notice.** Each vendor is told its product is in the round and the window in which runs happen. The exact day is not announced.
 3. **Run.** Every product is run once, with its default configuration, through the public adapter in this repository. Product versions are recorded. Self-hosted products are pinned to a version. Hosted products cannot be pinned, so the run date is recorded.
 4. **Review.** Vendors see their own results, as a report without hidden cases (see [what a vendor is told](#what-a-vendor-is-told)), and can report anomalies before publication, as [GOVERNANCE.md](../GOVERNANCE.md) describes. If the harness was wrong, it is fixed and the run is repeated. The first run's logs are kept and the row is marked as a re-run.
-5. **Publish.** Scores, per-case logs and the run environment are published together.
-6. **Retire.** The cases of the round are published and move to the practice split. The next round uses new cases.
+5. **Publish and retire.** Scores, the run environment, the round's cases and the per-case logs are published together. Logs can repeat case text, so they are not published before the cases are. The cases move to the practice split, and the next round uses new cases.
 
 Every attempt counts. There is no "best of" run.
 
@@ -47,7 +46,7 @@ The report holds no hidden case: no id, no text, no deployment card and no produ
 
 A dispute does not give a vendor a veto. Results from a valid run are published.
 
-**After publication.** Once the round's split is retired, its cases and all per-case logs are public (steps 5 and 6). The vendor can then see every case and what its product answered.
+**After publication.** When the results are published, the round's cases and all per-case logs are published with them (step 5). The vendor can then see every case and what its product answered.
 
 ## Known weak points and what we do about them
 
