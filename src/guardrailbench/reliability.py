@@ -125,6 +125,8 @@ def run_reliability(adapter, cases: list[Case], out_dir: Path, repeats: int = 3,
             raise ValueError(f"{rj} was made with different settings {old}; current are {meta}. Use a different --out.")
     else:
         rj.write_text(json.dumps({"meta": meta}), encoding="utf-8")  # written first so an interrupted run is also guarded
+    # this track runs without the card, where a policy pair's attack and twin are the same input: leave them out
+    cases = [c for c in cases if c.twin_change != "policy"]
     by_id = {c.id: c for c in cases}
     rng = lambda section: random.Random(f"{seed}:{section}")  # one stream per section: flags can't shift other samples
     tally: dict[str, dict] = {}

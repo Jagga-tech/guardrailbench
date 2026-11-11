@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 
 from .case import FAMILIES, Case
-from .metrics import _group, effective_block
+from .metrics import _group, by_mode, effective_block
 
 MODES = ("native", "flattened")
 OUTCOMES = ("correct", "over_block", "miss", "inverted")
@@ -22,19 +22,6 @@ DIMS = {"checkpoint": lambda c: c.checkpoint, "family": lambda c: str(c.family),
         "sector": lambda c: c.sector or "unknown", "twin_change": lambda c: c.twin_change or "none"}
 CELL = ("n_attack", "n_benign", "detection", "detection_ci", "false_block", "false_block_ci", "unsure_rate",
         "errors")
-
-
-def _by_mode(results: list[dict], cases: list[Case]) -> tuple[dict[str, list], int]:
-    by_id = {c.id: c for c in cases}
-    modes: dict[str, list] = {}
-    unknown = 0
-    for r in results:
-        c = by_id.get(r["case_id"])
-        if c is None:
-            unknown += 1
-        else:
-            modes.setdefault(r["mode"], []).append((r, c))
-    return modes, unknown
 
 
 def _outcomes(items: list) -> list[tuple[Case, str]]:
@@ -67,7 +54,7 @@ def build(results: list[dict], cases: list[Case], practice_results: list[dict] |
     """results/cases: the hidden-split run. practice_*: the same product's run on the public practice split."""
     product = _one({r["product"] for r in results}, "products")
     track = _one({r.get("track", "none") for r in results}, "tracks") or "none"
-    modes, unknown = _by_mode(results, cases)
+    modes, unknown, card_only = by_mode(results, cases)
     hidden_ids = {c.id for c in cases}
 
     practice: dict[tuple, list[str]] | None = None  # (mode, family, checkpoint, outcome) -> practice attack ids
@@ -85,7 +72,7 @@ def build(results: list[dict], cases: list[Case], practice_results: list[dict] |
             raise ValueError(f"the practice run is {p_product!r} on track {p_track!r}, "
                              f"the hidden run is {product!r} on track {track!r}")
         practice = {}
-        for mode, items in _by_mode(practice_results, practice_cases)[0].items():
+        for mode, items in by_mode(practice_results, practice_cases)[0].items():
             for c, o in _outcomes(items):
                 practice.setdefault((mode, c.family, c.checkpoint, o), []).append(c.id)
 
@@ -110,6 +97,7 @@ def build(results: list[dict], cases: list[Case], practice_results: list[dict] |
         "product_versions": sorted({r["product_version"] for r in results}), "track": track,
         "rows": len(results), "unknown_case_ids": unknown,
         "not_claimed": len(modes.get("not_claimed", [])),
+        "card_only_pairs": card_only,
         "by_mode": {m: _group(modes.get(m, [])) for m in MODES if modes.get(m)},
         "breakdowns": {dim: {m: {k: _cell([x for x in modes[m] if key(x[1]) == k])
                                  for k in sorted({key(c) for _, c in modes[m]}, key=lambda k: (k.isdigit() and int(k), k))}
@@ -151,6 +139,10 @@ def render(rep: dict) -> str:
     out = [f"# GuardrailBench vendor report: {rep['product']}", "",
            f"Product version: {', '.join(rep['product_versions']) or 'unknown'}. Track: {rep['track']}. "
            f"Split: {rep['split']}. Result rows: {rep['rows']}, of which not claimed: {rep['not_claimed']}.", "",
+           *([f"Card-only pairs, not scoreable without a card: {rep['card_only_pairs']['pairs']}. In these pairs "
+              "the attack and its twin differ only in the deployment card, so on this track the product got the "
+              "same input for both. They are left out of every number below.", ""]
+             if rep["card_only_pairs"]["pairs"] else []),
            "This report holds totals only. It contains no hidden case, no hidden case id and no product "
            "response. Hidden cases are published when the round's split is retired. How each number is "
            "computed is in docs/reference/metrics.md. Intervals are 95% Wilson intervals.", "",

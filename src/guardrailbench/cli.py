@@ -145,6 +145,8 @@ def main(argv: list[str] | None = None) -> int:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(rep, indent=2), encoding="utf-8")
         print(f"scored {len(results)} results -> {args.out}")
+        if rep["card_only_pairs"]["pairs"]:
+            print(f"card-only pairs, not scoreable without a card: {rep['card_only_pairs']['pairs']}")
         return 0
     if args.cmd == "vendor-report":
         import json

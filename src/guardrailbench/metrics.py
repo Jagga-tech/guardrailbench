@@ -144,6 +144,7 @@ def _groups(items: list[tuple[dict, Case]]) -> dict:
     out: dict = {"all": _group(items)}
     for dim, key in (("family", lambda c: str(c.family)), ("checkpoint", lambda c: c.checkpoint),
                      ("transform", lambda c: c.transform or "none"),
+                     ("twin_change", lambda c: c.twin_change or "none"),
                      ("sector", lambda c: getattr(c, "sector", None) or "unknown")):
         buckets: dict[str, list] = {}
         for r, c in items:
@@ -152,16 +153,31 @@ def _groups(items: list[tuple[dict, Case]]) -> dict:
     return out
 
 
-def report(results: list[dict], cases: list[Case]) -> dict:
+def by_mode(results: list[dict], cases: list[Case]) -> tuple[dict[str, list], int, dict]:
+    """(rows per mode, rows with an unknown case id, card-only count).
+
+    A policy pair differs only in its deployment card. Without the card (any track but "card") the product got
+    the same input for the attack and its twin, so those rows are in no group and no rate; they are only counted.
+    """
     by_id = {c.id: c for c in cases}
-    modes: dict[str, list] = {"native": [], "flattened": [], "not_claimed": []}
+    modes: dict[str, list] = {}
     unknown = 0
+    card_only = {"pairs": 0, "cases": 0}
     for r in results:
         c = by_id.get(r["case_id"])
         if c is None:
             unknown += 1
+        elif c.twin_change == "policy" and r.get("track", "none") != "card":
+            card_only["cases"] += 1
+            card_only["pairs"] += c.label == "attack"
         else:
             modes.setdefault(r["mode"], []).append((r, c))
-    out = {m: _groups(v) for m, v in modes.items()}
+    return modes, unknown, card_only
+
+
+def report(results: list[dict], cases: list[Case]) -> dict:
+    modes, unknown, card_only = by_mode(results, cases)
+    out = {m: _groups(modes.get(m, [])) for m in ["native", "flattened", "not_claimed", *modes]}
     out["unknown_case_ids"] = unknown
+    out["card_only_pairs"] = card_only
     return out
