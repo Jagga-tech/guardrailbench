@@ -4,7 +4,8 @@ title: "GuardrailBench"
 version: "1.0.0-rc1"
 license: Apache-2.0
 repository-code: "https://github.com/Jagga-tech/guardrailbench"
-abstract: "An open, vendor-neutral benchmark of AI-agent guardrail products."
+abstract: "An open, vendor-neutral benchmark of AI-agent guardrail products: prompt-injection firewalls, agent firewalls and MCP gateways."
+url: "https://jagga-tech.github.io/guardrailbench/"
 type: software
 authors:
   - name: "GuardrailBench maintainers"
