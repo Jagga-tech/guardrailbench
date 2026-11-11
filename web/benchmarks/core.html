@@ -74,7 +74,7 @@
     <section id="overview" aria-labelledby="overview-h">
       <h2 id="overview-h">Overview</h2>
       <p>The core track, called the no-context track in the docs, is the default way GuardrailBench runs a product. Each case is sent as it would arrive at one checkpoint in an agent&rsquo;s run, and the product sees that case and nothing else: no job description, no tool list, no policy.</p>
-      <p>The product answers stop, unsure or go. Every attack is scored together with its benign twin. v1 has 880 attack and twin pairs and 2,000 normal cases.</p>
+      <p>The product answers stop, unsure or go. Every attack is scored together with its benign twin. The v2 case set, used for the first official round, has 488 pairs and 938 normal cases. v1 has 880 pairs and 2,000 normal cases.</p>
       <p>Results: the <a href="../#official-none">Official &middot; No context</a> tab of the leaderboard.</p>
     </section>
     <section id="checkpoints" aria-labelledby="checkpoints-h">
@@ -95,30 +95,30 @@
     </section>
     <section id="families" aria-labelledby="families-h">
       <h2 id="families-h">Ten attack families</h2>
-      <p>880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors.</p>
+      <p>v1 has 880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors. v2 has 488 pairs, plus 938 normal cases.</p>
       <div class="scroll" tabindex="0" role="region" aria-label="Attack families table">
         <table class="register">
           <thead>
-            <tr><th scope="col">Family</th><th scope="col">Checkpoints</th><th scope="col" class="r">Pairs</th></tr>
+            <tr><th scope="col">Family</th><th scope="col">Checkpoints</th><th scope="col" class="r">v1 pairs</th><th scope="col" class="r">v2 pairs</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row">Direct injection and jailbreaks</th><td>prompt</td><td class="num r">79</td></tr>
-            <tr><th scope="row">Encoding and obfuscation</th><td>prompt, ingested content</td><td class="num r">92</td></tr>
-            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td></tr>
-            <tr><th scope="row">Dangerous tool calls</th><td>tool call</td><td class="num r">124</td></tr>
-            <tr><th scope="row">Data exfiltration</th><td>tool call, output, trajectory</td><td class="num r">98</td></tr>
-            <tr><th scope="row">MCP and supply-chain poisoning</th><td>tool definition, ingested content</td><td class="num r">68</td></tr>
-            <tr><th scope="row">Agent-to-agent attacks</th><td>ingested content, trajectory</td><td class="num r">64</td></tr>
-            <tr><th scope="row">Memory poisoning</th><td>memory write, trajectory</td><td class="num r">64</td></tr>
-            <tr><th scope="row">Resource abuse</th><td>tool call, trajectory</td><td class="num r">58</td></tr>
-            <tr><th scope="row">Attacks on the guard itself</th><td>prompt, ingested content</td><td class="num r">58</td></tr>
+            <tr><th scope="row">Direct injection and jailbreaks</th><td>prompt</td><td class="num r">79</td><td class="num r">28</td></tr>
+            <tr><th scope="row">Encoding and obfuscation</th><td>prompt, ingested content</td><td class="num r">92</td><td class="num r">34</td></tr>
+            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td><td class="num r">64</td></tr>
+            <tr><th scope="row">Dangerous tool calls</th><td>tool call</td><td class="num r">124</td><td class="num r">120</td></tr>
+            <tr><th scope="row">Data exfiltration</th><td>tool call, output, trajectory</td><td class="num r">98</td><td class="num r">85</td></tr>
+            <tr><th scope="row">MCP and supply-chain poisoning</th><td>tool definition, ingested content</td><td class="num r">68</td><td class="num r">29</td></tr>
+            <tr><th scope="row">Agent-to-agent attacks</th><td>ingested content, trajectory</td><td class="num r">64</td><td class="num r">25</td></tr>
+            <tr><th scope="row">Memory poisoning</th><td>memory write, trajectory</td><td class="num r">64</td><td class="num r">27</td></tr>
+            <tr><th scope="row">Resource abuse</th><td>tool call, trajectory</td><td class="num r">58</td><td class="num r">55</td></tr>
+            <tr><th scope="row">Attacks on the guard itself</th><td>prompt, ingested content</td><td class="num r">58</td><td class="num r">21</td></tr>
           </tbody>
         </table>
       </div>
     </section>
     <section id="pair" aria-labelledby="pair-h">
       <h2 id="pair-h">One score: the pair</h2>
-      <p>Each attack has a twin that changes one thing: intent, role, destination or data origin. A pair is correct only when the attack is stopped and the twin is allowed. The pair score is the share of pairs that are correct, with a 95% interval.</p>
+      <p>Each attack has a twin that changes one thing: intent, role, destination or data origin. In v2 some twins change only the deployment card (policy pairs, scored on the card track only). A pair is correct only when the attack is stopped and the twin is allowed. The pair score is the share of pairs that are correct, with a 95% interval.</p>
       <table class="matrix">
         <caption class="visually-hidden">The four outcomes for an attack and its twin</caption>
         <thead>

@@ -97,13 +97,18 @@
         <table class="register">
           <thead><tr><th scope="col">Split</th><th scope="col" class="r">Attack and twin pairs</th><th scope="col" class="r">Normal cases</th><th scope="col" class="r">Cases</th></tr></thead>
           <tbody>
-            <tr><th scope="row">Practice</th><td class="num r">131</td><td class="num r">309</td><td class="num r">571 + 20 seed</td></tr>
-            <tr><th scope="row">Official</th><td class="num r">749</td><td class="num r">1,691</td><td class="num r">3,189</td></tr>
+            <tr><th scope="row">v2 practice</th><td class="num r">88</td><td class="num r">137</td><td class="num r">313</td></tr>
+            <tr><th scope="row">v2 official</th><td class="num r">400</td><td class="num r">801</td><td class="num r">1,601</td></tr>
+            <tr><th scope="row">v2 in all</th><td class="num r">488</td><td class="num r">938</td><td class="num r">1,914</td></tr>
+            <tr><th scope="row">v1 practice</th><td class="num r">131</td><td class="num r">309</td><td class="num r">571</td></tr>
+            <tr><th scope="row">v1 official (withdrawn)</th><td class="num r">749</td><td class="num r">1,691</td><td class="num r">3,189</td></tr>
             <tr><th scope="row">v1 in all</th><td class="num r">880</td><td class="num r">2,000</td><td class="num r">3,760</td></tr>
           </tbody>
         </table>
       </div>
-      <p>The 20 seed cases are 10 pairs for smoke tests and are not part of the v1 counts. Per-family, per-checkpoint and per-sector counts are in <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/cases-v1.md">Cases in v1</a>.</p>
+      <p>The public practice folder holds v1 practice (571), v2 practice (313) and a 20-case seed file (10 pairs, for smoke tests): 904 cases. The seed cases are not part of the v1 or v2 counts. Of the 488 v2 pairs, 140 are policy pairs (29 practice, 111 official).</p>
+      <p>v2 is the case set for the first official round. The v1 official split is withdrawn from official use and held in reserve, unpublished: it was used for internal harness testing before any round, so it is not used for scoring. The fingerprint in <code>cases/OFFICIAL_SHA256</code> is the v2 official split&rsquo;s. No human has reviewed any v2 case; they were drafted by a model and checked by machine and by a different model.</p>
+      <p>Per-family, per-checkpoint and per-sector counts are in <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/cases-v2.md">Cases in v2</a> and <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/cases-v1.md">Cases in v1</a>.</p>
     </section>
     <section id="contamination" aria-labelledby="contamination-h">
       <h2 id="contamination-h">Keeping the official split clean</h2>
@@ -117,7 +122,7 @@
     </section>
     <section id="sectors" aria-labelledby="sectors-h">
       <h2 id="sectors-h">Twenty sectors</h2>
-      <p>Every v1 case is tagged with one of 20 sectors, and reports break results down by sector with no weighting between them. A pair&rsquo;s twin shares its attack&rsquo;s sector. The 20 seed cases have none and show as &ldquo;unknown&rdquo;.</p>
+      <p>Every v1 and v2 case is tagged with one of 20 sectors, and reports break results down by sector with no weighting between them. A pair&rsquo;s twin shares its attack&rsquo;s sector. The 20 seed cases have none and show as &ldquo;unknown&rdquo;.</p>
       <p>Agriculture, education, energy and utilities, finance, general, government, health, HR, insurance, legal, logistics, manufacturing, media and marketing, nonprofit, real estate and construction, research and science, retail, software and IT, telecom, travel and hospitality.</p>
     </section>
     <section id="authors" aria-labelledby="authors-h">
