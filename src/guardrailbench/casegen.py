@@ -11,7 +11,7 @@ import re
 import uuid
 from pathlib import Path
 
-from .case import Case, validate
+from .case import Case, policy_field, validate
 from .flatten import to_text
 from .transforms import TRANSFORMS, apply_span, long_padding
 
@@ -42,7 +42,9 @@ DOMAIN_TO_SECTOR = {
 
 
 def _canon(obj) -> str:
-    return json.dumps({k: v for k, v in obj.items() if k not in ("review", "card", "benign_card", "sector")}, sort_keys=True, ensure_ascii=False)
+    # Cards stay out of the sort hash, except in a policy pair, where the two cards are the whole case.
+    skip = ("review", "sector") if obj.get("twin_change") == "policy" else ("review", "card", "benign_card", "sector")
+    return json.dumps({k: v for k, v in obj.items() if k not in skip}, sort_keys=True, ensure_ascii=False)
 
 
 def _read_drafts(drafts: Path) -> list[tuple[str, int, dict]]:
@@ -56,6 +58,10 @@ def _read_drafts(drafts: Path) -> list[tuple[str, int, dict]]:
                 continue
             d = json.loads(line)
             if d.get("review", "keep") == "keep":
+                if d.get("twin_change") == "policy" and "benign" not in d:
+                    # a policy twin is the attack's messages under another card, so a draft need not repeat them
+                    at = d["attack"]
+                    d["benign"] = {"messages": at["messages"], "target": at["target"], "span": at["marker"]}
                 out.append((rel, n, d))
     return out
 
@@ -212,7 +218,21 @@ def lint(cases: list[Case]) -> list[str]:
                 if s.quick_ratio() > 0.9 and s.ratio() > 0.9:
                     problems.append(f"{ia} and {ib}: near-duplicate attacks")
     for c in cases:
-        blob = json.dumps(c.messages, ensure_ascii=False)
+        t = by_id.get(c.twin_id) if c.label == "attack" and c.twin_change == "policy" else None
+        field = policy_field(c, t) if t is not None else None
+        if field in ("user_role", "rules"):
+            # the card must decide alone: its deciding words may not also be in the messages
+            said = json.dumps(c.messages, ensure_ascii=False).lower()
+            a, b = c.deployment_card[field], t.deployment_card[field]
+            for v in sorted({a, b} if field == "user_role" else set(a) ^ set(b)):  # only what the two cards disagree on
+                if v.strip() and json.dumps(v.strip(), ensure_ascii=False)[1:-1].lower() in said:
+                    problems.append(f"{c.id}: policy pair's messages state the deciding {field} {v.strip()!r}")
+        elif field == "allowed_destinations":
+            added = set(t.deployment_card[field]) - set(c.deployment_card[field])
+            if not any(d.strip() and d.strip() in to_text(c.messages, c.target) for d in added):
+                problems.append(f"{c.id}: policy pair's target does not use a destination only the twin's card allows")
+    for c in cases:
+        blob = json.dumps([c.messages, c.deployment_card], ensure_ascii=False)
         hosts = [h for h in _URL.findall(blob)] + _EMAIL.findall(blob)
         for h in sorted({h.lower() for h in hosts if _real_host(h)}):
             problems.append(f"{c.id}: real-world domain {h}")
@@ -225,6 +245,7 @@ def _opaque(rel: str, n: int, side: str) -> str:
 
 def _keyed(drafts: Path):
     """Yield (key, draft, label, messages, target); keys are opaque hashes, the pair side is hash-randomised."""
+    # A policy pair's two sides have the same messages. They get different keys, and blind() shows each its card.
     for rel, n, d in _read_drafts(drafts):
         if d["kind"] == "benign":
             yield _opaque(rel, n, "s"), d, "benign", d["messages"], d["target"]
@@ -236,8 +257,11 @@ def _keyed(drafts: Path):
 
 
 def blind(drafts: Path, out: Path, seed: int) -> None:
-    rows = [{"key": k, "checkpoint": d["checkpoint"], "messages": m, "target": t}
-            for k, d, _, m, t in _keyed(drafts)]
+    # The messages of a policy case cannot be labelled alone, so its row also carries that side's card.
+    rows = [{"key": k, "checkpoint": d["checkpoint"], "messages": m, "target": t,
+             **({"card": d.get("card") if lab == "attack" else d.get("benign_card")}
+                if d.get("twin_change") == "policy" else {})}
+            for k, d, lab, m, t in _keyed(drafts)]
     random.Random(seed).shuffle(rows)
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -14,6 +14,8 @@ import re
 from dataclasses import dataclass, fields
 from pathlib import Path
 
+from .card import _items, stated_tools
+
 CHECKPOINTS = {"prompt", "ingested_content", "tool_definition", "tool_call",
                "memory_write", "output", "trajectory"}
 FAMILIES = {
@@ -30,7 +32,10 @@ FAMILIES = {
 }
 LABELS = {"attack", "benign"}
 SPLITS = {"practice", "official"}
-TWIN_CHANGES = {"intent", "role", "destination", "data_origin"}
+TWIN_CHANGES = {"intent", "role", "destination", "data_origin", "policy"}
+# A policy pair has identical messages; only the deployment card differs, in exactly one of these fields.
+POLICY_FIELDS = ("allowed_tools", "allowed_destinations", "user_role", "rules")
+POLICY_CHECKPOINTS = {"tool_call", "trajectory"}
 SECTORS = frozenset({"finance", "health", "legal", "government", "education", "retail", "travel_hospitality",
                      "logistics", "manufacturing", "energy_utilities", "telecom", "software_it", "hr",
                      "insurance", "real_estate_construction", "media_marketing", "nonprofit",
@@ -174,6 +179,53 @@ def marker_index(case: Case) -> int:
     return case.target
 
 
+def _calls(m) -> list[tuple[str, str]]:
+    """(tool name, arguments) of each well-formed tool call in a message."""
+    tcs = m.get("tool_calls") if isinstance(m, dict) else None
+    fs = [tc.get("function") for tc in (tcs if isinstance(tcs, list) else []) if isinstance(tc, dict)]
+    return [(f["name"], f["arguments"]) for f in fs
+            if isinstance(f, dict) and isinstance(f.get("name"), str) and isinstance(f.get("arguments"), str)]
+
+
+def policy_field(a: Case, t: Case) -> str | None:
+    """The one card field a policy pair differs in; None unless both cards are valid and exactly one field differs."""
+    if not (_card_ok(a.deployment_card) and _card_ok(t.deployment_card)):
+        return None
+    diff = [k for k in CARD_FIELDS if a.deployment_card[k] != t.deployment_card[k]]
+    return diff[0] if len(diff) == 1 and diff[0] in POLICY_FIELDS else None
+
+
+def _policy_problems(a: Case, t: Case) -> list[str]:
+    """Rules for a policy pair, checked from the attack side. The card alone must decide the answer."""
+    out = []
+    if a.messages != t.messages or a.target != t.target:
+        out.append("policy twin must have identical messages and target; only the deployment card may differ")
+    if not (_card_ok(a.deployment_card) and _card_ok(t.deployment_card)):
+        return out + ["policy pair needs a deployment card on both sides"]
+    field = policy_field(a, t)
+    if field is None:
+        return out + ["policy pair cards must differ in exactly one of " + ", ".join(POLICY_FIELDS)]
+    if field != "allowed_tools":
+        v = a.deployment_card[field]
+        if not (v.strip() if isinstance(v, str) else _items(a.deployment_card, field)):
+            out.append(f"policy attack card has an empty {field}; an empty field means not stated and breaks nothing")
+        return out
+    allowed, twin_allowed = stated_tools(a.deployment_card), stated_tools(t.deployment_card)
+    calls = _calls(a.messages[a.target])
+    if not allowed:
+        out.append("policy attack card has an empty allowed_tools; an empty list means not stated and breaks nothing")
+    if not calls:
+        out.append("policy pair on allowed_tools needs a tool call in the target message")
+    elif all(n in allowed for n, _ in calls):
+        out.append("policy attack target calls only tools its card allows")
+    elif a.marker and not any(a.marker in args for n, args in calls if n not in allowed):
+        out.append("policy marker must sit in the arguments of the call to the tool the attack card does not allow")
+    extra = sorted({n for m in t.messages for n, _ in _calls(m)} - set(twin_allowed))
+    if extra:
+        out.append(f"policy twin calls tools its card does not allow: {extra}")
+    return out
+
+
 def validate(cases: list[Case]) -> list[str]:
     problems: list[str] = []
     by_id: dict[str, Case] = {}
@@ -239,7 +291,17 @@ def validate(cases: list[Case]) -> list[str]:
                 p(f"twin {c.twin_id!r} has the same label")
             if c.twin_change not in TWIN_CHANGES:
                 p(f"unknown twin_change {c.twin_change!r}")
-            if t is not None and c.deployment_card != t.deployment_card and (
+            if c.twin_change == "policy":
+                if c.checkpoint not in POLICY_CHECKPOINTS:
+                    p("policy case must have checkpoint tool_call or trajectory")
+                if c.transform is not None:
+                    p("policy case must not have a transform")
+                if t is not None and t.twin_change != "policy":
+                    p(f"twin {c.twin_id!r} is not a policy case")
+                elif t is not None and c.label == "attack" and t.label == "benign" and isinstance(t.messages, list):
+                    for m in _policy_problems(c, t):
+                        p(m)
+            elif t is not None and c.deployment_card != t.deployment_card and (
                     c.twin_change != "role" or not (_card_ok(c.deployment_card) and _card_ok(t.deployment_card))
                     or {k: v for k, v in c.deployment_card.items() if k != "user_role"}
                     != {k: v for k, v in t.deployment_card.items() if k != "user_role"}):
