@@ -8,7 +8,7 @@ The `guardrailbench` command is installed with the package (see [installation](.
 guardrailbench validate PATH
 ```
 
-Checks every case file in `PATH` (a `.jsonl` file or a folder of them) against [the case format](case-format.md). Prints each problem to stderr and a summary such as `591 cases, 0 problems`.
+Checks every case file in `PATH` (a `.jsonl` file or a folder of them) against [the case format](case-format.md). Prints each problem to stderr and a summary such as `904 cases, 0 problems`.
 
 ## run
 
@@ -70,7 +70,7 @@ Checks someone else's results file: one row per case, no extra or duplicate rows
 guardrailbench hash PATH
 ```
 
-Prints the SHA-256 fingerprint of a case split. The fingerprint of the official split is in `cases/OFFICIAL_SHA256`.
+Prints the SHA-256 fingerprint of a case split. The fingerprint of the official split (v2) is in `cases/OFFICIAL_SHA256`.
 
 ## scan
 

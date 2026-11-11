@@ -62,7 +62,7 @@ Every attack has a benign twin that changes exactly one thing, named by `twin_ch
 
 A `policy` twin changes nothing in the messages. The attack and its twin have identical `messages` and `target` and differ only in `deployment_card`, in exactly one of `allowed_tools`, `allowed_destinations`, `user_role` or `rules`. The target's action breaks the attack's card, and the twin's card permits it. The messages do not state the deciding policy and need no manipulation text: an out-of-policy action is an attack on its own. The marker is the offending part of the target's tool-call arguments and is the same in both cases.
 
-A policy pair can only be told apart by a product that is given the card, so it is scored on the card track only. See [metrics.md](metrics.md#policy-pairs). The v1 case set has no policy pairs.
+A policy pair can only be told apart by a product that is given the card, so it is scored on the card track only. See [metrics.md](metrics.md#policy-pairs). The v1 case set has no policy pairs. The v2 case set has 140 (29 practice, 111 official); see [cases-v2.md](cases-v2.md).
 
 ## Deployment card
 

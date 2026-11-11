@@ -33,6 +33,7 @@ Steps for both are under [Submitting results](#submitting-results).
 
 - **Nov 2026**: The repository is open.
 - **Nov 2026**: The v1 case set is in: 880 attack cases, each with a benign twin, plus 2,000 normal cases.
+- **Nov 2026**: The v2 case set is in, and it is the set for the first official round: 488 attack pairs (140 of them policy pairs, which only the deployment card can tell apart) plus 938 normal cases. 313 of its cases are public. The v1 official split is withdrawn from use and held in reserve. No human has reviewed any v2 case. See [Cases in v2](docs/reference/cases-v2.md).
 - **Nov 2026**: Scoring uses a pair score, and a card track gives each product the case's deployment card.
 - **Nov 2026**: A reliability track covers consistency, stability, load, long inputs and failure behaviour.
 
@@ -65,7 +66,7 @@ cases = load_cases(Path("cases/practice/v1.jsonl"))  # 571 cases, each with fiel
 print(len(cases), cases[0].id, cases[0].checkpoint, cases[0].label)
 ```
 
-More on the fields in [the case format](docs/reference/case-format.md). Counts by family, checkpoint and sector are in [Cases in v1](docs/reference/cases-v1.md). Terms are defined in the [glossary](docs/glossary.md).
+More on the fields in [the case format](docs/reference/case-format.md). Counts by family, checkpoint and sector are in [Cases in v1](docs/reference/cases-v1.md) and [Cases in v2](docs/reference/cases-v2.md). Terms are defined in the [glossary](docs/glossary.md).
 
 ## Set Up
 
@@ -78,7 +79,7 @@ uv sync --extra dev
 uv run guardrailbench validate cases/practice
 ```
 
-The last command prints `591 cases, 0 problems`: the 571 cases of the practice split and the 20 seed cases. Without uv: `pip install -e .`. Some products need an extra package, see [installation](docs/installation.md).
+The last command prints `904 cases, 0 problems`: the 571 cases of v1 practice, the 313 cases of v2 practice and the 20 seed cases. Without uv: `pip install -e .`. Some products need an extra package, see [installation](docs/installation.md).
 
 ## Usage
 
@@ -104,12 +105,14 @@ All commands and flags: [command line reference](docs/reference/cli.md). Step by
 
 | Item | Where |
 |---|---|
-| Practice split | [`cases/practice/v1.jsonl`](cases/practice/v1.jsonl): 571 cases (131 attacks, their 131 benign twins and 309 normal cases). A separate 20-case [seed file](cases/practice/seed.jsonl) is for smoke tests. |
-| Official split | Hidden. The SHA-256 fingerprint of the frozen split is in [`cases/OFFICIAL_SHA256`](cases/OFFICIAL_SHA256). Check any split with `guardrailbench hash <path>`. |
+| Practice split, v1 | [`cases/practice/v1.jsonl`](cases/practice/v1.jsonl): 571 cases (131 attacks, their 131 benign twins and 309 normal cases). |
+| Practice split, v2 | [`cases/practice/v2.jsonl`](cases/practice/v2.jsonl): 313 cases (88 attack pairs, of which 29 are policy pairs, and 137 normal cases). |
+| Seed file | [`cases/practice/seed.jsonl`](cases/practice/seed.jsonl): 20 cases for smoke tests. The whole `cases/practice` folder is 904 cases. |
+| Official split | Hidden: the v2 official split, 1,601 cases (400 attack pairs, of which 111 are policy pairs, and 801 normal cases). Its SHA-256 fingerprint is in [`cases/OFFICIAL_SHA256`](cases/OFFICIAL_SHA256). Check any split with `guardrailbench hash <path>`. |
 | Case-writing guide | [`docs/case-writing-guide.md`](docs/case-writing-guide.md) |
 | Review log | [`docs/case-review-log.md`](docs/case-review-log.md) |
 
-v1 has 3,760 cases: 571 in the practice split and 3,189 in the official split, which is not published. Cases are licensed CC BY 4.0. Please do not train on them: they carry `GRB-CANARY-` strings.
+v1 has 3,760 cases: 571 in the practice split and 3,189 in the official split, which is not published and is withdrawn from official use: it was used for internal harness testing before any round, so it is not used for scoring. v2 has 1,914 cases: 313 in the practice split and 1,601 in the official split, which is hidden and is the one the first official round uses. Cases are licensed CC BY 4.0. Please do not train on them: they carry `GRB-CANARY-` strings.
 
 ## Submitting results
 
@@ -134,7 +137,7 @@ The run policy is in [official rounds](docs/official-runs.md) and the rules for 
 Version 1.0.0-rc1, a pre-release. What is not done, and what has to happen first:
 
 - **No results are published.** Practice results appear when the first submissions are merged. Official results appear after the first official round. Its conditions are listed in [official rounds](docs/official-runs.md#before-the-first-official-round).
-- **No case has had human review**, so no case is marked "Verified". That review is one of the conditions for the first official round.
+- **No case has had human review**, so no case is marked "Verified". The v2 cases were drafted by a model and checked by machine and by a different model only. That review is one of the conditions for the first official round.
 - **Some adapters have not been run against the live product.** The open points are marked `UNVERIFIED` in the adapter source and listed in [the follow-ups](docs/design/followups.md). An adapter with open points is not used in an official round.
 - **Non-English cases have had no native-speaker check.**
 - **1.0.0-rc1 is not tagged as a release**, so the citation file carries no release date.

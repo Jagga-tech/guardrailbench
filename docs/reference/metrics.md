@@ -57,7 +57,7 @@ A product that cannot take a card gets `not_applicable` rows for policy pairs on
 
 On the card track a product is scored on every policy pair, including those that turn on a card field its adapter does not pass on. The `twin_change` line shows the total. Which fields each adapter uses is in [deployment cards](deployment-cards.md).
 
-For a case set with no policy pairs, such as v1, `card_only_pairs` is zero and no other number changes.
+For a case set with no policy pairs, such as v1, `card_only_pairs` is zero and no other number changes. v2 has policy pairs (140 across both splits), so on its no-context and reliability runs `card_only_pairs` is not zero.
 
 ## Supporting numbers
 

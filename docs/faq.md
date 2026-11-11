@@ -10,7 +10,7 @@ Detection rate and false-block rate, reported apart, hide whether a product can 
 
 ## Why is the official split hidden?
 
-Public test sets leak into training data and into vendors' tuning, so they stop measuring anything. The official split is held by the maintainers and run on their infrastructure. Before each round, the SHA-256 fingerprint of the frozen split is published in `cases/OFFICIAL_SHA256`, so anyone can later check that it was not changed once results came in. Every case also carries a canary string that shows if it leaks.
+Public test sets leak into training data and into vendors' tuning, so they stop measuring anything. The official split is held by the maintainers and run on their infrastructure. Before each round, the SHA-256 fingerprint of the frozen split is published in `cases/OFFICIAL_SHA256` (today that is the v2 official split), so anyone can later check that it was not changed once results came in. Every case also carries a canary string that shows if it leaks.
 
 ## Can vendors tune their product to the benchmark?
 
@@ -52,7 +52,7 @@ Before results are published you get a report on your own product. It gives the 
 
 ## How often is the benchmark refreshed?
 
-Each official round uses a fresh official split. When a round's results are published, its cases are published too and move to the practice split. No round has been run, so no refresh has happened. Changes that alter published scores are versioned and recorded in [the changelog](../CHANGELOG.md).
+Each official round uses a fresh official split. When a round's results are published, its cases are published too and move to the practice split. No round has been run yet. The v2 case set was made for the first one: its official split is hidden and its practice share is public. The v1 official split is withdrawn from official use and held in reserve, unpublished: it was used for internal harness testing before any round, so it is not used for scoring. Changes that alter published scores are versioned and recorded in [the changelog](../CHANGELOG.md).
 
 ## What does "unsure" mean?
 
@@ -86,7 +86,7 @@ The product cannot represent that checkpoint, for example a text classifier give
 
 ## How are cases made, and are they checked by people?
 
-Cases are written fresh, never copied from public datasets. They are model-drafted, machine-checked and model cross-reviewed in two blind passes. No case has had human review, so no case is marked "Verified". See [the review log](case-review-log.md) and [cases in v1](reference/cases-v1.md).
+Cases are written fresh, never copied from public datasets. They are model-drafted, machine-checked and model cross-reviewed in two blind passes. No case has had human review, so no case is marked "Verified". See [the review log](case-review-log.md), [cases in v1](reference/cases-v1.md) and [cases in v2](reference/cases-v2.md).
 
 ## Can I post results?
 

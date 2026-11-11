@@ -13,6 +13,7 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 - Pair score: each attack scored with its benign twin, strict and lenient.
 - Reliability track: consistency, stability, load, long inputs, and failure behaviour.
 - Sector tag on every v1 case, with per-sector counts.
+- v2 case set: 488 attack pairs (140 policy pairs) and 938 normal cases. 313 cases are public in `cases/practice/v2.jsonl` (88 pairs, 137 normal cases) and 1,601 are in the hidden official split (400 pairs, 801 normal cases). Model-drafted, machine-checked and blind-reviewed by a different model. No human review. See `docs/reference/cases-v2.md` and the v2 section of `docs/case-review-log.md`.
 - Licensing, contribution, conduct, security, and governance documents.
 - User docs in `docs/`: an index, installation, FAQ, guides (run a product, write an adapter, submit results, reliability) and reference pages (case format, metrics, command line, cases in v1, leaderboard).
 - Issue templates for feature requests and questions.
@@ -43,6 +44,7 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 - The package version in `pyproject.toml` is `1.0.0rc1`, to match this changelog and `CITATION.cff`. It was `0.1.0`.
 - The pull request template has two checklists, one for code and adapter changes and one for practice result submissions.
 - `run --track card` no longer loads a product's models when the product takes no card and every row will be "not applicable".
+- The official split is now the v2 official split (1,601 cases). `cases/OFFICIAL_SHA256` holds its fingerprint. The v1 official split (3,189 cases) is withdrawn from official use and held in reserve, unpublished: it was used for internal harness testing before any round, so it is not used for scoring. The v1 practice split stays public. `guardrailbench validate cases/practice` now prints `904 cases, 0 problems`.
 
 ### Fixed
 

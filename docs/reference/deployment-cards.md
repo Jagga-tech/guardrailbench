@@ -57,7 +57,7 @@ An adapter that passes on only some card fields gets identical input for both si
 - If a tool name cannot be written exactly as a string in the rule language, no rule is added for that card. A partial list would block a tool the card allows.
 - With your own rules file (`GUARDRAILBENCH_INVARIANT_POLICY`), a case whose card would add a rule is reported as an error.
 
-In the practice split every judged tool call uses a tool its card allows, so this rule does not fire there. That is a fact about the cases, not a setting. Policy pairs on `allowed_tools` are the cases where it does fire, and v1 has none.
+In the v1 cases every judged tool call uses a tool its card allows, so this rule does not fire there. That is a fact about the cases, not a setting. Policy pairs on `allowed_tools` are the cases where it does fire, and v1 has none. v2 has policy pairs, at `tool_call` and `trajectory`.
 
 **LlamaFirewall.** Only AlignmentCheck reads the trace, so the card reaches assistant turns only (tool calls and trajectories). PromptGuard, which handles user messages and tool results, classifies one message and never sees the card. AlignmentCheck's own prompt tells its model to judge the agent's action against the user's message. The vendor does not say a system message is treated as policy, so the adapter passes the card where a deployment would put it and adds no instruction of its own.
 
