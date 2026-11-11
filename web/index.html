@@ -3,11 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GuardrailBench</title>
-<meta name="description" content="An open, vendor-neutral benchmark for prompt-injection firewalls, agent guards and MCP gateways. Every attack is scored with its harmless twin.">
-<meta property="og:title" content="GuardrailBench">
-<meta property="og:description" content="An open, vendor-neutral benchmark for AI-agent guardrails.">
+<title>GuardrailBench: an open benchmark for AI-agent guardrails</title>
+<meta name="description" content="An open, vendor-neutral benchmark of prompt-injection firewalls, agent firewalls and MCP gateways. Every attack is scored with its benign twin.">
+<link rel="canonical" href="https://jagga-tech.github.io/guardrailbench/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GuardrailBench">
+<meta property="og:title" content="GuardrailBench: an open benchmark for AI-agent guardrails">
+<meta property="og:description" content="An open, vendor-neutral benchmark of prompt-injection firewalls, agent firewalls and MCP gateways. Every attack is scored with its benign twin.">
+<meta property="og:url" content="https://jagga-tech.github.io/guardrailbench/">
 <meta property="og:image" content="https://jagga-tech.github.io/guardrailbench/assets/social-card.png">
+<meta property="og:image:alt" content="GuardrailBench: an open benchmark for AI-agent guardrails">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,8 +27,8 @@
 
 <div class="notice">
   <div class="container">
-    <p>Pre-release. No results are published yet.</p>
-    <a href="about.html#status">What happens next</a>
+    <p>Pre-release. No results are published.</p>
+    <a href="about.html#status">What has to happen first</a>
   </div>
 </div>
 <header class="bar">
@@ -46,13 +51,14 @@
           <ul>
             <li><a href="about.html">About GuardrailBench</a></li>
             <li><a href="method.html">Method</a></li>
-            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md" class="ext">Docs</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="citations.html">Citations</a></li>
-            <li><a href="submit.html">Submit</a></li>
+            <li><a href="submit.html">Take part</a></li>
           </ul></details></li>
+        <li class="nav-take"><a href="submit.html">Take part</a></li>
         <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
@@ -63,17 +69,18 @@
   <div class="container lb">
     <header class="pagehead">
       <h1>Official Leaderboards</h1>
-      <p class="lead">Guardrail products scored on attacks and their harmless twins. Nothing is published yet.</p>
+      <p class="lead">Guardrail products scored on attacks and their benign twins. No results are published.</p>
+      <p>Makers of guardrail products: there are <a href="submit.html">two ways to take part</a>.</p>
     </header>
 
     <div class="tabs" role="tablist" aria-label="Leaderboards">
-        <button class="tab" type="button" role="tab" id="tab-official-none" data-board="official-none" data-kind="detection" data-desc="Hidden split, run by the maintainers. The guard sees each case and nothing else." data-empty="Rows appear after the first official round." aria-controls="lb-panel" aria-selected="true">Official &middot; No context</button>
-        <button class="tab" type="button" role="tab" id="tab-official-card" data-board="official-card" data-kind="detection" data-desc="Hidden split, run by the maintainers. The guard is configured from each case&rsquo;s deployment card." data-empty="Products that cannot take a policy will show as not applicable." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Official &middot; Card</button>
-        <button class="tab" type="button" role="tab" id="tab-reliability" data-board="reliability" data-kind="reliability" data-desc="Consistency, stability, load, long inputs and failure on the hidden split. The reading filter does not apply." data-empty="Rows appear after the first official round." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Reliability</button>
-        <button class="tab" type="button" role="tab" id="tab-practice" data-board="practice" data-kind="detection" data-desc="Public practice split, run and reported by the submitter. Unverified until maintainers re-run a sample." data-empty="Submissions are pull requests with per-case logs. See Submit." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Practice (self-reported)</button>
+        <button class="tab" type="button" role="tab" id="tab-official-none" data-board="official-none" data-kind="detection" data-desc="Official split, run by the maintainers for products whose makers asked. The guard sees each case and nothing else." data-empty="Rows appear after the first official round. A product is in a round only when its maker asks." aria-controls="lb-panel" aria-selected="true">Official &middot; No context</button>
+        <button class="tab" type="button" role="tab" id="tab-official-card" data-board="official-card" data-kind="detection" data-desc="Official split, run by the maintainers for products whose makers asked. The guard is configured from each case&rsquo;s deployment card." data-empty="Rows appear after the first official round. Products that cannot take a policy show as not applicable." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Official &middot; Card</button>
+        <button class="tab" type="button" role="tab" id="tab-reliability" data-board="reliability" data-kind="reliability" data-desc="Consistency, stability, load, long inputs and failure, measured by the maintainers in an official round. The reading filter does not apply." data-empty="Rows appear after the first official round." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Reliability</button>
+        <button class="tab" type="button" role="tab" id="tab-practice" data-board="practice" data-kind="detection" data-desc="Practice split, run and reported by the submitter. Maintainers check the per-case logs before a row is merged." data-empty="Rows appear when the first submissions are merged. Submissions are pull requests with per-case logs. See Take part." aria-controls="lb-panel" aria-selected="false" tabindex="-1">Practice (self-reported)</button>
     </div>
     <div id="lb-panel" role="tabpanel" aria-labelledby="tab-official-none" class="bench">
-      <p class="lb-desc" id="lb-desc">Hidden split, run by the maintainers. The guard sees each case and nothing else.</p>
+      <p class="lb-desc" id="lb-desc">Official split, run by the maintainers for products whose makers asked. The guard sees each case and nothing else.</p>
       <form class="controls" onsubmit="return false">
         <label class="field"><span>Checkpoint</span>
           <select id="f-cp">
@@ -103,15 +110,15 @@
         <table class="register results" id="lb-table">
           <caption class="visually-hidden">Official, no context: all checkpoints, strict reading</caption>
           <thead><tr><th scope="col">Product</th><th scope="col">Pair score<small>strict</small></th><th scope="col">Unsure</th><th scope="col">Detection<small>strict</small></th><th scope="col">False block<small>strict</small></th><th scope="col">Organisation</th><th scope="col">Version</th><th scope="col">Date</th><th scope="col">Logs</th></tr></thead>
-          <tbody><tr class="empty"><td colspan="9"><div><span class="empty-title">Nothing published</span><p>No published results yet &mdash; first results follow legal review and outside review of the hidden split.</p><p>Rows appear after the first official round.</p></div></td></tr></tbody>
+          <tbody><tr class="empty"><td colspan="9"><div><span class="empty-title">Nothing published</span><p>No results are published.</p><p>Rows appear after the first official round. A product is in a round only when its maker asks.</p></div></td></tr></tbody>
         </table>
       </div>
       <div class="notes">
-        <p>Each entry reports pair score: the share of attack/twin pairs where the attack is stopped and its harmless twin is allowed.</p>
+        <p>Each entry reports pair score: the share of attack/twin pairs where the attack is stopped and its benign twin is allowed.</p>
         <ul class="legend" aria-label="Badges">
           <li><span class="badge badge--open">open source</span> open-source product</li>
-          <li><span class="badge badge--run">maintainer run</span> run by the maintainers on the hidden split</li>
-          <li><span class="badge badge--self">self-reported</span> practice split, unverified</li>
+          <li><span class="badge badge--run">maintainer run</span> run by the maintainers in an official round</li>
+          <li><span class="badge badge--self">self-reported</span> practice split, run by the submitter</li>
           <li><span class="badge badge--aff">affiliated</span> maintainer-affiliated product, conflict disclosed</li>
           <li><span class="badge badge--base">baseline</span> reference baseline, not a product</li>
         </ul>
@@ -125,7 +132,7 @@
               <div><dt>Detection, False block</dt><dd>Attacks stopped, and twins and normal cases stopped. Supporting detail only.</dd></div>
               <div><dt>Not claimed</dt><dd>A checkpoint the product cannot see. Shown plainly, not counted as a miss.</dd></div>
             </dl>
-            <p>No overall winner. Self-reported practice results get their own labelled tab.</p>
+            <p>There is no overall winner. Self-reported practice results have their own tab.</p>
           </div>
         </details>
       </div>
@@ -141,13 +148,13 @@
         <li class="card">
           <p class="big">3,189<small>cases</small></p>
           <h3>Official split</h3>
-          <p>Hidden. Written, held and run only by the maintainers.</p>
+          <p>Hidden. Written, held and run only by the maintainers, in official rounds.</p>
           <a href="benchmarks/splits.html#two">Read more<span class="visually-hidden"> about the official split</span></a>
         </li>
         <li class="card">
           <p class="big">571<small>cases + 20 seed</small></p>
           <h3>Practice split</h3>
-          <p>Public. Run it with your own keys and submit the logs.</p>
+          <p>Public. Run it with your own keys and send the results with the logs.</p>
           <a href="benchmarks/splits.html#counts">Read more<span class="visually-hidden"> about the practice split</span></a>
         </li>
         <li class="card">
@@ -196,7 +203,7 @@
     <div class="container grid">
       <div class="head">
         <h2 id="ack-title">Acknowledgements</h2>
-        <p>GuardrailBench takes no payment for placement. No sponsors yet.</p>
+        <p>GuardrailBench takes no payment for placement and has no sponsors.</p>
       </div>
     </div>
   </section>
@@ -218,7 +225,7 @@
         <li><a href="./">Leaderboards</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="method.html">Method</a></li>
-        <li><a href="submit.html">Submit</a></li>
+        <li><a href="submit.html">Take part</a></li>
         <li><a href="citations.html">Citations</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>

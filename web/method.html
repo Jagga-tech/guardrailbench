@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GuardrailBench method</title>
-<meta name="description" content="How GuardrailBench measures guardrail products: pair score, strict and lenient readings, the card and reliability tracks, sectors, and the hidden split.">
+<title>Method | GuardrailBench</title>
+<meta name="description" content="How GuardrailBench measures guardrail products: pair score, strict and lenient readings, the card and reliability tracks, sectors, and the official split.">
+<link rel="canonical" href="https://jagga-tech.github.io/guardrailbench/method.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GuardrailBench">
+<meta property="og:title" content="Method | GuardrailBench">
+<meta property="og:description" content="How GuardrailBench measures guardrail products: pair score, strict and lenient readings, the card and reliability tracks, sectors, and the official split.">
+<meta property="og:url" content="https://jagga-tech.github.io/guardrailbench/method.html">
+<meta property="og:image" content="https://jagga-tech.github.io/guardrailbench/assets/social-card.png">
+<meta property="og:image:alt" content="GuardrailBench: an open benchmark for AI-agent guardrails">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,13 +44,14 @@
           <ul>
             <li><a href="about.html">About GuardrailBench</a></li>
             <li><a href="method.html" aria-current="page">Method</a></li>
-            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md" class="ext">Docs</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="citations.html">Citations</a></li>
-            <li><a href="submit.html">Submit</a></li>
+            <li><a href="submit.html">Take part</a></li>
           </ul></details></li>
+        <li class="nav-take"><a href="submit.html">Take part</a></li>
         <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
@@ -74,7 +84,7 @@
       <article class="article">
         <section id="pair" aria-labelledby="pair-h">
           <h2 id="pair-h">The pair score</h2>
-          <p>Every attack case has a harmless twin that changes exactly one thing: the intent, the user&rsquo;s role, the destination, or where the data came from. The same calendar invite, say, with a real meeting note in place of a hidden instruction.</p>
+          <p>Every attack case has a benign twin that changes exactly one thing: the intent, the user&rsquo;s role, the destination, or where the data came from. The same calendar invite, say, with a real meeting note in place of a hidden instruction.</p>
           <p>A pair is correct only when the attack is stopped and the twin is allowed. The pair score is the share of pairs that are correct. It is shown by family and by checkpoint, in both tracks, with a 95% Wilson confidence interval.</p>
           <div class="scroll" tabindex="0" role="region" aria-label="Pair outcomes">
             <table class="register">
@@ -127,7 +137,7 @@
             <div><dt>Consistency</dt><dd>Each case runs several times (three by default). The flip rate is the share whose decision is not the same every time.</dd></div>
             <div><dt>Stability</dt><dd>Edits that keep the meaning: reflowed whitespace, a neutral opening sentence, renamed people. Instability is the share of decisions that change.</dd></div>
             <div><dt>Load</dt><dd>Median and 95th percentile latency and the error rate for a seeded sample at 1, 8 and 32 parallel workers.</dd></div>
-            <div><dt>Long inputs</dt><dd>Attacks padded to 4,000, 16,000, 64,000 and 256,000 characters, with a padded harmless control at each length.</dd></div>
+            <div><dt>Long inputs</dt><dd>Attacks padded to 4,000, 16,000, 64,000 and 256,000 characters, with a padded benign control at each length.</dd></div>
             <div><dt>Failure</dt><dd>Errors and timeouts across every run, and the result when an error counts the way the product&rsquo;s stated fail mode says it should.</dd></div>
           </dl>
         </section>
@@ -142,11 +152,11 @@
           <h2 id="splits-h">Splits and contamination</h2>
           <p>Public test sets mislead: detectors have been trained on the benchmarks that ranked them. GuardrailBench copies the SWE-bench model.</p>
           <ul>
-            <li>The <strong>practice split</strong> is public. Anyone can run it with their own keys and submit verdicts with full per-case logs. Self-reported results sit on a separate, labelled tier until maintainers re-run a random sample.</li>
-            <li>The <strong>official split</strong> is hidden. Maintainers write it, hold it and run it on their own infrastructure. Vendors never receive it.</li>
+            <li>The <strong>practice split</strong> is public. Anyone can run it with their own keys and send results with full per-case logs. These results are shown on their own tab, marked self-reported.</li>
+            <li>The <strong>official split</strong> is hidden. Maintainers write it, hold it and run it on their own infrastructure, in official rounds. Vendors never receive it. A product is in a round only when its maker asks: see <a href="submit.html">Take part</a>.</li>
             <li>Before each round the SHA-256 of the frozen official split is published, so anyone can check later that no case changed after results came in.</li>
             <li>Every case carries a canary string that shows if it leaks into training data. Vendors are asked to state their training sources.</li>
-            <li>The official split is refreshed on a schedule, and retired cases move to the practice split.</li>
+            <li>Each official round uses a fresh official split. After a round its cases are published and move to the practice split.</li>
           </ul>
           <p>If a product&rsquo;s API cannot represent a case, such as a text classifier given a tool call, the result is &ldquo;not claimed&rdquo;, shown plainly and not counted as a miss.</p>
         </section>
@@ -165,12 +175,12 @@
         <section id="limits" aria-labelledby="limits-h">
           <h2 id="limits-h">Known limitations</h2>
           <ul>
-            <li>v1 cases are model-drafted, machine-checked and cross-reviewed. Human review of a verified subset is pending.</li>
+            <li>v1 cases are model-drafted, machine-checked and cross-reviewed. No case has had human review, so there is no verified subset.</li>
             <li>The normal-case corpus differs in style from the attacks, so its false-block rate is an optimistic proxy. The twin false-block rate is shown next to it.</li>
-            <li>Attack destinations often use look-alike or reserved domains, while harmless ones use the deployment&rsquo;s own.</li>
+            <li>Attack destinations often use look-alike or reserved domains, while benign ones use the deployment&rsquo;s own.</li>
             <li>Non-English cases have had no native-speaker check.</li>
           </ul>
-          <p>The full list is in the <a href="https://github.com/Jagga-tech/guardrailbench#cases">README</a>.</p>
+          <p>The full list is in <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/cases-v1.md#known-limitations">Cases in v1</a>.</p>
         </section>
       </article>
     </div>
@@ -193,7 +203,7 @@
         <li><a href="./">Leaderboards</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="method.html">Method</a></li>
-        <li><a href="submit.html">Submit</a></li>
+        <li><a href="submit.html">Take part</a></li>
         <li><a href="citations.html">Citations</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>

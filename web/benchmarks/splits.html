@@ -4,7 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Practice and official splits | GuardrailBench</title>
-<meta name="description" content="GuardrailBench has a public practice split you run yourself and a hidden official split only maintainers run.">
+<meta name="description" content="GuardrailBench has a public practice split that anyone runs and a hidden official split that only the maintainers run, for makers who ask.">
+<link rel="canonical" href="https://jagga-tech.github.io/guardrailbench/benchmarks/splits.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GuardrailBench">
+<meta property="og:title" content="Practice and official splits | GuardrailBench">
+<meta property="og:description" content="GuardrailBench has a public practice split that anyone runs and a hidden official split that only the maintainers run, for makers who ask.">
+<meta property="og:url" content="https://jagga-tech.github.io/guardrailbench/benchmarks/splits.html">
+<meta property="og:image" content="https://jagga-tech.github.io/guardrailbench/assets/social-card.png">
+<meta property="og:image:alt" content="GuardrailBench: an open benchmark for AI-agent guardrails">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,13 +44,14 @@
           <ul>
             <li><a href="../about.html">About GuardrailBench</a></li>
             <li><a href="../method.html">Method</a></li>
-            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md" class="ext">Docs</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
             <li><a href="../contact.html">Contact</a></li>
             <li><a href="../citations.html">Citations</a></li>
-            <li><a href="../submit.html">Submit</a></li>
+            <li><a href="../submit.html">Take part</a></li>
           </ul></details></li>
+        <li class="nav-take"><a href="../submit.html">Take part</a></li>
         <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
@@ -52,7 +62,7 @@
   <div class="container">
     <header class="pagehead">
       <h1>Practice and official splits</h1>
-      <p class="lead">You run the public split, we run the hidden one.</p>
+      <p class="lead">Anyone runs the practice split. The maintainers run the official split, for makers who ask.</p>
       <div class="actions">
         <a class="btn btn--primary" href="../method.html">Method</a>
         <a class="btn" href="https://github.com/Jagga-tech/guardrailbench">GitHub</a>
@@ -63,21 +73,21 @@
       <article class="article bench">
     <section id="overview" aria-labelledby="overview-h">
       <h2 id="overview-h">Overview</h2>
-      <p>Public test sets mislead: detectors have been trained on the benchmarks that ranked them. GuardrailBench copies the SWE-bench model. You run the public practice split; the maintainers run the hidden official split.</p>
-      <p>Results: the <a href="../#practice">Practice (self-reported)</a> tab of the leaderboard.</p>
+      <p>Public test sets mislead: detectors have been trained on the benchmarks that ranked them. GuardrailBench copies the SWE-bench model. Anyone runs the public practice split. The maintainers run the hidden official split in official rounds.</p>
+      <p>Results: practice results are on the <a href="../#practice">Practice (self-reported)</a> tab of the leaderboard. Official results are on the <a href="../#official-none">official tabs</a>.</p>
     </section>
     <section id="two" aria-labelledby="two-h">
       <h2 id="two-h">Two splits</h2>
       <div class="elev elev--2">
         <div>
           <h3>Practice split, public</h3>
-          <p>Run it with your own keys, then submit verdicts and logs as a pull request.</p>
-          <p><a href="../submit.html">How to submit</a></p>
+          <p>Run it with your own keys, then send the results and the per-case logs as a pull request.</p>
+          <p><a href="../submit.html#practice">How to submit</a></p>
         </div>
         <div>
           <h3>Official split, hidden</h3>
-          <p>Only maintainers run it. Its SHA-256 is published before each round.</p>
-          <p><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md">Vendor rules</a></p>
+          <p>Only maintainers run it, and only on products whose makers asked. Its SHA-256 is published before each round.</p>
+          <p><a href="../submit.html#official">How to ask for an official round</a></p>
         </div>
       </div>
     </section>
@@ -93,7 +103,7 @@
           </tbody>
         </table>
       </div>
-      <p>Per-family and per-checkpoint counts are in the <a href="https://github.com/Jagga-tech/guardrailbench#cases">README</a>.</p>
+      <p>The 20 seed cases are 10 pairs for smoke tests and are not part of the v1 counts. Per-family, per-checkpoint and per-sector counts are in <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/reference/cases-v1.md">Cases in v1</a>.</p>
     </section>
     <section id="contamination" aria-labelledby="contamination-h">
       <h2 id="contamination-h">Keeping the official split clean</h2>
@@ -101,8 +111,8 @@
         <li>Maintainers write the official split, hold it and run it on their own infrastructure. Vendors never receive it.</li>
         <li>Before each round the SHA-256 of the frozen official split is published, so anyone can check later that no case changed after results came in.</li>
         <li>Every case carries a canary string that shows if it leaks into training data. Vendors are asked to state their training sources.</li>
-        <li>The official split is refreshed on a schedule, and retired cases move to the practice split.</li>
-        <li>Self-reported practice results sit on a separate, labelled tier until maintainers re-run a random sample.</li>
+        <li>Each official round uses a fresh official split. After a round its cases are published and move to the practice split.</li>
+        <li>Self-reported practice results are shown on their own tab and never on the official tabs.</li>
       </ul>
     </section>
     <section id="sectors" aria-labelledby="sectors-h">
@@ -112,7 +122,7 @@
     </section>
     <section id="authors" aria-labelledby="authors-h">
       <h2 id="authors-h">Who wrote the cases</h2>
-      <p>Written fresh, never copied from public datasets. Model-drafted, machine-checked and cross-reviewed; human review of a verified subset is still to come. Non-English cases have had no native-speaker check.</p>
+      <p>Written fresh, never copied from public datasets. Model-drafted, machine-checked and cross-reviewed. No case has had human review, so there is no verified subset. Non-English cases have had no native-speaker check.</p>
     </section>
       </article>
     </div>
@@ -135,7 +145,7 @@
         <li><a href="../">Leaderboards</a></li>
         <li><a href="../about.html">About</a></li>
         <li><a href="../method.html">Method</a></li>
-        <li><a href="../submit.html">Submit</a></li>
+        <li><a href="../submit.html">Take part</a></li>
         <li><a href="../citations.html">Citations</a></li>
         <li><a href="../contact.html">Contact</a></li>
       </ul>

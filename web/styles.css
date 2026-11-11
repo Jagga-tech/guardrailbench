@@ -102,6 +102,7 @@ svg { display: block; }
 .menu ul .ext::after { content: "\2197"; margin-left: var(--space-2xs); color: var(--color-muted); }
 .gh svg { width: 22px; height: 22px; fill: currentColor; }
 @media (max-width: 40rem) {
+  .nav-take { display: none; } /* still in the About menu */
   .bar .container { position: relative; gap: var(--space-md); }
   .nav { gap: var(--space-md); font-size: var(--text-sm); }
   .brand span { display: none; }
@@ -204,6 +205,12 @@ svg { display: block; }
 .elev li { padding-left: var(--space-lg); position: relative; }
 .elev li::before { content: ""; position: absolute; left: 0; top: 0.75em; width: 12px; height: var(--rule-hair); background: var(--color-rule); }
 .after { grid-column: 1 / -1; }
+/* numbered steps inside an elevation (take part) */
+.elev ol { padding-left: var(--space-lg); display: grid; gap: var(--space-sm); }
+.elev ol li { padding-left: var(--space-2xs); }
+.elev ol li::before { content: none; }
+.elev h2 { font-size: var(--text-3xl); max-width: none; }
+.elev .actions { margin-top: var(--space-sm); }
 
 /* status band */
 .status { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--space-lg) var(--gap-columns); align-items: end; }

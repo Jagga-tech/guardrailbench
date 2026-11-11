@@ -28,6 +28,7 @@ jobs:
           mkdir _site
           cp -R web/. _site/
           cp -R assets _site/assets
+          test -f _site/404.html   # GitHub Pages serves this file for missing paths
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

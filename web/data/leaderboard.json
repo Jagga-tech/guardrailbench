@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "updated": null,
-  "about": "Results shown on the home page. Every list is empty: no results are published yet. Rates are fractions from 0 to 1. A checkpoint missing from by_checkpoint means the product does not claim it.",
+  "about": "Results shown on the home page. Every list is empty: no results are published. Rates are fractions from 0 to 1. A checkpoint missing from by_checkpoint means the product does not claim it.",
   "schema": {
     "entry": {
       "product": "string",

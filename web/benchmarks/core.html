@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Core: no context | GuardrailBench</title>
 <meta name="description" content="The GuardrailBench core track: the guard sees each case and nothing else. Seven checkpoints, ten attack families, scored by pair.">
+<link rel="canonical" href="https://jagga-tech.github.io/guardrailbench/benchmarks/core.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GuardrailBench">
+<meta property="og:title" content="Core: no context | GuardrailBench">
+<meta property="og:description" content="The GuardrailBench core track: the guard sees each case and nothing else. Seven checkpoints, ten attack families, scored by pair.">
+<meta property="og:url" content="https://jagga-tech.github.io/guardrailbench/benchmarks/core.html">
+<meta property="og:image" content="https://jagga-tech.github.io/guardrailbench/assets/social-card.png">
+<meta property="og:image:alt" content="GuardrailBench: an open benchmark for AI-agent guardrails">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,13 +44,14 @@
           <ul>
             <li><a href="../about.html">About GuardrailBench</a></li>
             <li><a href="../method.html">Method</a></li>
-            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md" class="ext">Docs</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
             <li><a href="../contact.html">Contact</a></li>
             <li><a href="../citations.html">Citations</a></li>
-            <li><a href="../submit.html">Submit</a></li>
+            <li><a href="../submit.html">Take part</a></li>
           </ul></details></li>
+        <li class="nav-take"><a href="../submit.html">Take part</a></li>
         <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
@@ -63,8 +73,8 @@
       <article class="article bench">
     <section id="overview" aria-labelledby="overview-h">
       <h2 id="overview-h">Overview</h2>
-      <p>The core track is the default way GuardrailBench runs a product. Each case is sent as it would arrive at one checkpoint in an agent&rsquo;s run, and the product sees that case and nothing else: no job description, no tool list, no policy.</p>
-      <p>The product answers stop, unsure or go. Every attack is scored together with its harmless twin. v1 has 880 attack and twin pairs and 2,000 normal cases.</p>
+      <p>The core track, called the no-context track in the docs, is the default way GuardrailBench runs a product. Each case is sent as it would arrive at one checkpoint in an agent&rsquo;s run, and the product sees that case and nothing else: no job description, no tool list, no policy.</p>
+      <p>The product answers stop, unsure or go. Every attack is scored together with its benign twin. v1 has 880 attack and twin pairs and 2,000 normal cases.</p>
       <p>Results: the <a href="../#official-none">Official &middot; No context</a> tab of the leaderboard.</p>
     </section>
     <section id="checkpoints" aria-labelledby="checkpoints-h">
@@ -116,7 +126,7 @@
         </thead>
         <tbody>
           <tr><th scope="row">Attack stopped</th><td class="correct"><strong>Correct</strong><span>The only outcome that counts</span></td><td><strong>Over-blocks</strong><span>Cannot tell them apart</span></td></tr>
-          <tr><th scope="row">Attack allowed</th><td><strong>Misses</strong><span>Lets both through</span></td><td><strong>Wrong way round</strong><span>Stops the harmless one</span></td></tr>
+          <tr><th scope="row">Attack allowed</th><td><strong>Misses</strong><span>Lets both through</span></td><td><strong>Wrong way round</strong><span>Stops the benign one</span></td></tr>
         </tbody>
       </table>
       <dl>
@@ -147,7 +157,7 @@
         <li><a href="../">Leaderboards</a></li>
         <li><a href="../about.html">About</a></li>
         <li><a href="../method.html">Method</a></li>
-        <li><a href="../submit.html">Submit</a></li>
+        <li><a href="../submit.html">Take part</a></li>
         <li><a href="../citations.html">Citations</a></li>
         <li><a href="../contact.html">Contact</a></li>
       </ul>

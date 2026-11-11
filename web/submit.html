@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Submit results | GuardrailBench</title>
-<meta name="description" content="How to submit GuardrailBench practice-split results, and how official-split runs work.">
+<title>Take part | GuardrailBench</title>
+<meta name="description" content="The two ways a guardrail product gets on the GuardrailBench leaderboard: self-run practice results by pull request, or an official round that its maker asks for.">
+<link rel="canonical" href="https://jagga-tech.github.io/guardrailbench/submit.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="GuardrailBench">
+<meta property="og:title" content="Take part | GuardrailBench">
+<meta property="og:description" content="The two ways a guardrail product gets on the GuardrailBench leaderboard: self-run practice results by pull request, or an official round that its maker asks for.">
+<meta property="og:url" content="https://jagga-tech.github.io/guardrailbench/submit.html">
+<meta property="og:image" content="https://jagga-tech.github.io/guardrailbench/assets/social-card.png">
+<meta property="og:image:alt" content="GuardrailBench: an open benchmark for AI-agent guardrails">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,17 +40,18 @@
             <li><a href="benchmarks/reliability.html">Reliability</a></li>
             <li><a href="benchmarks/splits.html">Practice and official splits</a></li>
           </ul></details></li>
-        <li class="menu menu--end"><details><summary class="is-current">About</summary>
+        <li class="menu menu--end"><details><summary>About</summary>
           <ul>
             <li><a href="about.html">About GuardrailBench</a></li>
             <li><a href="method.html">Method</a></li>
-            <li><a href="https://github.com/Jagga-tech/guardrailbench#readme" class="ext">Docs</a></li>
+            <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md" class="ext">Docs</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md" class="ext">Governance</a></li>
             <li><a href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md" class="ext">Contributing</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="citations.html">Citations</a></li>
-            <li><a href="submit.html" aria-current="page">Submit</a></li>
+            <li><a href="submit.html" aria-current="page">Take part</a></li>
           </ul></details></li>
+        <li class="nav-take"><a href="submit.html" aria-current="page">Take part</a></li>
         <li><a class="gh" href="https://github.com/Jagga-tech/guardrailbench" aria-label="GuardrailBench on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg></a></li>
       </ul>
     </nav>
@@ -51,31 +61,69 @@
 <main id="main">
   <div class="container">
     <header class="pagehead">
-      <h1>Submit</h1>
-      <p class="lead">Practice results are self-reported through a pull request. Official results come only from maintainer runs.</p>
+      <h1>Take part</h1>
+      <p class="lead">There are two ways to get a guardrail product on the leaderboard. Both are free, and you can do both.</p>
     </header>
-    <div class="doc">
-      <article class="article bench">
+  </div>
+
+  <section class="section--s" aria-label="The two routes">
+    <div class="container grid">
+      <div class="elev elev--2">
         <section id="practice" aria-labelledby="practice-h">
-          <h2 id="practice-h">Practice split</h2>
-          <ul>
-            <li>Run the public practice split with your own keys and compute.</li>
-            <li>Open a pull request with the per-case logs (the <code>runs/</code> output) and the report. Logs are required.</li>
-            <li>If you ran more than once, submit every attempt, not only the best.</li>
-            <li>Results appear on the <a href="./#practice">Practice (self-reported)</a> tab, labelled unverified, until maintainers re-run a random sample.</li>
-          </ul>
-          <pre><code>guardrailbench verify-submission --results runs/&lt;product&gt;/&lt;split&gt;.jsonl --cases cases/practice</code></pre>
-          <p>Run this before you open the pull request; maintainers run the same check.</p>
+          <p><span class="badge badge--self">self-reported</span></p>
+          <h2 id="practice-h">Practice</h2>
+          <p><strong>Open. You run it.</strong> You run your own product on the public practice split and send the results. They are shown on the <a href="./#practice">Practice (self-reported)</a> tab, marked self-reported.</p>
+          <ol>
+            <li>Install the harness and write an adapter, or pick one that exists. <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/guides/add-your-product.md">Add your product</a> takes about an hour.</li>
+            <li>Run the practice split with your own keys and the product&rsquo;s defaults, then score it.</li>
+            <li>Check the log with <code>guardrailbench verify-submission</code>. Maintainers run the same check.</li>
+            <li>Open a pull request with the report and the full per-case log. Send every attempt, not only the best.</li>
+            <li>Maintainers check the log and merge. Your row appears on the practice tab.</li>
+          </ol>
+          <div class="actions">
+            <a class="btn btn--primary" href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/guides/submit.md">Submit results: the steps</a>
+            <a href="https://github.com/Jagga-tech/guardrailbench/tree/main/cases/practice">Practice data</a>
+          </div>
         </section>
         <section id="official" aria-labelledby="official-h">
-          <h2 id="official-h">Official split</h2>
-          <p>Only maintainers run the hidden split, on their own infrastructure. Vendors never receive it. To have a product included, open an issue titled &ldquo;Participation: &lt;product&gt;&rdquo; (see <a href="contact.html">Contact</a>).</p>
+          <p><span class="badge badge--run">maintainer run</span></p>
+          <h2 id="official-h">Official rounds</h2>
+          <p><strong>Closed. The maintainers run it, and only if you ask.</strong> The <a href="./#official-none">official tabs</a> show only results from the maintainers&rsquo; closed test on the hidden official split. A product is in a round only when its maker asks. The maintainers do not test a product uninvited.</p>
+          <ol>
+            <li>Open a <a href="https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml">participation request</a>. It asks for the product, the tracks you want and a contact route.</li>
+            <li>Have a public adapter for the product in the repository: one that is already there, or one you add by pull request.</li>
+            <li>Give the maintainers a way to run the product. Hosted: an ordinary account or key, sent privately. <strong>Never paste a key in an issue.</strong> Self-hosted: install instructions.</li>
+            <li>You are told the window in which the runs happen. The product is run once, with its defaults.</li>
+            <li>You see your own results before they are published and can report anomalies. The results of a valid run are published.</li>
+          </ol>
+          <div class="actions">
+            <a class="btn btn--primary" href="https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml">Open a participation request</a>
+            <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/official-runs.md">Run policy</a>
+          </div>
         </section>
-        <div class="actions">
-          <a class="btn btn--primary" href="https://github.com/Jagga-tech/guardrailbench/blob/main/CONTRIBUTING.md#submit-results">Submitting results</a>
-          <a class="btn" href="https://github.com/Jagga-tech/guardrailbench/blob/main/docs/guides/add-your-product.md">Add your product</a>
-          <a class="btn" href="https://github.com/Jagga-tech/guardrailbench">Repository</a>
-        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="doc">
+      <article class="article bench">
+        <section id="rules" aria-labelledby="rules-h">
+          <h2 id="rules-h">The same on both routes</h2>
+          <ul>
+            <li>There is no fee, and no one pays for placement.</li>
+            <li>The product runs with its defaults. A tuned setup is shown separately and labelled as tuned.</li>
+            <li>Vendors never receive the official split before or during a round. A round&rsquo;s cases are published with its results.</li>
+            <li>A practice result never moves to the official tabs.</li>
+            <li>Keys, passwords and tokens never go in an issue, a pull request or a log.</li>
+          </ul>
+          <p>The rules for vendors, including how conflicts of interest are handled, are in <a href="https://github.com/Jagga-tech/guardrailbench/blob/main/GOVERNANCE.md#vendor-participation-rules">GOVERNANCE.md</a>. For anything else, see <a href="contact.html">Contact</a>.</p>
+        </section>
+        <section id="check" aria-labelledby="check-h">
+          <h2 id="check-h">Check a practice log before you send it</h2>
+          <pre><code>guardrailbench verify-submission --results runs/&lt;product&gt;/practice.jsonl --cases cases/practice</code></pre>
+          <p>It prints nothing when the file is complete: one row per case, valid decisions, and logs in every row.</p>
+        </section>
       </article>
     </div>
   </div>
@@ -97,7 +145,7 @@
         <li><a href="./">Leaderboards</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="method.html">Method</a></li>
-        <li><a href="submit.html">Submit</a></li>
+        <li><a href="submit.html">Take part</a></li>
         <li><a href="citations.html">Citations</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>

@@ -17,7 +17,7 @@
     affiliated: ['affiliated', 'badge--aff'],
     baseline: ['baseline', 'badge--base']
   };
-  var EMPTY = 'No published results yet — first results follow legal review and outside review of the hidden split.';
+  var EMPTY = 'No results are published.';
   var state = { board: tabs[0].dataset.board, cp: 'all', reading: 'strict', data: null };
 
   function esc(s) {
