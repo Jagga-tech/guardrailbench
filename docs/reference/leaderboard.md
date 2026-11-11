@@ -12,7 +12,7 @@ results/
       meta.json       who ran it, and whether it is verified
 ```
 
-Only the aggregates (`report.json`, `meta.json`) are committed to this repository. Raw run output holds case text, so `runs/` and every `*.jsonl` outside `cases/practice/` are git-ignored. Per-case logs are attached to the pull request that submits a result, see [the submit guide](../guides/submit.md).
+Each result folder holds `report.json`, `meta.json` and the compressed per-case log `log.jsonl.gz`. Uncompressed run output (`runs/` and every `*.jsonl` outside `cases/practice/`) is git-ignored. See [the submit guide](../guides/submit.md).
 
 ## meta.json
 

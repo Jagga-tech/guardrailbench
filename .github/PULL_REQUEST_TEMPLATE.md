@@ -21,7 +21,7 @@ Steps are in [submit results](https://github.com/Jagga-tech/guardrailbench/blob/
 
 - [ ] The run is on the practice split (`cases/practice`), with the product's defaults unless labelled as tuned
 - [ ] `results/<product>/practice/report.json` and `meta.json` are in this pull request, and `verified` is not set
-- [ ] The full per-case log (`runs/<product>/practice.jsonl`) is attached to this pull request as a `.zip` or `.gz` file
+- [ ] The full per-case log is in this pull request as `results/<product>/practice/log.jsonl.gz`
 - [ ] Every attempt is included, not only the best one
 - [ ] `uv run guardrailbench verify-submission --results runs/<product>/practice.jsonl --cases cases/practice` prints nothing
 - [ ] No key, password or token appears in the logs or in this pull request

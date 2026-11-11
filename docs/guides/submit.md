@@ -42,15 +42,19 @@ There are two ways to take part. This page covers the first.
 
    Do not set `verified`. Maintainers set it.
 
-5. Open a pull request with `report.json` and `meta.json`, and attach the per-case log (`runs/NAME/practice.jsonl`) to the pull request as a `.zip` or `.gz` file. Logs are required. Raw run output is git-ignored in this repository, which is why the log is attached and not committed. Card-track and reliability results go in their own files and folders.
+5. Compress the per-case log into the results folder:
 
-   Logs of merged results are kept in the experiments repository, `github.com/Jagga-tech/guardrailbench-experiments`, which opens with the first submissions.
+   ```
+   gzip -c runs/NAME/practice.jsonl > results/NAME/practice/log.jsonl.gz
+   ```
+
+   Open a pull request with `report.json`, `meta.json` and `log.jsonl.gz`. The log is required. Everything stays in this repository, so a result and the log that backs it are always together. Card-track and reliability results go in their own folders.
 
 6. Sign off your commits (`git commit -s`). See [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## What maintainers check
 
-Before merging, maintainers run `verify-submission` on the attached log and compare it with the report. A merged result is shown as self-reported.
+Before merging, maintainers run `verify-submission` on the log and compare it with the report. A merged result is shown as self-reported.
 
 A practice result is marked **verified** only after maintainers re-run a random sample of its cases with the same product and configuration and the answers agree:
 

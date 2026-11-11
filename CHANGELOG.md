@@ -31,10 +31,11 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ### Changed
 
+- Submitted results keep their per-case log in this repository, as `results/<product>/<split>/log.jsonl.gz`. There is no separate results repository.
 - The README follows the layout of other benchmark projects: links row, news, overview, set up, usage, downloads, contributions. The long tables (case counts, reliability keys) moved to `docs/reference/` and `docs/guides/`.
 - The design documents moved to `docs/design/` (`guardrailbench-design.md`, `measurement-design.md`, `followups.md`) and are written as project design documents.
 - Official rounds are opt-in. A product enters a round only when its maker asks: a participation request, a public adapter in this repository, and a way for the maintainers to run the product. The maintainers do not test a product uninvited. `GOVERNANCE.md` and `docs/official-runs.md` state the rule.
-- One name for each thing across the README, the docs and the site: practice split, official split, official round, benign twin, normal case, deployment card, pair score, experiments repository.
+- One name for each thing across the README, the docs and the site: practice split, official split, official round, benign twin, normal case, deployment card, pair score.
 - The package version in `pyproject.toml` is `1.0.0rc1`, to match this changelog and `CITATION.cff`. It was `0.1.0`.
 - The pull request template has two checklists, one for code and adapter changes and one for practice result submissions.
 - `run --track card` no longer loads a product's models when the product takes no card and every row will be "not applicable".

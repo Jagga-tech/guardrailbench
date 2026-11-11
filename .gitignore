@@ -3,12 +3,13 @@ cases/official/
 runs/
 *.jsonl
 !cases/practice/*.jsonl
-# results: only the aggregates (report.json, meta.json) are published
+# results: the aggregates and the compressed per-case log
 results/**
 !results/**/
 !results/.gitkeep
 !results/*/*/report.json
 !results/*/*/meta.json
+!results/*/*/log.jsonl.gz
 site/
 __pycache__/
 *.egg-info/

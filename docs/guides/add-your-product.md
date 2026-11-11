@@ -133,7 +133,7 @@ This repeats every case three times, sends reworded copies, and tests load and l
 
 ### 10. Send the results
 
-Follow [submit results](submit.md): add a `meta.json`, and open a pull request with the reports and the per-case log attached. Maintainers check the log and merge. The result appears on the "Practice (self-reported)" tab, marked self-reported.
+Follow [submit results](submit.md): add a `meta.json`, and open a pull request with the reports and the compressed per-case log. Maintainers check the log and merge. The result appears on the "Practice (self-reported)" tab, marked self-reported.
 
 To have the adapter itself added, open a second pull request that puts the file in `src/guardrailbench/adapters/` with an offline test. `tests/test_adapter_template.py` shows one way to write that test. A public adapter is one of the three things an official round needs.
 

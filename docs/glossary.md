@@ -20,7 +20,6 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 
 **Deployment card.** A record of the agent's setup taken from a case's system message: its job, allowed tools, allowed destinations, the user's role and the rules. See [case format](reference/case-format.md#deployment-card).
 
-**Experiments repository.** The separate repository that holds the per-case logs of merged results. See [submit results](guides/submit.md).
 
 **Flattened.** A case sent as plain text because the product cannot represent its checkpoint. Flattened results are never mixed with native ones. See [metrics](reference/metrics.md#native-and-flattened).
 
