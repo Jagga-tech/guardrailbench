@@ -136,6 +136,8 @@ Every attack case has a benign twin that changes exactly one thing. For example,
 
 ## Products for the first results
 
+> Note, 2026-11-11: participation in official rounds is now opt-in. A product is run only when its maker asks, so this section and the notice rule under Governance are superseded by [GOVERNANCE.md](../../GOVERNANCE.md#vendor-participation-rules) and [official rounds](../official-runs.md#how-a-product-enters-a-round).
+
 These can be tested without a sales contact (per the product research, checked 2026-11-05): Azure Prompt Shields, AWS Bedrock Guardrails, Google Model Armor, OpenAI Moderation (contrast baseline), Lakera Guard (free tier, still to confirm on Lakera's own site), Meta Prompt Guard 2, Llama Guard 4 (contrast baseline), LlamaFirewall, NVIDIA NeMo Guardrails, Protect AI LLM Guard and its DeBERTa models, Qualifire Sentinel, and Invariant Guardrails.
 
 Every other vendor is invited. Some vendors' terms forbid publishing results: Palo Alto, SentinelOne/Prompt Security, F5/CalypsoAI, and Cloudflare Enterprise. They appear only if they agree. Otherwise the board shows "declined" or leaves them out.

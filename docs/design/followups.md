@@ -4,6 +4,8 @@ Things found in review that are known and left for later. Each one says when it 
 
 ## Before any official run
 
+> Note, 2026-11-11: an official round now covers only products whose makers have asked to take part. See [official rounds](../official-runs.md#how-a-product-enters-a-round).
+
 - **Invariant warmup.** `warmup()` only builds the policy. The detector models still load on the first `analyze_pending` call, which can time out. Make `warmup()` run one dummy analyze, and check it in a throwaway venv with `invariant-ai` installed.
 - **Gated model cards.** Accept the Meta licence (Prompt Guard 2, Llama Guard 4) and the Qualifire licence on Hugging Face. Then confirm the items marked UNVERIFIED in `adapters/hf_classifier.py` and `adapters/llama_guard.py`: the PG2 label names, the PG2-22M scope, the Qualifire labels and max length, and the Llama Guard 4 assistant-turn template.
 - **Cloud APIs.** Using real credentials, confirm the items marked UNVERIFIED:

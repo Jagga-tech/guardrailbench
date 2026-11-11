@@ -1,0 +1,81 @@
+name: Participation request
+description: Ask for your own product to be run in an official round. For makers of guardrail products only.
+title: "Participation: <product>"
+labels: [participation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A product enters an official round only when its maker asks. This form is that request. The full policy is in [official rounds](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/official-runs.md).
+
+        **Do not paste keys, passwords, tokens or account details in this issue.** This issue is public. Name a contact route below and the maintainers will arrange a private handover there.
+
+        To send practice results instead, see [submit results](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/guides/submit.md). No request is needed for that.
+  - type: input
+    id: product
+    attributes:
+      label: Product and version
+      description: The product name as you publish it, and the version or release you want run.
+    validations:
+      required: true
+  - type: input
+    id: maker
+    attributes:
+      label: Maker
+      description: The organisation that makes the product, and your role in it. The request must come from the maker.
+    validations:
+      required: true
+  - type: dropdown
+    id: hosting
+    attributes:
+      label: Hosted or self-hosted
+      options:
+        - Hosted (the maintainers call your service)
+        - Self-hosted (the maintainers install and run it)
+        - Both
+    validations:
+      required: true
+  - type: input
+    id: adapter
+    attributes:
+      label: Adapter
+      description: The name of an adapter already in this repository (as used with `--product`), or a link to the pull request that adds one.
+    validations:
+      required: true
+  - type: checkboxes
+    id: tracks
+    attributes:
+      label: Tracks wanted
+      options:
+        - label: No-context track
+        - label: Card track (the product has a documented way to take a policy)
+        - label: Reliability track
+  - type: textarea
+    id: access
+    attributes:
+      label: How the maintainers will run the product
+      description: |
+        Hosted: say that you will supply an ordinary account or key of the kind any customer gets, and any limits on it (rate, region, expiry).
+        Self-hosted: give install instructions that work on a clean machine, or link to them.
+
+        **Do not paste a key, password or token here.** Describe the access only. The secret itself is sent privately.
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Contact route
+      description: Where the maintainers can reach you to arrange the private handover and send your results before publication. For example a security or partnerships contact page. Do not put a secret here.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I am authorised to make this request for the maker, and the maker's terms allow the result to be published.
+          required: true
+        - label: The maker accepts the published run policy (docs/official-runs.md) and the vendor participation rules (GOVERNANCE.md), including that the results of a valid run are published.
+          required: true
+        - label: This issue contains no key, password, token or other secret.
+          required: true
