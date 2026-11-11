@@ -89,7 +89,7 @@
     <section id="made" aria-labelledby="made-h">
       <h2 id="made-h">How cards are made</h2>
       <ul>
-        <li>Cards are extracted from each case&rsquo;s system message and never add information it does not contain.</li>
+        <li>Cards are extracted from each case&rsquo;s system message and add nothing it does not contain. Policy pairs are the exception: there the card carries the deciding rule and the messages do not.</li>
         <li>An empty field means &ldquo;not stated&rdquo;, not &ldquo;nothing allowed&rdquo;. A case with no system message has an all-empty card.</li>
         <li>A twin shares its attack&rsquo;s card, except role twins, where <code>user_role</code> is exactly the change, and policy pairs (below).</li>
         <li>The 20 seed cases have no card.</li>

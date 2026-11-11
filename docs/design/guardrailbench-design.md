@@ -44,7 +44,7 @@ The full evidence, with every claim fact-checked, is in the research report "Gua
 - Any appearance that the test was built to favour a particular product.
 - Vendors being able to train on, or tune to, the official test set.
 - A headline number that a stronger attacker could overturn without anyone noticing.
-- Publishing results in breach of a vendor's terms, or without a legal review.
+- Publishing results in breach of a vendor's terms.
 
 ## The unit under test
 

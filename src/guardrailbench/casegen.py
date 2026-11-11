@@ -116,7 +116,9 @@ def _canary(seed: int, cid: str) -> str:
 
 
 def assemble(drafts: Path, practice_out: Path, official_out: Path, seed: int = 20261107,
-             practice_frac: float = 0.15) -> dict:
+             practice_frac: float = 0.15, version: int = 1) -> dict:
+    """version sets the id prefix (v1-, v2-, ...) and the cases' version field, so a new set never collides with an old one."""
+    v = f"v{version}"
     practice_out, official_out = Path(practice_out).resolve(), Path(official_out).resolve()
     if practice_out == official_out:
         raise ValueError("practice and official outputs are the same file")
@@ -140,20 +142,20 @@ def assemble(drafts: Path, practice_out: Path, official_out: Path, seed: int = 2
         fam, cp = _family(d), d["checkpoint"]
         if d["kind"] == "benign":
             counters["bn"] = n = counters.get("bn", 0) + 1
-            cid = f"v1-bn-{n:04d}"
+            cid = f"{v}-bn-{n:04d}"
             sector = d.get("sector") or DOMAIN_TO_SECTOR.get(str(d.get("domain", "")).strip().lower())
             unmapped += sector is None
-            cases.append(Case(cid, 1, split, fam, cp, d["messages"], d["target"], "benign", None, None, None,
+            cases.append(Case(cid, version, split, fam, cp, d["messages"], d["target"], "benign", None, None, None,
                               None, _canary(seed, cid), None, d.get("card"), sector or "general"))
             continue
         counters[fam] = n = counters.get(fam, 0) + 1
-        a_id, b_id = f"v1-{fam:02d}-{n:04d}-a", f"v1-{fam:02d}-{n:04d}-b"
+        a_id, b_id = f"{v}-{fam:02d}-{n:04d}-a", f"{v}-{fam:02d}-{n:04d}-b"
         tr = d["transform"]
         pseed = int.from_bytes(hashlib.sha256(f"{seed}:{'|'.join(map(str, _sort_key(d)))}".encode()).digest()[:8], "big")
         at, bn = d["attack"], d["benign"]
         a_msgs, marker = _side(at["messages"], at["target"], at["marker"], tr, pseed, where)
         b_msgs, _ = _side(bn["messages"], bn["target"], bn["span"], tr, pseed, where)
-        common = dict(version=1, split=split, family=fam, checkpoint=cp, twin_change=d["twin_change"],
+        common = dict(version=version, split=split, family=fam, checkpoint=cp, twin_change=d["twin_change"],
                       transform=tr, source_pattern=d["source_pattern"], sector=d.get("sector"))
         cases.append(Case(id=a_id, messages=a_msgs, target=at["target"], label="attack", twin_id=b_id,
                           canary=_canary(seed, a_id), marker=marker, deployment_card=d.get("card"), **common))
@@ -166,7 +168,7 @@ def assemble(drafts: Path, practice_out: Path, official_out: Path, seed: int = 2
         raise ValueError("assembled cases are invalid:\n" + "\n".join(problems))
     cases.sort(key=lambda c: c.id)
     counts = {"practice": 0, "official": 0, "pairs": sum(c.label == "attack" for c in cases),
-              "benign": sum(c.id.startswith("v1-bn-") for c in cases)}
+              "benign": sum(c.id.startswith(f"{v}-bn-") for c in cases)}
     for out, sp in ((practice_out, "practice"), (official_out, "official")):
         out.parent.mkdir(parents=True, exist_ok=True)
         mine = [c for c in cases if c.split == sp]

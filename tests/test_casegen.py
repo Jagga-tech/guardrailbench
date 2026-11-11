@@ -215,3 +215,12 @@ def test_cards_do_not_change_ids_or_split(tmp_path):
     for a, b in ((p1, p2), (o1, o2)):
         strip = lambda f: [{**c.__dict__, "deployment_card": None} for c in load_cases(f)]  # noqa: E731
         assert strip(a) == strip(b)
+
+
+def test_assemble_version_sets_id_prefix_and_field(tmp_path):
+    d = fixture(tmp_path)
+    p, o = tmp_path / "v2" / "p.jsonl", tmp_path / "v2" / "o.jsonl"
+    counts = assemble(d, p, o, version=2)
+    cases = load_cases(p) + (load_cases(o) if o.read_text() else [])
+    assert all(c.id.startswith("v2-") and c.version == 2 for c in cases)
+    assert counts["benign"] == 3
