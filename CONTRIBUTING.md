@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. This page covers setup, the kinds of contribution we take, and what we do not take.
+This page covers setup, the kinds of contribution the project takes, and what it does not take.
 
 By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -38,20 +38,24 @@ An adapter turns one case into a product's own API request and the response into
 
 ## Report a bad or mislabelled practice case
 
-Open an issue with the "Case report" template. Give the case id, what is wrong (label, realism, twin mismatch, marker), and why. Do not paste working attacks against real products. Reports on the hidden official split cannot be accepted, because we cannot discuss its contents.
+Open an issue with the "Case report" template. Give the case id, what is wrong (label, realism, twin mismatch, marker), and why. Do not paste working attacks against real products. Reports on the official split cannot be accepted, because its contents cannot be discussed.
 
 ## Submit results
 
 - Run the **practice split** with your own keys and compute. The steps are in [docs/guides/submit.md](docs/guides/submit.md).
-- Open a pull request with the per-case logs (the `runs/` output) and the report. Logs are required.
+- Open a pull request with the report and the full per-case log. Logs are required.
 - If you ran more than once, submit every attempt, not only the best.
-- Practice-split results go on the **unverified tier**, clearly labelled.
-- Official-split runs are done only by maintainers. A result becomes "verified" after maintainers re-run a random sample.
-- You can check a submission with `guardrailbench verify-submission`.
+- Maintainers check the log and merge. Practice results are shown on the "Practice (self-reported)" tab, marked self-reported.
+- Check a submission yourself with `guardrailbench verify-submission`.
 
-## What we do not accept
+## Ask for an official round
 
-- Requests for hidden-split cases, hints about them, or access to them.
+The official tabs show only results from the maintainers' closed test on the official split. A product enters a round only when its maker asks, and the maintainers do not test a product uninvited. If you make the product, open a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml). You also need a public adapter in this repository and a way for the maintainers to run the product. Never post a key in an issue or a pull request. The policy is in [docs/official-runs.md](docs/official-runs.md).
+
+## What is not accepted
+
+- Requests for official-split cases, hints about them, or access to them.
+- Requests to put someone else's product in an official round. Only its maker can ask.
 - Vendor-tuned configurations in the default track. Tuned setups may be reported separately, labelled as tuned.
 - Cases copied from public datasets. Cases are written fresh.
 - Working harmful payloads (malware, real weapons information) in cases.

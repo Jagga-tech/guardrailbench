@@ -62,7 +62,7 @@ Every section is split by `all`, `family`, `checkpoint`, `transform` and `sector
 
 ## Tracks
 
-- **No-context track** (`run --track none`, the default): the product gets the case and nothing else.
+- **No-context track** (`run --track none`, the default; the site also calls it the core track): the product gets the case and nothing else.
 - **Card track** (`run --track card`): products that set `accepts_card = True` also get the case's deployment card. Others get `not_applicable` rows. Which built-in products take a card, and how: [deployment cards](deployment-cards.md). `score` records the track in `report.json` and refuses a results file that mixes tracks.
 - **Reliability track**: consistency, stability, speed under load, long inputs and failure behaviour. See [the reliability guide](../guides/reliability.md).
 

@@ -8,7 +8,7 @@ This walks through one full run of a product on the public practice split. Insta
 guardrailbench run --product nope --cases cases/practice --out /tmp/x.jsonl
 ```
 
-An unknown name exits with code 2 and prints the registered names: `azure-prompt-shields`, `bedrock-guardrails`, `fake`, `invariant`, `lakera-guard`, `llama-guard-4`, `llamafirewall`, `llm-guard`, `model-armor`, `nemo-guardrails`, `openai-moderation`, `prompt-guard-2-22m`, `prompt-guard-2-86m`, `protectai-deberta-v2`, `qualifire-sentinel`. If your product is not on the list, [write an adapter](write-an-adapter.md).
+An unknown name exits with code 2 and prints the 16 registered names. Fourteen are adapters for guardrail products: `azure-prompt-shields`, `bedrock-guardrails`, `invariant`, `lakera-guard`, `llama-guard-4`, `llamafirewall`, `llm-guard`, `model-armor`, `nemo-guardrails`, `openai-moderation`, `prompt-guard-2-22m`, `prompt-guard-2-86m`, `protectai-deberta-v2`, `qualifire-sentinel`. The other two are not products: `llm-judge` is a reference baseline and `fake` is a test double that allows everything. If your product is not on the list, [write an adapter](write-an-adapter.md).
 
 Set up the product with its defaults and your own keys. Read the module docstring of its adapter first. Do not tune thresholds or settings to the cases.
 
@@ -55,4 +55,4 @@ See [reliability](reliability.md).
 guardrailbench leaderboard --results results --out site
 ```
 
-Open `site/index.html`. To put your result on the public board, follow [submit results](submit.md).
+Open `site/index.html`. To put your result on the public leaderboard, follow [submit results](submit.md).

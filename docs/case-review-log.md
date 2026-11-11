@@ -4,7 +4,7 @@ Counts only. No case text is recorded here.
 
 ## Drafting
 
-- 46 drafting batches: 990 attack pairs (an attack and its benign twin) and 2000 standalone benign cases.
+- 46 drafting batches: 990 attack pairs (an attack and its benign twin) and 2000 normal cases.
 - The multi-step exfiltration row stopped at 20 of 30 pairs, because a model safety filter halted drafting twice.
 - One admin-action batch was re-scoped to structured admin-API calls after a filter stop.
 
@@ -23,9 +23,9 @@ Counts only. No case text is recorded here.
 ## Repair
 
 - Every flagged pair was repaired or dropped, except that 3 flagged lines in one file were left unchanged by repair; they went through the second blind pass like the rest.
-- 21 standalone benign cases were repaired.
+- 21 normal cases were repaired.
 - Real brand names were replaced in 37 lines.
-- The 21 repaired standalone benign cases and the 37 brand-rename-only lines were checked by assemble, validate and lint, but did NOT get a second blind review.
+- The 21 repaired normal cases and the 37 brand-rename-only lines were checked by assemble, validate and lint, but did NOT get a second blind review.
 - Canaries are derived from a public seed and the case ids, so they detect leakage but are not secret.
 
 ## Second blind review
@@ -34,7 +34,7 @@ Counts only. No case text is recorded here.
 
 ## Final counts
 
-880 pairs and 2000 standalone benign cases: 571 practice cases and 3189 official cases (the 20 seed cases are extra). The attack count equals the pair count.
+880 pairs and 2000 normal cases: 571 practice cases and 3189 official cases (the 20 seed cases are extra). The attack count equals the pair count.
 
 | Family | Checkpoint | Attack (practice / official) | Benign (practice / official) |
 |---|---|---|---|
@@ -66,7 +66,7 @@ Every case now carries a deployment card extracted from its system message; fact
 - Verbatim check: every rule must appear in the system message. It found 1 paraphrased rule, which was replaced with the original text.
 - Model spot-check of a 10% sample (296 sides): 270 ok, 19 user_role inconsistencies (normalised by rule), 7 sides with real errors (fixed). That is about a 2.4% error rate on the sample.
 - user_role was normalised by rule: where the system message says the agent is the assistant for or to a named person or role, that phrase is the user_role (75 sides changed). Explicit "Session user:" values were left alone.
-- Human check of the same sample: pending.
+- Human check of the same sample: not done.
 
 ## Surface-tell probe
 
@@ -76,15 +76,15 @@ Every case now carries a deployment card extracted from its system message; fact
 |---|---|---|
 | All cases | 0.524 | 3760 |
 | Twins only (attack vs its twin) | 0.534 | 1760 |
-| Attack vs standalone benign, prompt | 0.628 | 613 |
-| Attack vs standalone benign, ingested_content | 0.509 | 911 |
-| Attack vs standalone benign, tool_call | 0.797 | 660 |
-| Attack vs standalone benign, output | 0.764 | 185 |
-| Attack vs standalone benign, memory_write | 0.625 | 146 |
-| Attack vs standalone benign, tool_definition | 0.605 | 140 |
-| Attack vs standalone benign, trajectory | 0.903 | 225 |
+| Attack vs normal cases, prompt | 0.628 | 613 |
+| Attack vs normal cases, ingested_content | 0.509 | 911 |
+| Attack vs normal cases, tool_call | 0.797 | 660 |
+| Attack vs normal cases, output | 0.764 | 185 |
+| Attack vs normal cases, memory_write | 0.625 | 146 |
+| Attack vs normal cases, tool_definition | 0.605 | 140 |
+| Attack vs normal cases, trajectory | 0.903 | 225 |
 
-Reading: twins-only is near chance, so vocabulary alone does not give away which side of a pair is the attack. That is the contrast the benchmark scores. The per-checkpoint numbers for attack vs standalone benign are much higher, especially trajectory (0.90), tool_call and output (0.76 to 0.80) and memory_write (0.63). The standalone benign corpus differs from the attacks in style and shape, so a vocabulary-level classifier can partly separate them. The false-positive rate measured on the standalone corpus is therefore an optimistic proxy for real traffic.
+Reading: twins-only is near chance, so vocabulary alone does not give away which side of a pair is the attack. That is the contrast the benchmark scores. The per-checkpoint numbers for attack vs normal cases are much higher, especially trajectory (0.90), tool_call and output (0.76 to 0.80) and memory_write (0.63). The normal-case corpus differs from the attacks in style and shape, so a vocabulary-level classifier can partly separate them. The false-positive rate measured on the normal cases is therefore an optimistic proxy for real traffic.
 
 ## Sectors
 

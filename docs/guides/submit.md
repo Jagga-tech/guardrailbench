@@ -1,6 +1,9 @@
 # Submit results
 
-Anyone can submit results for the public practice split. They go on a clearly labelled **unverified** tier. The hidden official split is run only by maintainers.
+There are two ways to take part. This page covers the first.
+
+- **Practice (open).** You run your own product on the public practice split and send the results, with full per-case logs, by pull request. Maintainers check the logs and merge. The results are shown on the "Practice (self-reported)" tab, marked self-reported.
+- **Official rounds (closed).** The official tabs show only results from the maintainers' closed test on the official split. A product enters a round only when its maker asks, with a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml). See [official rounds](../official-runs.md#how-a-product-enters-a-round).
 
 ## What you need
 
@@ -39,13 +42,17 @@ Anyone can submit results for the public practice split. They go on a clearly la
 
    Do not set `verified`. Maintainers set it.
 
-5. Open a pull request with `report.json`, `meta.json` and the per-case logs (the `runs/` output). Logs are required. Raw logs hold case text and are git-ignored in this repository, so they are shared as the pull request describes or, once it is open, in the separate submissions repository. Card-track and reliability results go in their own files and folders.
+5. Open a pull request with `report.json` and `meta.json`, and attach the per-case log (`runs/NAME/practice.jsonl`) to the pull request as a `.zip` or `.gz` file. Logs are required. Raw run output is git-ignored in this repository, which is why the log is attached and not committed. Card-track and reliability results go in their own files and folders.
+
+   Logs of merged results are kept in the experiments repository, `github.com/Jagga-tech/guardrailbench-experiments`, which opens with the first submissions.
 
 6. Sign off your commits (`git commit -s`). See [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
-## Verification
+## What maintainers check
 
-A result becomes **verified** only after maintainers re-run a random sample of its cases with the same product and configuration and the answers agree:
+Before merging, maintainers run `verify-submission` on the attached log and compare it with the report. A merged result is shown as self-reported.
+
+A practice result is marked **verified** only after maintainers re-run a random sample of its cases with the same product and configuration and the answers agree:
 
 ```
 guardrailbench verify-submission --results runs/NAME/practice.jsonl --cases cases/practice --rerun NAME --k 50
@@ -53,13 +60,13 @@ guardrailbench verify-submission --results runs/NAME/practice.jsonl --cases case
 
 The command prints the random seed it used, re-runs `k` cases, and reports any case where the decision, the mode or the score differs. Cases where the re-run itself errors are skipped, and if too few can be compared the spot check is reported as unverified.
 
-Practice-split runs stay on the unverified tier unless maintainers verify them. Official-split runs are done by maintainers on their own infrastructure, on the hidden split whose SHA-256 fingerprint is published in `cases/OFFICIAL_SHA256`. Vendors never receive that split. How a round works is in [official runs](../official-runs.md).
+A practice result never moves to the official tabs. Those show only official rounds, which maintainers run on their own infrastructure, on the official split whose SHA-256 fingerprint is published in `cases/OFFICIAL_SHA256`. Vendors never receive that split. How a round works is in [official rounds](../official-runs.md).
 
 ## Rules
 
 - No tuning to the practice cases. Defaults only in the default track.
-- Do not ask for hidden-split cases or hints about them.
-- Vendors are told before their product's results are published, and can raise anomalies. See [GOVERNANCE.md](../../GOVERNANCE.md).
+- Do not ask for official-split cases or hints about them.
+- Never put a key, password or token in a pull request, a log or an issue.
 - Report a bad or mislabelled practice case with the "Case report" issue template, not in a submission.
 
 How results are shown: [leaderboard](../reference/leaderboard.md).

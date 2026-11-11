@@ -95,3 +95,5 @@ Several modules can be given, separated by commas. Each is imported after the bu
 ## Open a pull request
 
 To add the adapter to the repository, open a pull request and sign off your commits (`git commit -s`). If you want to discuss it first, use the "New adapter" issue template.
+
+An adapter in the repository lets anyone run the product on the practice split. It does not put the product in an official round: only the product's maker can ask for that, with a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml). See [official rounds](../official-runs.md#how-a-product-enters-a-round).

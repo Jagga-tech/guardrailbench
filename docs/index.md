@@ -7,15 +7,20 @@ GuardrailBench is an open, vendor-neutral benchmark of AI-agent guardrail produc
 - [Installation](installation.md)
 - [Run a product](guides/run-a-product.md)
 - [FAQ](faq.md)
+- [Glossary](glossary.md): the terms the docs use, each with one meaning
+
+## Take part
+
+A maker of a guardrail product has two routes: send practice results by pull request ([submit results](guides/submit.md)), or ask for an official round with a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml) ([official rounds](official-runs.md#how-a-product-enters-a-round)). [Add your product](guides/add-your-product.md) covers both.
 
 ## Guides
 
 - [Run a product](guides/run-a-product.md): validate, run, score, and build a page
 - [Add your product](guides/add-your-product.md): the one-hour path for a guardrail company, from install to results
-- [Write an adapter](guides/write-an-adapter.md): connect a product the harness does not know yet
-- [Submit results](guides/submit.md): practice-split results, verification, and what maintainers run
+- [Write an adapter](guides/write-an-adapter.md): connect a product the harness does not know
+- [Submit results](guides/submit.md): the practice route, from the run to the pull request, and what maintainers check
 - [Reliability track](guides/reliability.md): consistency, stability, load, long inputs and failures
-- [Official runs](official-runs.md): which tests are open, which only maintainers run, and how a round works
+- [Official rounds](official-runs.md): the run policy. Which tests are open, how a product enters a round, and how a round works
 
 ## Reference
 
@@ -35,7 +40,7 @@ GuardrailBench is an open, vendor-neutral benchmark of AI-agent guardrail produc
 
 - [GuardrailBench design](design/guardrailbench-design.md): goals, scope, tracks, splits, governance
 - [Measurement design](design/measurement-design.md): the deployment card, three outcomes, pair score, reliability
-- [Follow-ups](design/followups.md): known items left for later, with when each is due
+- [Follow-ups](design/followups.md): known open items, with when each is due
 
 ## Project
 

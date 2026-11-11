@@ -1,6 +1,6 @@
 # Add your product
 
-This is the path for a company that makes a guardrail and wants it in GuardrailBench. It takes about an hour and needs no help from the maintainers. You write one small file, run the public practice cases on your own machine, and send the results.
+This is the path for a company that makes a guardrail and wants it in GuardrailBench. It takes about an hour and needs no help from the maintainers. You write one small file, run the public practice split on your own machine, and send the results. That is the practice route. To have the product in an official round as well, see [Official rounds](#official-rounds) at the end.
 
 ## What your product needs to expose
 
@@ -10,12 +10,13 @@ This is the path for a company that makes a guardrail and wants it in GuardrailB
 - Documentation that says what the product inspects: user messages, tool calls, tool results, tool definitions, agent output. This decides which checkpoints it is tested on natively.
 - Optional: a documented way to give the product a policy for the agent (its job, allowed tools, allowed destinations, rules). With it, the product can also run on the card track.
 
-## What we will never ask for
+## What the maintainers never ask for
 
 - Source code.
 - Model weights.
 - Customer data, logs or traffic.
 - Money. There is no fee to be tested or listed.
+- A key in public. A key for an official round is sent privately, never in an issue or a pull request.
 
 The adapter you write calls the product the way a customer would. That is all the benchmark sees.
 
@@ -132,12 +133,18 @@ This repeats every case three times, sends reworded copies, and tests load and l
 
 ### 10. Send the results
 
-Follow [submit results](submit.md): add a `meta.json`, and open a pull request with the reports and the per-case logs. The separate submissions repository is not open yet, so for now results go by pull request to this repository. They appear on the practice tab, marked self-reported, until a maintainer re-runs a sample.
+Follow [submit results](submit.md): add a `meta.json`, and open a pull request with the reports and the per-case log attached. Maintainers check the log and merge. The result appears on the "Practice (self-reported)" tab, marked self-reported.
 
-To have the adapter itself added, so that maintainers can run your product in official rounds, open a second pull request that puts the file in `src/guardrailbench/adapters/` with an offline test. `tests/test_adapter_template.py` shows one way to write that test.
+To have the adapter itself added, open a second pull request that puts the file in `src/guardrailbench/adapters/` with an offline test. `tests/test_adapter_template.py` shows one way to write that test. A public adapter is one of the three things an official round needs.
 
 ## Official rounds
 
-Results on the practice split are yours to produce. Official results are not: maintainers run the hidden split on their own infrastructure, through the public adapter, and no vendor receives those cases before or during a round.
+Results on the practice split are yours to produce. Official results are not: maintainers run the official split on their own infrastructure, through the public adapter, and no vendor receives those cases before or during a round.
 
-You are told before a round that your product is in it, and you can fix the adapter beforehand. After the run and before anything is published, you get a report with your numbers, the breakdowns, and the ids of practice cases that show the same kinds of failure. The round's cases are published when the split is retired. The whole process, including how to dispute a result, is in [official runs](../official-runs.md#what-a-vendor-is-told).
+Your product is in a round only if you ask. The maintainers do not test a product uninvited. To ask:
+
+1. Open a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml).
+2. Have a public adapter for the product in this repository (the second pull request above).
+3. Give the maintainers a way to run the product for the round. For a hosted product, an ordinary account or key, sent privately through the contact route you name in the request. Never paste a key in an issue. For a self-hosted product, install instructions.
+
+You are told the window in which the runs happen, and you can fix the adapter beforehand. After the run and before anything is published, you get a report with your numbers, the breakdowns, and the ids of practice cases that show the same kinds of failure. The round's cases are published when the split is retired. The whole process, including how to dispute a result, is in [official runs](../official-runs.md#what-a-vendor-is-told).

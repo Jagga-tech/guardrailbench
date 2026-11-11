@@ -2,11 +2,11 @@
 
 Counts for the v1 case set. For the file format, see [case-format.md](case-format.md).
 
-v1 has 880 attack cases, each with a benign twin, plus 2000 standalone benign cases: 3760 in all. 571 are in the public practice split (`cases/practice/v1.jsonl`, plus a 20-case seed file). 3189 are in the official split, which stays local; its fingerprint is in `cases/OFFICIAL_SHA256`. Cases with a system message carry a `deployment_card` extracted from it (agent job, allowed tools and destinations, user role, rules). The seed cases have no card, and a case without a system message has an all-empty card, which means nothing is stated. Cards are not part of the sort hash, so they did not change which split a case is in. Counts per family and checkpoint, with the practice / official split in brackets:
+v1 has 880 attack cases, each with a benign twin, plus 2,000 normal cases: 3,760 in all. 571 are in the practice split (`cases/practice/v1.jsonl`): 131 attacks, their 131 benign twins and 309 normal cases. 3,189 are in the official split: 749 attacks, their 749 benign twins and 1,691 normal cases. The official split is not published; its fingerprint is in `cases/OFFICIAL_SHA256`. The 20-case seed file (`cases/practice/seed.jsonl`, 10 pairs) is for smoke tests and is not part of these counts. Cases with a system message carry a `deployment_card` extracted from it (agent job, allowed tools and destinations, user role, rules). The seed cases have no card, and a case without a system message has an all-empty card, which means nothing is stated. Cards are not part of the sort hash, so they did not change which split a case is in. Counts per family and checkpoint, with the practice / official split in brackets:
 
 Family codes: F1 direct injection and jailbreaks, F2 encoding and obfuscation, F3 indirect injection, F4 dangerous tool calls, F5 data exfiltration and leakage, F6 MCP and supply-chain poisoning, F7 agent-to-agent attacks, F8 memory poisoning, F9 resource abuse, F10 attacks on the guard itself.
 
-| Family | Checkpoint | Attack (practice / official) | Benign (practice / official) |
+| Family | Checkpoint | Attack (practice / official) | Benign: twins and normal cases (practice / official) |
 |---|---|---|---|
 | F1 | prompt | 79 (12 / 67) | 529 (80 / 449) |
 | F2 | ingested_content | 34 (6 / 28) | 34 (6 / 28) |
@@ -57,12 +57,12 @@ Attack pairs are tagged by the organisation's industry; normal cases by their dr
 
 ## How the cases were made
 
-How they were made: the cases are model-drafted, machine-checked and model cross-reviewed (blind, two passes). Human review, the "Verified" subset, is pending. See [../case-review-log.md](../case-review-log.md) for counts from each stage and the quota shortfalls.
+The cases are model-drafted, machine-checked and model cross-reviewed (blind, two passes). No case has had human review, so there is no "Verified" subset. See [../case-review-log.md](../case-review-log.md) for counts from each stage and the quota shortfalls.
 
 ## Known limitations
 
 - Trajectory and memory attacks repeat the injected text in the final call's arguments, because the validator requires the marker in the judged message.
 - Attack destinations often use look-alike, `.test` or `.invalid` domains, while benign ones use the deployment's own domain.
 - Family 1, 2 and 10 twins that drop a manipulation device are shorter than their attacks.
-- The standalone benign corpus differs in style and shape from the attacks (a bag-of-words probe separates them well at some checkpoints, e.g. trajectory 0.90 balanced accuracy), so the false-positive rate on it is an optimistic proxy. Twin pairs are not given away by vocabulary (0.53). See [the review log](../case-review-log.md).
+- The normal cases differ in style and shape from the attacks (a bag-of-words probe separates them well at some checkpoints, e.g. trajectory 0.90 balanced accuracy), so the false-positive rate on it is an optimistic proxy. Twin pairs are not given away by vocabulary (0.53). See [the review log](../case-review-log.md).
 - Non-English cases have had no native-speaker check.

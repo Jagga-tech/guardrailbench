@@ -18,7 +18,7 @@ guardrailbench run --product NAME --cases PATH --out FILE [--workers 4] [--timeo
 
 Sends every case to the product and appends one JSON line per case to `FILE`. Each line holds the decision, the mode (`native`, `flattened` or `not_claimed`), the per-step logs, the product version and the track. Re-running with the same `--out` resumes: cases already done by the same product, version and track are skipped. If the file holds another product, version or track, the command exits with code 2. `--timeout` is seconds per call. Failed calls with a 429 or 5xx style error are retried up to three times. With `--track card`, products with `accepts_card = True` get each case's deployment card and the rest get `not_applicable` rows. Use a separate `--out` file for card runs.
 
-`NAME` is a registered adapter. `fake` allows everything and checks plumbing only. Run the command with an unknown name to see the list.
+`NAME` is a registered adapter. `fake` is a test double: it allows everything and checks plumbing only. Run the command with an unknown name to see the list.
 
 ## score
 
@@ -34,11 +34,11 @@ Turns a results file into a report. See [metrics](metrics.md) for every field. W
 guardrailbench vendor-report --results RUNS.jsonl --cases PATH --out DIR [--practice-results PRACTICE_RUNS.jsonl --practice-cases cases/practice]
 ```
 
-For maintainers, after an official run. Writes `DIR/vendor-report.json` and `DIR/vendor-report.md`: a report on one product's hidden-split run that can be sent to its vendor. It holds totals only: the numbers `score` computes for each mode, and counts and rates by checkpoint, family, sector, twin change and outcome. It then lists every family and checkpoint with a miss, an over-block or an inverted pair.
+For maintainers, after a product's run in an official round. Writes `DIR/vendor-report.json` and `DIR/vendor-report.md`: a report on one product's official-split run that can be sent to its vendor. It holds totals only: the numbers `score` computes for each mode, and counts and rates by checkpoint, family, sector, twin change and outcome. It then lists every family and checkpoint with a miss, an over-block or an inverted pair.
 
 With `--practice-results` and `--practice-cases` (the same product's run on the public practice split), each of those groups also names the practice cases the product got wrong in the same way, or says there are none. The JSON holds every id, and the Markdown shows the first five per outcome.
 
-Nothing from the cases given with `--cases` is written: no id, text, marker, canary, card or product response. No flag changes that. The command exits with code 2 if the practice cases are not all marked `split: practice`, if they share an id with the `--cases` set, if the two runs are for different products or tracks, or if a results file mixes products or tracks. How the report is used is in [official runs](../official-runs.md#what-a-vendor-is-told).
+Nothing from the cases given with `--cases` is written: no id, text, marker, canary, card or product response. No flag changes that. The command exits with code 2 if the practice cases are not all marked `split: practice`, if they share an id with the `--cases` set, if the two runs are for different products or tracks, or if a results file mixes products or tracks. How the report is used is in [official rounds](../official-runs.md#what-a-vendor-is-told).
 
 ## reliability
 
@@ -70,7 +70,7 @@ Checks someone else's results file: one row per case, no extra or duplicate rows
 guardrailbench hash PATH
 ```
 
-Prints the SHA-256 fingerprint of a case split. The fingerprint of the hidden official split is in `cases/OFFICIAL_SHA256`.
+Prints the SHA-256 fingerprint of a case split. The fingerprint of the official split is in `cases/OFFICIAL_SHA256`.
 
 ## scan
 

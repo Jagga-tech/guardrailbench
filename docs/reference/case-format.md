@@ -39,6 +39,8 @@ Messages use the OpenAI chat format. An assistant tool call looks like `{"tool_c
 
 A product that cannot represent a checkpoint is marked "not claimed" for it, which is different from a miss.
 
+Terms such as benign twin, normal case and pair are defined in the [glossary](../glossary.md).
+
 ## Families
 
 1. Direct injection and jailbreaks

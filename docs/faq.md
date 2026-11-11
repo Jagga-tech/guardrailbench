@@ -1,6 +1,6 @@
 # FAQ
 
-## What is a twin?
+## What is a benign twin?
 
 Every attack case has a benign twin: a matched case that differs in exactly one thing, such as the same calendar invite with a real meeting note instead of a hidden instruction, or the same refund call from a user who is allowed to make it. The field `twin_change` names the one thing: `intent`, `role`, `destination` or `data_origin`. See [case format](reference/case-format.md).
 
@@ -8,7 +8,7 @@ Every attack case has a benign twin: a matched case that differs in exactly one 
 
 Detection rate and false-block rate, reported apart, hide whether a product can tell an attack from ordinary work. A product that blocks everything gets perfect detection. The pair score counts an attack as correct only when the product stops it and lets its twin through. Blocking everything scores zero. See [metrics](reference/metrics.md).
 
-## Why is there a hidden split?
+## Why is the official split hidden?
 
 Public test sets leak into training data and into vendors' tuning, so they stop measuring anything. The official split is held by the maintainers and run on their infrastructure. Before each round, the SHA-256 fingerprint of the frozen split is published in `cases/OFFICIAL_SHA256`, so anyone can later check that it was not changed once results came in. Every case also carries a canary string that shows if it leaks.
 
@@ -35,13 +35,24 @@ A guardrail is one layer of defence, not a full security boundary.
 
 Write an adapter, a small class that turns a case into the product's API request and the response into a verdict. [Add your product](guides/add-your-product.md) is the one-hour path with a template to copy, and [write an adapter](guides/write-an-adapter.md) has the full interface. You can run a private adapter without changing the repository, or open a pull request to add it.
 
-## How do I learn what my product got wrong on the hidden split?
+## How does a company take part?
+
+There are two routes, and both are free.
+
+- **Practice (open).** Run your own product on the public practice split and [submit the results](guides/submit.md) with full per-case logs by pull request. Maintainers check the logs and merge. The result is shown on the "Practice (self-reported)" tab, marked self-reported.
+- **Official rounds (closed).** The official tabs show only results from the maintainers' closed test on the official split. Your product is in a round only if you ask: open a [participation request](https://github.com/Jagga-tech/guardrailbench/issues/new?template=participation.yml), have a public adapter in this repository, and give the maintainers a way to run the product. See [how a product enters a round](official-runs.md#how-a-product-enters-a-round).
+
+## Will the maintainers test a product without being asked?
+
+No. A product enters an official round only when its maker asks. An adapter in this repository lets anyone run that product on the practice split. It does not put the product in a round.
+
+## How do I learn what my product got wrong in an official round?
 
 Before results are published you get a report on your own product. It gives the numbers by checkpoint, attack family, sector and outcome, and for each weak group it names public practice cases your product got wrong in the same way, so you can reproduce the failure. It does not show hidden cases. Those are published when the round's split is retired. See [what a vendor is told](official-runs.md#what-a-vendor-is-told).
 
 ## How often is the benchmark refreshed?
 
-The official split is meant to be refreshed on a schedule, and cases are retired into the practice split once they are published. No refresh has happened yet: v1 is pre-release. Changes that alter published scores are versioned and recorded in [the changelog](../CHANGELOG.md).
+Each official round uses a fresh official split. When a round's results are published, its cases are published too and move to the practice split. No round has been run, so no refresh has happened. Changes that alter published scores are versioned and recorded in [the changelog](../CHANGELOG.md).
 
 ## What does "unsure" mean?
 
@@ -49,7 +60,7 @@ Some products return more than allow or block: a challenge, a flag for review, a
 
 ## What is the card track?
 
-In the core (no-context) track a product gets the case and nothing else. In the card track it also gets the case's deployment card: the agent's job, its allowed tools and destinations, the user's role and the policy rules, taken from the case's system message. Products that accept a policy are configured from the card. Products that cannot take one show "not applicable", not zero. See [case format](reference/case-format.md).
+In the no-context track a product gets the case and nothing else. In the card track it also gets the case's deployment card: the agent's job, its allowed tools and destinations, the user's role and the policy rules, taken from the case's system message. Products that accept a policy are configured from the card. Products that cannot take one show "not applicable", not zero. See [case format](reference/case-format.md).
 
 ## Which products can take a card?
 
@@ -69,12 +80,12 @@ The product cannot represent that checkpoint, for example a text classifier give
 
 ## How are cases made, and are they checked by people?
 
-Cases are written fresh, never copied from public data sets. They are model-drafted, machine-checked and model cross-reviewed in two blind passes. Human review, which would create the "Verified" subset, is pending, so no case is marked Verified yet. See [the review log](case-review-log.md) and [cases in v1](reference/cases-v1.md).
+Cases are written fresh, never copied from public datasets. They are model-drafted, machine-checked and model cross-reviewed in two blind passes. No case has had human review, so no case is marked "Verified". See [the review log](case-review-log.md) and [cases in v1](reference/cases-v1.md).
 
 ## Can I post results?
 
-Run the practice split and [submit it](guides/submit.md). It will appear on the unverified tier. Please do not publish working attacks against third-party products. See [SECURITY.md](../SECURITY.md).
+Run the practice split and [submit it](guides/submit.md). It appears on the "Practice (self-reported)" tab. Please do not publish working attacks against third-party products. See [SECURITY.md](../SECURITY.md).
 
 ## How do I report a bad case?
 
-Open an issue with the "Case report" template. Give the case id, what is wrong and why. Reports on the hidden official split cannot be accepted, because its contents cannot be discussed.
+Open an issue with the "Case report" template. Give the case id, what is wrong and why. Reports on the official split cannot be accepted, because its contents cannot be discussed.

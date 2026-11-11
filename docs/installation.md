@@ -13,7 +13,7 @@ uv sync --extra dev
 uv run guardrailbench validate cases/practice
 ```
 
-The last command should print `591 cases, 0 problems`. In the rest of the docs, commands are written as `guardrailbench ...`. With uv, put `uv run` in front.
+The last command should print `591 cases, 0 problems`: the 571 cases of the practice split and the 20 seed cases. In the rest of the docs, commands are written as `guardrailbench ...`. With uv, put `uv run` in front.
 
 ## With pip
 
@@ -30,7 +30,7 @@ Install an extra only for the product you want to run. Each one is a name in `py
 
 | Extra | Installs | For adapters |
 |---|---|---|
-| `dev` | pytest, ruff | running the tests |
+| `dev` | pytest, ruff | running the tests and the linter |
 | `hf` | transformers, torch | `prompt-guard-2-22m`, `prompt-guard-2-86m`, `protectai-deberta-v2`, `qualifire-sentinel`, `llama-guard-4` |
 | `llamafirewall` | llamafirewall | `llamafirewall` |
 | `nemo` | nemoguardrails | `nemo-guardrails` |
@@ -41,7 +41,7 @@ Install an extra only for the product you want to run. Each one is a name in `py
 
 Example: `uv sync --extra dev --extra bedrock`, or `pip install -e ".[bedrock]"`.
 
-The hosted-API adapters (`azure-prompt-shields`, `lakera-guard`, `openai-moderation`) need no extra package, only your own keys. Each adapter's module docstring in `src/guardrailbench/adapters/` lists the environment variables it reads, the documentation pages it relies on, and anything not yet verified.
+The hosted-API adapters (`azure-prompt-shields`, `lakera-guard`, `openai-moderation`) need no extra package, only your own keys. Nor do `llm-judge`, the reference baseline, and `fake`, the test double. Each adapter's module docstring in `src/guardrailbench/adapters/` lists the environment variables it reads, the documentation pages it relies on, and anything marked `UNVERIFIED`.
 
 ## Check the install
 
@@ -50,13 +50,18 @@ guardrailbench run --product fake --cases cases/practice --out runs/fake/practic
 guardrailbench score --results runs/fake/practice.jsonl --cases cases/practice --out results/fake/practice/report.json
 ```
 
-The `fake` product allows everything. It checks the plumbing, not detection, so every attack counts as a miss. Do not commit the `fake` report.
+The `fake` product is a test double that allows everything. It checks the plumbing, not detection, so every attack counts as a miss. Do not commit the `fake` report.
 
 ## Run the tests
 
+The tests need the `dev` extra: `uv sync --extra dev` as above, or `pip install -e ".[dev]"`.
+
 ```
 uv run pytest -q
+uv run ruff check .
 uv run guardrailbench casegen lint cases/practice/v1.jsonl
 ```
+
+With pip, drop `uv run`.
 
 Next: [run a product](guides/run-a-product.md).
