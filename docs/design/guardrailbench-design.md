@@ -160,6 +160,8 @@ Modelled on the AMTSO Testing Protocol Standard (anti-malware testing), MLCommon
 
 This is not legal advice. Before public release, a lawyer reviews three things: the vendor terms on benchmarking and testing, the risk of false-advertising or disparagement claims from publishing comparisons, and the hyperscaler clauses that give AWS, Microsoft and Google the right to benchmark a competing product in return.
 
+Update, 2026-11-11: the owner has decided that legal review is not a condition for publishing.
+
 ## How it is built (open to change)
 
 - Python, the same as SWE-bench, since most security researchers use it.
@@ -203,5 +205,5 @@ This is not legal advice. Before public release, a lawyer reviews three things: 
 
 1. Which fields go in the first domain packs. Waiting on field-adoption research.
 2. Who the outside reviewer is for the round in which an affiliated product first appears.
-3. Legal review.
+3. Legal review. (2026-11-11: the owner has decided that legal review is not a condition for publishing.)
 4. The git identity and GitHub org for the public repo.
