@@ -1,12 +1,12 @@
 name: Case report
-description: A practice case is mislabelled, unrealistic, or broken.
+description: Report a practice case that is mislabelled, unrealistic or broken.
 labels: [case]
 body:
   - type: input
     id: case_id
     attributes:
       label: Case id
-      description: Practice split only. We cannot take reports on the hidden split.
+      description: Practice split only. Reports on the official split cannot be taken, because its contents cannot be discussed.
     validations:
       required: true
   - type: dropdown

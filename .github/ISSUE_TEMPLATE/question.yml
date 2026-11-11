@@ -1,11 +1,11 @@
 name: Question
-description: Ask how something works or how to take part.
+description: Ask how something works, after checking the docs and the FAQ.
 labels: [question]
 body:
   - type: markdown
     attributes:
       value: |
-        Please check the [docs](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md) and the [FAQ](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/faq.md) first. Do not ask about the contents of the hidden official split, and do not paste working attacks against third-party products.
+        Please check the [docs](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md) and the [FAQ](https://github.com/Jagga-tech/guardrailbench/blob/main/docs/faq.md) first. Do not ask about the contents of the official split, and do not paste working attacks against third-party products.
   - type: textarea
     id: question
     attributes:

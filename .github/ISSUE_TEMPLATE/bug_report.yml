@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in the harness, scoring, or CLI is wrong.
+description: Report something wrong in the harness, the scoring, the command line or the site.
 labels: [bug]
 body:
   - type: textarea

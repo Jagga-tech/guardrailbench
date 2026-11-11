@@ -1,5 +1,14 @@
+# The chooser lists every template in this folder with its one-line description:
+# bug_report, case_report, feature_request, new_adapter, participation, question.
+# The links below are shown after them.
 blank_issues_enabled: false
 contact_links:
+  - name: Read the docs first
+    url: https://github.com/Jagga-tech/guardrailbench/blob/main/docs/index.md
+    about: Installation, guides, reference and the FAQ. Most questions are answered there.
+  - name: How to take part
+    url: https://jagga-tech.github.io/guardrailbench/submit.html
+    about: The two routes for makers of guardrail products, practice results and official rounds, side by side.
   - name: Security issue
     url: https://github.com/Jagga-tech/guardrailbench/security/policy
     about: Report harness vulnerabilities privately. Do not post working attacks on third-party products.

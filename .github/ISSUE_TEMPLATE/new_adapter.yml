@@ -1,5 +1,5 @@
 name: New adapter
-description: Propose an adapter for a guardrail product.
+description: Propose or discuss an adapter that connects a guardrail product to the harness.
 labels: [adapter]
 body:
   - type: input
@@ -31,5 +31,5 @@ body:
           required: true
         - label: Only fields the docs say the product inspects
           required: true
-        - label: Can be tested without a sales contact, or terms allow publishing results
+        - label: I understand that an adapter lets the product be run on the practice split, and that only its maker can ask for an official round
           required: true
