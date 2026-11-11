@@ -14,7 +14,8 @@ ROOT = Path(__file__).resolve().parent.parent / "cases"
 K = 5
 CHECKPOINTS = ["prompt", "ingested_content", "tool_call", "output", "memory_write", "tool_definition", "trajectory"]
 
-rows = [json.loads(l) for s in ("practice", "official") for l in (ROOT / s / "v1.jsonl").open()]
+rows = [json.loads(l) for s in ("practice", "official") for f in sorted((ROOT / s).glob("v*.jsonl")) for l in f.open()]
+rows = [r for r in rows if r.get("twin_change") != "policy"]  # policy twins share their text; only the card differs
 TOK = {r["id"]: set(re.findall(r"\w+", to_text(r["messages"], r["target"])[-4000:].lower())) for r in rows}
 twin_of = {r["id"]: r["twin_id"] for r in rows if r.get("twin_id")}
 twin_of.update({v: k for k, v in list(twin_of.items())})

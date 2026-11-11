@@ -173,9 +173,15 @@ def test_other_twin_kinds_keep_their_card_rule(cases):
         assert "only a role twin may differ" in problems(a, t)
 
 
-def test_practice_split_has_no_policy_pairs_and_still_validates():
+def v1_practice():
+    return load_cases(PRACTICE / "seed.jsonl") + load_cases(PRACTICE / "v1.jsonl")
+
+
+def test_practice_split_validates_and_only_v2_has_policy_pairs():
     cs = load_cases(PRACTICE)
-    assert validate(cs) == [] and not any(c.twin_change == "policy" for c in cs)
+    assert validate(cs) == []
+    assert not any(c.twin_change == "policy" for c in v1_practice())
+    assert any(c.twin_change == "policy" for c in cs if c.version == 2)
 
 
 # --- casegen ---
@@ -332,7 +338,7 @@ GOLDEN = {"none": "1eeddaffa677d0b3cce05f28869d623eff1fca4ec8cf231fc78449ef93250
 
 @pytest.mark.parametrize("track", ["none", "card"])
 def test_practice_split_scores_byte_identically(tmp_path, track, cases):
-    practice = load_cases(PRACTICE)
+    practice = v1_practice()  # the v1 files only: v2 adds policy pairs, which change the report by design
     out = fixed(rows(FakeAdapter(CRUDE), practice, tmp_path / "p.jsonl", track))
     rep = report(out, practice)
     assert rep["card_only_pairs"] == {"pairs": 0, "cases": 0}
