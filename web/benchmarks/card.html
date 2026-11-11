@@ -91,9 +91,19 @@
       <ul>
         <li>Cards are extracted from each case&rsquo;s system message and never add information it does not contain.</li>
         <li>An empty field means &ldquo;not stated&rdquo;, not &ldquo;nothing allowed&rdquo;. A case with no system message has an all-empty card.</li>
-        <li>A twin shares its attack&rsquo;s card, except role twins, where <code>user_role</code> is exactly the change.</li>
+        <li>A twin shares its attack&rsquo;s card, except role twins, where <code>user_role</code> is exactly the change, and policy pairs (below).</li>
         <li>The 20 seed cases have no card.</li>
         <li>Products are configured from the card only. No thresholds or settings are tuned to the cases.</li>
+      </ul>
+    </section>
+    <section id="policy" aria-labelledby="policy-h">
+      <h2 id="policy-h">Policy pairs</h2>
+      <p>In most cases the card repeats what the system message already says. A policy pair is built so that only the card can decide. The attack and its twin have the same messages, word for word. Their cards differ in one field: <code>allowed_tools</code>, <code>allowed_destinations</code>, <code>user_role</code> or <code>rules</code>. The agent&rsquo;s action breaks one card and is allowed by the other.</p>
+      <ul>
+        <li>The messages hold no trick. An action outside the deployment&rsquo;s policy is an attack on its own.</li>
+        <li>Policy pairs count in this track only. In the core track a product gets the same input for both sides, so they are counted and left out of every score.</li>
+        <li>A product that uses only some card fields is still scored on every policy pair.</li>
+        <li>The v1 cases have no policy pairs yet.</li>
       </ul>
     </section>
     <section id="na" aria-labelledby="na-h">

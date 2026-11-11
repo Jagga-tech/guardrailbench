@@ -6,7 +6,7 @@ The reliability track asks how steady a product is, not only how often it is rig
 guardrailbench reliability --product NAME --cases cases/practice --out DIR [--repeats N] [--no-load] [--no-long] [--timeout SECONDS] [--seed S]
 ```
 
-It writes `DIR/reliability.json` and one JSONL per sub-run. Defaults: 3 repeats, 30 s timeout, seed 20261109. `--no-load` skips the load test and `--no-long` skips the long-input test.
+It writes `DIR/reliability.json` and one JSONL per sub-run. Defaults: 3 repeats, 30 s timeout, seed 20261109. `--no-load` skips the load test and `--no-long` skips the long-input test. The track runs without deployment cards, so [policy pairs](../reference/metrics.md#policy-pairs) are left out of it.
 
 ## What it measures
 

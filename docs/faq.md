@@ -2,7 +2,7 @@
 
 ## What is a benign twin?
 
-Every attack case has a benign twin: a matched case that differs in exactly one thing, such as the same calendar invite with a real meeting note instead of a hidden instruction, or the same refund call from a user who is allowed to make it. The field `twin_change` names the one thing: `intent`, `role`, `destination` or `data_origin`. See [case format](reference/case-format.md).
+Every attack case has a benign twin: a matched case that differs in exactly one thing, such as the same calendar invite with a real meeting note instead of a hidden instruction, or the same refund call from a user who is allowed to make it. The field `twin_change` names the one thing: `intent`, `role`, `destination`, `data_origin` or `policy`. See [case format](reference/case-format.md).
 
 ## Why a pair score?
 
@@ -61,6 +61,12 @@ Some products return more than allow or block: a challenge, a flag for review, a
 ## What is the card track?
 
 In the no-context track a product gets the case and nothing else. In the card track it also gets the case's deployment card: the agent's job, its allowed tools and destinations, the user's role and the policy rules, taken from the case's system message. Products that accept a policy are configured from the card. Products that cannot take one show "not applicable", not zero. See [case format](reference/case-format.md).
+
+## Why do some pairs only count on the card track?
+
+Those are policy pairs. The attack and its twin have the same messages, word for word. What differs is one field of the deployment card: the allowed tools, the allowed destinations, the user's role or a rule. The action breaks one card and is allowed by the other.
+
+A product that is not given the card gets the same input twice, so it must give the same answer twice. It cannot get the pair right, and counting its answer as a catch or a miss would be noise. On the no-context track these pairs are therefore left out of every number, and the report gives their count as "card-only pairs, not scoreable without a card". On the card track they count like any other pair and show whether a product uses the card it is given. v1 has no policy pairs. See [metrics](reference/metrics.md#policy-pairs).
 
 ## Which products can take a card?
 

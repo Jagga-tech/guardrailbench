@@ -13,7 +13,7 @@ Each line of a `.jsonl` case file is one JSON object. The loader (`guardrailbenc
 | `target` | int | Index of the message the guard is asked to judge. Must be inside `messages`. |
 | `label` | string | `attack` or `benign`. |
 | `twin_id` | string or null | The paired case. The twin must point back and have the other label. Attacks must have one. |
-| `twin_change` | string or null | What the twin changes: `intent`, `role`, `destination` or `data_origin`. |
+| `twin_change` | string or null | What the twin changes: `intent`, `role`, `destination`, `data_origin` or `policy`. |
 | `transform` | string or null | An evasion applied to the text (encoding, padding, language and so on). |
 | `source_pattern` | string or null | The incident, CVE or paper the pattern comes from. A citation, never copied text. |
 | `canary` | string | A unique `GRB-CANARY-<uuid>` string. It shows if the case leaks into training data. |
@@ -58,6 +58,12 @@ Terms such as benign twin, normal case and pair are defined in the [glossary](..
 
 Every attack has a benign twin that changes exactly one thing, named by `twin_change`. `intent` swaps a hidden instruction for an ordinary one, `role` changes who is asking (and so what is allowed), `destination` changes where data goes, and `data_origin` changes where the content came from. For `intent` and `destination` twins the attack's marker must not appear anywhere in the twin. Role and data-origin twins keep the payload and change its context.
 
+### Policy pairs
+
+A `policy` twin changes nothing in the messages. The attack and its twin have identical `messages` and `target` and differ only in `deployment_card`, in exactly one of `allowed_tools`, `allowed_destinations`, `user_role` or `rules`. The target's action breaks the attack's card, and the twin's card permits it. The messages do not state the deciding policy and need no manipulation text: an out-of-policy action is an attack on its own. The marker is the offending part of the target's tool-call arguments and is the same in both cases.
+
+A policy pair can only be told apart by a product that is given the card, so it is scored on the card track only. See [metrics.md](metrics.md#policy-pairs). The v1 case set has no policy pairs.
+
 ## Deployment card
 
 A case with a system message carries a `deployment_card` extracted from it. It has exactly these fields:
@@ -70,7 +76,7 @@ A case with a system message carries a `deployment_card` extracted from it. It h
 | `user_role` | string | Who the session user is, and what they may do. |
 | `rules` | list of strings | Short policy lines, copied from the system message. |
 
-An empty list or string means "not stated", not "nothing allowed". A card never adds information the system message does not contain. A case without a system message has an all-empty card, and the 20 seed cases have none (`null`). A twin must have the same card as its attack, except a `role` twin, which may differ only in `user_role`. Cards are not part of the sort hash that assigns a case to a split. The card track uses them: see [metrics.md](metrics.md).
+An empty list or string means "not stated", not "nothing allowed". A card never adds information the system message does not contain, with one exception: in a [policy pair](#policy-pairs) the one field that differs holds the deciding policy, which the messages leave out. A case without a system message has an all-empty card, and the 20 seed cases have none (`null`). A twin must have the same card as its attack, except a `role` twin, which may differ only in `user_role`, and a `policy` twin, which must differ in exactly one policy field. Cards are not part of the sort hash that assigns a case to a split. The card track uses them: see [metrics.md](metrics.md).
 
 ## Sectors
 
@@ -81,5 +87,11 @@ An empty list or string means "not stated", not "nothing allowed". A card never 
 - Ids and canaries are unique, and attack markers are unique.
 - Tool-call `arguments` are valid JSON strings.
 - Attack cases need a twin and a marker; benign cases must not have a marker.
+- For a `policy` pair:
+  - both cases have `twin_change` `policy`, checkpoint `tool_call` or `trajectory`, and no transform;
+  - `messages` and `target` are identical in the two cases;
+  - both cards are present, and they differ in exactly one of `allowed_tools`, `allowed_destinations`, `user_role` or `rules` (never in `agent_job`);
+  - if the field is `allowed_tools`: the attack's list is not empty, the target message makes a tool call, at least one tool it calls is missing from the attack's list, the marker sits in the arguments of such a call, and every tool called anywhere in the messages is in the twin's list;
+  - if it is another field: the attack's value is not empty, because an empty value means "not stated" and forbids nothing.
 
-To write new cases, read [the case-writing guide](../case-writing-guide.md). `guardrailbench casegen lint <file>` adds style checks on top of `validate`.
+To write new cases, read [the case-writing guide](../case-writing-guide.md). `guardrailbench casegen lint <file>` adds style checks on top of `validate`. For policy pairs it flags a `user_role` or `rules` pair whose deciding card text also appears in the messages, and an `allowed_destinations` pair whose target does not use the destination the twin's card adds.

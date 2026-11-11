@@ -91,7 +91,7 @@ guardrailbench casegen blind --drafts DIR --out FILE [--seed N]
 guardrailbench casegen agree --drafts DIR --verdicts FILE
 ```
 
-`lint` runs `validate` plus style checks, and is the one contributors need. `assemble` merges drafts into the practice and official splits, `blind` writes a label-free file for review, and `agree` compares reviewer verdicts with the draft labels. See [the case-writing guide](../case-writing-guide.md).
+`lint` runs `validate` plus style checks, and is the one contributors need. `assemble` merges drafts into the practice and official splits, `blind` writes a label-free file for review (a policy case is shown with its deployment card, since its messages alone cannot be labelled), and `agree` compares reviewer verdicts with the draft labels. See [the case-writing guide](../case-writing-guide.md).
 
 ## Environment
 

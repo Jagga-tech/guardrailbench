@@ -23,6 +23,12 @@ Rules:
 - Never book business class.
 ```
 
+## Policy pairs
+
+Most cards repeat what the case's system message already says. A policy pair is different: the attack and its twin have the same messages, and their cards differ in one field, `allowed_tools`, `allowed_destinations`, `user_role` or `rules`. The action breaks the attack's card and is allowed by the twin's. Only a product that uses that field can tell the two apart, so these pairs are what shows whether a product enforces the card. They are scored on the card track only. See [case format](case-format.md#policy-pairs) and [metrics](metrics.md#policy-pairs).
+
+An adapter that passes on only some card fields gets identical input for both sides of a pair that turns on a field it leaves out. That pair is then a miss or an over-block. It is counted, because a deployment that relies on that field would not be protected. The "Card fields used" column below says which fields each adapter passes on.
+
 ## Products
 
 | Product | Takes a card? | How | Card fields used | Checked |
@@ -51,7 +57,7 @@ Rules:
 - If a tool name cannot be written exactly as a string in the rule language, no rule is added for that card. A partial list would block a tool the card allows.
 - With your own rules file (`GUARDRAILBENCH_INVARIANT_POLICY`), a case whose card would add a rule is reported as an error.
 
-In the practice split every judged tool call uses a tool its card allows, so this rule does not fire there. That is a fact about the cases, not a setting.
+In the practice split every judged tool call uses a tool its card allows, so this rule does not fire there. That is a fact about the cases, not a setting. Policy pairs on `allowed_tools` are the cases where it does fire, and v1 has none.
 
 **LlamaFirewall.** Only AlignmentCheck reads the trace, so the card reaches assistant turns only (tool calls and trajectories). PromptGuard, which handles user messages and tool results, classifies one message and never sees the card. AlignmentCheck's own prompt tells its model to judge the agent's action against the user's message. The vendor does not say a system message is treated as policy, so the adapter passes the card where a deployment would put it and adds no instruction of its own.
 

@@ -27,10 +27,14 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 - A participation request form (`.github/ISSUE_TEMPLATE/participation.yml`) for makers who want their product in an official round.
 - `docs/glossary.md`: the terms the docs use, each with one meaning.
 - Site: a "Take part" page that shows the practice route and the official-round route side by side, a 404 page, and Open Graph tags on every page.
+- Policy pairs: a fifth `twin_change` value, `policy`. The attack and its twin have identical messages and differ only in one field of the deployment card (`allowed_tools`, `allowed_destinations`, `user_role` or `rules`), so only a product that uses the card can tell them apart. `validate`, `casegen` (drafts may leave out the benign side; blind review shows the card) and the case-writing guide cover them. The v1 case files are unchanged and hold none.
+- `report.json`: a `twin_change` breakdown next to family, checkpoint, transform and sector, and a `card_only_pairs` count. `vendor-report.json` has the same count.
 - `.pre-commit-config.yaml` (ruff, end-of-file and trailing-whitespace hooks) and a minimal `[tool.ruff]` setting in `pyproject.toml`. `ruff` is part of the `dev` extra.
 
 ### Changed
 
+- Scoring of policy pairs: on the no-context track and the reliability track they are left out of every number and only counted ("card-only pairs, not scoreable without a card"); on the card track they count like any pair. No number changes for a case set without policy pairs, and a test pins the practice split's report to its earlier bytes.
+- `casegen lint` also checks deployment cards for real-world domains.
 - Submitted results keep their per-case log in this repository, as `results/<product>/<split>/log.jsonl.gz`. There is no separate results repository.
 - The README follows the layout of other benchmark projects: links row, news, overview, set up, usage, downloads, contributions. The long tables (case counts, reliability keys) moved to `docs/reference/` and `docs/guides/`.
 - The design documents moved to `docs/design/` (`guardrailbench-design.md`, `measurement-design.md`, `followups.md`) and are written as project design documents.

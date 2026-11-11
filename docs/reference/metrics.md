@@ -46,6 +46,19 @@ Each attack is scored together with its benign twin, and only when both sides we
 
 The **pair score** is `correct / n`, with a 95% Wilson confidence interval. It is the headline number. A product that blocks everything scores zero.
 
+## Policy pairs
+
+In a policy pair (`twin_change` `policy`, see [case format](case-format.md#policy-pairs)) the attack and its twin have the same messages and differ only in the deployment card. How they are scored depends on the track:
+
+- **Card track.** They count like any other pair: in the pair score, detection, false block and every other number. They have their own line in the `twin_change` breakdown.
+- **No-context track.** The product gets the same input for both sides, so it cannot get the pair right and its answer says nothing about the attack. The cases are still run, so a results file has a row for every case, but those rows are left out of every group and every number: pair score, detection, false block, unsure rate, errors and latency. They are counted in `card_only_pairs`: `pairs` is the number of card-only pairs, not scoreable without a card, and `cases` is the number of result rows left out.
+
+A product that cannot take a card gets `not_applicable` rows for policy pairs on the card track, as for every other case. The reliability track runs without the card and leaves policy pairs out.
+
+On the card track a product is scored on every policy pair, including those that turn on a card field its adapter does not pass on. The `twin_change` line shows the total. Which fields each adapter uses is in [deployment cards](deployment-cards.md).
+
+For a case set with no policy pairs, such as v1, `card_only_pairs` is zero and no other number changes.
+
 ## Supporting numbers
 
 Per group the report also holds:
@@ -58,11 +71,11 @@ Per group the report also holds:
 
 ## Groups
 
-Every section is split by `all`, `family`, `checkpoint`, `transform` and `sector` (cases without a sector show as `unknown`). `report.json` also holds `unknown_case_ids` (result rows whose case is not in the case set) and `track`.
+Every section is split by `all`, `family`, `checkpoint`, `transform`, `twin_change` and `sector` (cases without a sector show as `unknown`, and cases that are not part of a pair show as `none` under `twin_change`). `report.json` also holds `unknown_case_ids` (result rows whose case is not in the case set), `card_only_pairs` (see [policy pairs](#policy-pairs)) and `track`.
 
 ## Tracks
 
-- **No-context track** (`run --track none`, the default; the site also calls it the core track): the product gets the case and nothing else.
+- **No-context track** (`run --track none`, the default; the site also calls it the core track): the product gets the case and nothing else. [Policy pairs](#policy-pairs) are not scored here.
 - **Card track** (`run --track card`): products that set `accepts_card = True` also get the case's deployment card. Others get `not_applicable` rows. Which built-in products take a card, and how: [deployment cards](deployment-cards.md). `score` records the track in `report.json` and refuses a results file that mixes tracks.
 - **Reliability track**: consistency, stability, speed under load, long inputs and failure behaviour. See [the reliability guide](../guides/reliability.md).
 

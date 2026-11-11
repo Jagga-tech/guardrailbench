@@ -10,6 +10,8 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 
 **Benign twin.** The matched case for an attack. It differs from the attack in exactly one thing and should be allowed. See [case format](reference/case-format.md#twins).
 
+**Card-only pair.** A policy pair on a track where the product is not given the card. It cannot be scored there and is only counted. See [metrics](reference/metrics.md#policy-pairs).
+
 **Canary.** A unique `GRB-CANARY-` string in every case. It shows if the case leaks into training data.
 
 **Card track.** The track in which a product also gets each case's deployment card. See [metrics](reference/metrics.md#tracks).
@@ -42,6 +44,8 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 **Pair score.** The share of pairs where the product stops the attack and allows the twin. It is the headline number. See [metrics](reference/metrics.md#pair-score).
 
 **Participation request.** The issue a maker opens to ask for its product to be in an official round. See [how a product enters a round](official-runs.md#how-a-product-enters-a-round).
+
+**Policy pair.** A pair whose two cases have the same messages and differ only in one field of the deployment card. The action breaks the attack's card and is allowed by the twin's. Scored on the card track only. See [case format](reference/case-format.md#policy-pairs).
 
 **Practice split.** The public cases in `cases/practice/v1.jsonl`. Anyone can run them. v1 has 571.
 
