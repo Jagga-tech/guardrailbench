@@ -29,6 +29,7 @@ A maker of a guardrail product has two routes: send practice results by pull req
 - [Metrics](reference/metrics.md): decisions, strict and lenient, pair score, native and flattened
 - [Command line](reference/cli.md): every command and flag
 - [Cases in v1](reference/cases-v1.md): counts by family, checkpoint and sector, and known limitations
+- [Cases in v2](reference/cases-v2.md): the case set for the first official round, with policy pairs, review numbers and known limitations
 - [Leaderboard](reference/leaderboard.md): result folders, `meta.json` and the generated page
 
 ## Writing and reviewing cases

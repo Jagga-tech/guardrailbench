@@ -1,6 +1,8 @@
 # Cases in v1
 
-Counts for the v1 case set. For the file format, see [case-format.md](case-format.md).
+Counts for the v1 case set. For the file format, see [case-format.md](case-format.md). The second case set is in [cases-v2.md](cases-v2.md).
+
+**Status.** The v1 practice split stays public (`cases/practice/v1.jsonl`). The v1 official split (3,189 cases) is withdrawn from official use and held in reserve, unpublished: it was used for internal harness testing before any round, so it is not used for scoring. The first official round uses the v2 case set. `cases/OFFICIAL_SHA256` now holds the fingerprint of the v2 official split, not of the v1 one.
 
 v1 has 880 attack cases, each with a benign twin, plus 2,000 normal cases: 3,760 in all. 571 are in the practice split (`cases/practice/v1.jsonl`): 131 attacks, their 131 benign twins and 309 normal cases. 3,189 are in the official split: 749 attacks, their 749 benign twins and 1,691 normal cases. The official split is not published; its fingerprint is in `cases/OFFICIAL_SHA256`. The 20-case seed file (`cases/practice/seed.jsonl`, 10 pairs) is for smoke tests and is not part of these counts. Cases with a system message carry a `deployment_card` extracted from it (agent job, allowed tools and destinations, user role, rules). The seed cases have no card, and a case without a system message has an all-empty card, which means nothing is stated. Cards are not part of the sort hash, so they did not change which split a case is in. Counts per family and checkpoint, with the practice / official split in brackets:
 
