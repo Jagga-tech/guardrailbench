@@ -140,7 +140,7 @@ Version 1.0.0-rc1, a pre-release. What is not done, and what has to happen first
 - **No case has had human review**, so no case is marked "Verified". The v2 cases were drafted by a model and checked by machine and by a different model only. That review is one of the conditions for the first official round.
 - **Some adapters have not been run against the live product.** The open points are marked `UNVERIFIED` in the adapter source and listed in [the follow-ups](docs/design/followups.md). An adapter with open points is not used in an official round.
 - **Non-English cases have had no native-speaker check.**
-- **1.0.0-rc1 is not tagged as a release**, so the citation file carries no release date.
+- **1.0.0-rc1 is a release candidate**, tagged on 2026-11-11. 1.0.0 follows the first official round.
 - **The maintainer list is not in `.github/CODEOWNERS`.** It is added when the project moves to its own GitHub organisation.
 
 ## Contributions
