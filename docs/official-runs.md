@@ -80,7 +80,7 @@ A dispute does not give a vendor a veto. Results from a valid run are published.
 ## Before the first official round
 
 - Human review of the cases, so that a "Verified" subset exists.
-- A fresh official split that no product has been run on. Done 2026-11-11: the v2 official split (1,601 hidden cases) exists and its fingerprint is in `cases/OFFICIAL_SHA256`. The v1 official split is withdrawn and held in reserve.
+- A fresh official split that no product has been run on. Done 2026-11-11: the v2 official split (1,738 hidden cases, after the 2026-11-11 top-up) exists and its fingerprint is in `cases/OFFICIAL_SHA256`. The top-up changed the fingerprint. No product had been run on the split. The v1 official split is withdrawn and held in reserve.
 - A participation request from the maker of every product in the round, with its confirmation that the result may be published.
 - A public adapter for every product in the round, and a way for the maintainers to run it: an account or key for a hosted product, install instructions for a self-hosted one.
 - An independent reviewer for any affiliated product.

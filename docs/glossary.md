@@ -29,7 +29,7 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 
 **No-context track.** The default track. The product gets the case and nothing else. The site also calls it the core track.
 
-**Normal case.** A benign case that is not the twin of an attack. v1 has 2,000 and v2 has 938.
+**Normal case.** A benign case that is not the twin of an attack. v1 has 2,000 and v2 has 1,038.
 
 **Not applicable.** Shown on the card track for a product that cannot take a deployment card.
 
@@ -37,7 +37,7 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 
 **Official round.** One closed test of the official split, run by the maintainers on the products whose makers asked to take part. See [official rounds](official-runs.md).
 
-**Official split.** The cases used in official rounds. It is hidden: only its SHA-256 fingerprint is published before a round. The v2 official split has 1,601 cases. The v1 official split (3,189 cases) is withdrawn from official use and held in reserve.
+**Official split.** The cases used in official rounds. It is hidden: only its SHA-256 fingerprint is published before a round. The v2 official split has 1,738 cases. The v1 official split (3,189 cases) is withdrawn from official use and held in reserve.
 
 **Pair.** An attack and its benign twin.
 
@@ -47,7 +47,7 @@ The terms the docs use, each with one meaning. Links go to the page that has the
 
 **Policy pair.** A pair whose two cases have the same messages and differ only in one field of the deployment card. The action breaks the attack's card and is allowed by the twin's. Scored on the card track only. See [case format](reference/case-format.md#policy-pairs).
 
-**Practice split.** The public cases in `cases/practice`: `v1.jsonl` (571), `v2.jsonl` (313) and the seed file (20), 904 in all. Anyone can run them.
+**Practice split.** The public cases in `cases/practice`: `v1.jsonl` (571), `v2.jsonl` (313), `v2b.jsonl` (25, the v2 top-up) and the seed file (20), 929 in all. Anyone can run them.
 
 **Reliability track.** Consistency, stability, speed under load, long inputs and failure behaviour. See [the reliability guide](guides/reliability.md).
 

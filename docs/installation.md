@@ -13,7 +13,7 @@ uv sync --extra dev
 uv run guardrailbench validate cases/practice
 ```
 
-The last command should print `904 cases, 0 problems`: the 571 cases of v1 practice, the 313 cases of v2 practice and the 20 seed cases. In the rest of the docs, commands are written as `guardrailbench ...`. With uv, put `uv run` in front.
+The last command should print `929 cases, 0 problems`: the 571 cases of v1 practice, the 313 cases of v2 practice, the 25 cases of the v2 top-up and the 20 seed cases. In the rest of the docs, commands are written as `guardrailbench ...`. With uv, put `uv run` in front.
 
 ## With pip
 

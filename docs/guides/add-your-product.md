@@ -33,7 +33,7 @@ uv sync
 uv run guardrailbench validate cases/practice
 ```
 
-The last command should print `904 cases, 0 problems`.
+The last command should print `929 cases, 0 problems`.
 
 ### 2. Copy the template (1 minute)
 
@@ -85,7 +85,7 @@ You should see a mix of `allow`, `block` and perhaps `unsure`. If you see `error
 uv run guardrailbench run --product my-product --cases cases/practice --out runs/my-product/practice.jsonl
 ```
 
-This sends 904 cases, four at a time (`--workers` changes that). Multi-step cases are sent once per step, so the number of calls is a little higher. If the run stops, run the same command again and it carries on where it stopped.
+This sends 929 cases, four at a time (`--workers` changes that). Multi-step cases are sent once per step, so the number of calls is a little higher. If the run stops, run the same command again and it carries on where it stopped.
 
 ### 6. Score
 

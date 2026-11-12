@@ -146,30 +146,42 @@ Counts only. No human review has been done for any v2 case. Cases are described 
 
 ### Final counts
 
-15 pairs were dropped in all (3 + 10 + 2) and no normal case. 488 pairs and 938 normal cases remain: 1,601 official cases and 313 practice cases.
+15 pairs were dropped in all (3 + 10 + 2) and no normal case. 488 pairs and 938 normal cases remained after the first drafting. The top-up below added 31 pairs and 100 normal cases. In all: 519 pairs and 1,038 normal cases, 1,738 official cases and 338 practice cases.
 
 | Split | Pairs | Policy pairs | Normal cases | Cases |
 |---|---|---|---|---|
-| Practice | 88 | 29 | 137 | 313 |
-| Official | 400 | 111 | 801 | 1,601 |
+| Practice | 92 | 29 | 154 | 338 |
+| Official | 427 | 111 | 884 | 1,738 |
+
+### Top-up (2026-11-11)
+
+Why: the surface-tell probe below could partly tell attacks from standalone normal cases by topic and shape. The top-up added cases to close that gap. It was assembled separately: its ids start with `v2b-` (version 2), and the public part is `cases/practice/v2b.jsonl`.
+
+- Drafted: 32 injection pairs in everyday, non-technical content (many long), 64 normal technical cases (34 with a visible, harmless note to automated readers), and 36 normal trajectories that end in an outbound or state-changing call.
+- Machine checks (`validate`, `lint`) on every draft.
+- Blind review by a different model that saw no labels: 164 items. The reviewer's label matched the intended label on 164 of 164.
+- Flags: real entity 4, broken 1, ambiguous 0.
+- Repair: 2 pairs had real public bodies replaced with invented ones. 1 pair (broken) was dropped. 31 pairs were kept.
+- Added: 31 pairs and 100 normal cases (162 cases): 25 practice cases (4 pairs, 17 normal) and 137 official cases (27 pairs, 83 normal).
+- No human review.
 
 ### Surface-tell probe
 
-`scripts/tell_probe.py`: bag-of-words Naive Bayes, 5-fold cross-validation, balanced accuracy (0.5 is chance). Run over v1 practice, v2 practice and v2 official together, policy pairs left out.
+`scripts/tell_probe.py`: bag-of-words Naive Bayes, 5-fold cross-validation, balanced accuracy (0.5 is chance). Run over v1 practice, v2 practice and v2 official together, policy pairs left out. A crude check: it sees word presence only.
 
-| Run | Balanced accuracy |
-|---|---|
-| All cases | 0.613 |
-| Twins only (attack vs its twin) | 0.570 |
-| Attack vs normal cases, prompt | 0.573 |
-| Attack vs normal cases, ingested_content | 0.714 |
-| Attack vs normal cases, tool_call | 0.631 |
-| Attack vs normal cases, output | 0.500 |
-| Attack vs normal cases, memory_write | 0.579 |
-| Attack vs normal cases, tool_definition | 0.508 |
-| Attack vs normal cases, trajectory | 0.706 |
+| Run | Before top-up | After top-up |
+|---|---|---|
+| All cases | 0.613 | 0.545 |
+| Twins only (attack vs its twin) | 0.570 | 0.571 |
+| Attack vs normal cases, prompt | 0.573 | 0.573 |
+| Attack vs normal cases, ingested_content | 0.714 | 0.566 |
+| Attack vs normal cases, tool_call | 0.631 | 0.631 |
+| Attack vs normal cases, output | 0.500 | 0.500 |
+| Attack vs normal cases, memory_write | 0.579 | 0.579 |
+| Attack vs normal cases, tool_definition | 0.508 | 0.508 |
+| Attack vs normal cases, trajectory | 0.706 | 0.664 |
 
-These figures are for the combined set and are not comparable with the v1-only table above. See [Cases in v2](reference/cases-v2.md#surface-tell-probe) for how to read them.
+Fetched content, all cases and trajectories moved toward chance. Tool calls did not (0.63). These figures are for the combined set and are not comparable with the v1-only table above. See [Cases in v2](reference/cases-v2.md#surface-tell-probe) for how to read them.
 
 ### Labelling rulings
 

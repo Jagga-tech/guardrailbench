@@ -8,7 +8,7 @@ The `guardrailbench` command is installed with the package (see [installation](.
 guardrailbench validate PATH
 ```
 
-Checks every case file in `PATH` (a `.jsonl` file or a folder of them) against [the case format](case-format.md). Prints each problem to stderr and a summary such as `904 cases, 0 problems`.
+Checks every case file in `PATH` (a `.jsonl` file or a folder of them) against [the case format](case-format.md). Prints each problem to stderr and a summary such as `929 cases, 0 problems`.
 
 ## run
 
