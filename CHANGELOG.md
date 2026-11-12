@@ -12,6 +12,12 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 - The fingerprint in `cases/OFFICIAL_SHA256` changed, because the official split gained the top-up (1,601 to 1,738 cases). No product had been run on the official split before that.
 - `guardrailbench validate cases/practice` now prints `929 cases, 0 problems` (it was 904): 571 (v1) + 313 (v2) + 25 (v2b) + 20 (seed).
+- The fingerprint changed a second time on 2026-11-11, when the card fix below touched 28 official cases. Only their cards changed.
+
+### Fixed
+
+- 34 deployment cards listed allowed tools but left out a tool that the case itself calls (6 in the v1 practice split, 3 in the v2 practice split, 28 in the v2 official split, counting both sides of a pair). A product that enforces the card was right to stop those cases, although they were labelled benign. The missing tools are added to the cards. No message text changed.
+- `casegen lint` now reports a card whose `allowed_tools` omits a tool the case calls. Policy attacks are exempt, because there the call outside the list is the point.
 
 ## [1.0.0-rc1] - 2026-11-11
 

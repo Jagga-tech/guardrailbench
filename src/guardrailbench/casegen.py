@@ -220,6 +220,15 @@ def lint(cases: list[Case]) -> list[str]:
                 if s.quick_ratio() > 0.9 and s.ratio() > 0.9:
                     problems.append(f"{ia} and {ib}: near-duplicate attacks")
     for c in cases:
+        # A card that lists tools must list every tool the case calls, or a card-enforcing product is right to
+        # stop a case labelled benign. Policy attacks are the one place a call outside the list is intended.
+        card = c.deployment_card or {}
+        stated = [x for x in card.get("allowed_tools") or [] if x.strip()]
+        if stated and not (c.twin_change == "policy" and c.label == "attack") and isinstance(c.messages, list):
+            used = {tc["function"]["name"] for m in c.messages for tc in m.get("tool_calls") or []}
+            if used - set(stated):
+                problems.append(f"{c.id}: card's allowed_tools omits a tool the case calls: {sorted(used - set(stated))}")
+    for c in cases:
         t = by_id.get(c.twin_id) if c.label == "attack" and c.twin_change == "policy" else None
         field = policy_field(c, t) if t is not None else None
         if field in ("user_role", "rules"):

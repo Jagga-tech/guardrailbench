@@ -135,7 +135,7 @@ That is 31 pairs and 100 normal cases, 162 cases in all: 25 in the practice spli
 
 **Review.** The top-up went through the same machine checks and a blind review by a different model. 164 items were reviewed blind, and the reviewer's label matched on 164 of 164. It raised 4 real-entity flags and 1 broken flag, and no ambiguous flags. 2 pairs had real public bodies replaced with invented ones. 1 pair (the broken one) was dropped. No human has reviewed any v2 case, the top-up included.
 
-**Hash.** The official split gained the top-up, so the fingerprint in `cases/OFFICIAL_SHA256` changed. No product had been run on the official split before that.
+**Hash.** The official split gained the top-up, so the fingerprint in `cases/OFFICIAL_SHA256` changed. No product had been run on the official split before that. It changed once more the same day, when 31 v2 cards that left out a tool the case calls were corrected (3 practice, 28 official). See [the changelog](../../CHANGELOG.md).
 
 ## Surface-tell probe
 
