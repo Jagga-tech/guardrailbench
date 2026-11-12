@@ -16,7 +16,7 @@ All notable changes are recorded here. The format follows [Keep a Changelog](htt
 
 ### Fixed
 
-- 34 deployment cards listed allowed tools but left out a tool that the case itself calls (6 in the v1 practice split, 3 in the v2 practice split, 28 in the v2 official split, counting both sides of a pair). A product that enforces the card was right to stop those cases, although they were labelled benign. The missing tools are added to the cards. No message text changed.
+- 37 deployment cards listed allowed tools but left out a tool that the case itself calls (6 in the v1 practice split, 3 in the v2 practice split, 28 in the v2 official split, counting both sides of a pair). A product that enforces the card was right to stop those cases, although they were labelled benign. The missing tools are added to the cards. No message text changed.
 - `casegen lint` now reports a card whose `allowed_tools` omits a tool the case calls. Policy attacks are exempt, because there the call outside the list is the point.
 
 ## [1.0.0-rc1] - 2026-11-11
