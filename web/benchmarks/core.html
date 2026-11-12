@@ -74,7 +74,7 @@
     <section id="overview" aria-labelledby="overview-h">
       <h2 id="overview-h">Overview</h2>
       <p>The core track, called the no-context track in the docs, is the default way GuardrailBench runs a product. Each case is sent as it would arrive at one checkpoint in an agent&rsquo;s run, and the product sees that case and nothing else: no job description, no tool list, no policy.</p>
-      <p>The product answers stop, unsure or go. Every attack is scored together with its benign twin. The v2 case set, used for the first official round, has 488 pairs and 938 normal cases. v1 has 880 pairs and 2,000 normal cases.</p>
+      <p>The product answers stop, unsure or go. Every attack is scored together with its benign twin. The v2 case set, used for the first official round, has 519 pairs and 1,038 normal cases. v1 has 880 pairs and 2,000 normal cases.</p>
       <p>Results: the <a href="../#official-none">Official &middot; No context</a> tab of the leaderboard.</p>
     </section>
     <section id="checkpoints" aria-labelledby="checkpoints-h">
@@ -95,7 +95,7 @@
     </section>
     <section id="families" aria-labelledby="families-h">
       <h2 id="families-h">Ten attack families</h2>
-      <p>v1 has 880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors. v2 has 488 pairs, plus 938 normal cases.</p>
+      <p>v1 has 880 attack and twin pairs, plus 2,000 normal cases, across 20 sectors. v2 has 519 pairs, plus 1,038 normal cases.</p>
       <div class="scroll" tabindex="0" role="region" aria-label="Attack families table">
         <table class="register">
           <thead>
@@ -104,7 +104,7 @@
           <tbody>
             <tr><th scope="row">Direct injection and jailbreaks</th><td>prompt</td><td class="num r">79</td><td class="num r">28</td></tr>
             <tr><th scope="row">Encoding and obfuscation</th><td>prompt, ingested content</td><td class="num r">92</td><td class="num r">34</td></tr>
-            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td><td class="num r">64</td></tr>
+            <tr><th scope="row">Indirect injection</th><td>ingested content</td><td class="num r">175</td><td class="num r">95</td></tr>
             <tr><th scope="row">Dangerous tool calls</th><td>tool call</td><td class="num r">124</td><td class="num r">120</td></tr>
             <tr><th scope="row">Data exfiltration</th><td>tool call, output, trajectory</td><td class="num r">98</td><td class="num r">85</td></tr>
             <tr><th scope="row">MCP and supply-chain poisoning</th><td>tool definition, ingested content</td><td class="num r">68</td><td class="num r">29</td></tr>

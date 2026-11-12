@@ -2,6 +2,17 @@
 
 All notable changes are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- v2 top-up, 2026-11-11: 31 attack pairs (injections in everyday, non-technical content, many long) and 100 normal cases (64 technical, 36 trajectories that end in an outbound or state-changing call). It cuts surface giveaways found by a crude bag-of-words probe: on all cases the probe's balanced accuracy goes from 0.61 to 0.55 (0.5 is chance), on fetched content from 0.71 to 0.57 and on trajectories from 0.71 to 0.66. Tool calls stay at 0.63. The cases have ids starting `v2b-` and version 2. 25 are public in `cases/practice/v2b.jsonl` (4 pairs, 17 normal cases) and 137 are in the hidden official split. Blind-reviewed by a different model (164 of 164 labels matched); no human review. v2 now has 519 attack pairs (140 policy pairs) and 1,038 normal cases: 2,076 in all, 338 public and 1,738 hidden. See `docs/reference/cases-v2.md` and the v2 section of `docs/case-review-log.md`.
+
+### Changed
+
+- The fingerprint in `cases/OFFICIAL_SHA256` changed, because the official split gained the top-up (1,601 to 1,738 cases). No product had been run on the official split before that.
+- `guardrailbench validate cases/practice` now prints `929 cases, 0 problems` (it was 904): 571 (v1) + 313 (v2) + 25 (v2b) + 20 (seed).
+
 ## [1.0.0-rc1] - 2026-11-11
 
 ### Added
