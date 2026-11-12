@@ -17,4 +17,4 @@ __pycache__/
 .pytest_cache/
 drafts/
 !tests/fixtures/*.jsonl
-drafts-v2/
+drafts-v2*/

@@ -224,3 +224,10 @@ def test_assemble_version_sets_id_prefix_and_field(tmp_path):
     cases = load_cases(p) + (load_cases(o) if o.read_text() else [])
     assert all(c.id.startswith("v2-") and c.version == 2 for c in cases)
     assert counts["benign"] == 3
+
+
+def test_assemble_id_prefix_for_a_top_up(tmp_path):
+    p, o = tmp_path / "t" / "p.jsonl", tmp_path / "t" / "o.jsonl"
+    assemble(fixture(tmp_path), p, o, version=2, id_prefix="v2b")
+    cases = load_cases(p) + (load_cases(o) if o.read_text() else [])
+    assert all(c.id.startswith("v2b-") and c.version == 2 for c in cases)

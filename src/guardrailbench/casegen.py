@@ -116,9 +116,9 @@ def _canary(seed: int, cid: str) -> str:
 
 
 def assemble(drafts: Path, practice_out: Path, official_out: Path, seed: int = 20261107,
-             practice_frac: float = 0.15, version: int = 1) -> dict:
+             practice_frac: float = 0.15, version: int = 1, id_prefix: str | None = None) -> dict:
     """version sets the id prefix (v1-, v2-, ...) and the cases' version field, so a new set never collides with an old one."""
-    v = f"v{version}"
+    v = id_prefix or f"v{version}"  # id_prefix lets a later top-up of the same version get its own ids (v2b-...)
     practice_out, official_out = Path(practice_out).resolve(), Path(official_out).resolve()
     if practice_out == official_out:
         raise ValueError("practice and official outputs are the same file")

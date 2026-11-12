@@ -57,6 +57,7 @@ def main(argv: list[str] | None = None) -> int:
     x.add_argument("--seed", type=int, default=20261107)
     x.add_argument("--practice-frac", type=float, default=0.15)
     x.add_argument("--set-version", type=int, default=1, help="id prefix and version field of the assembled set")
+    x.add_argument("--id-prefix", default=None, help="id prefix for a top-up of an existing set, e.g. v2b")
     cg.add_parser("lint").add_argument("path", type=Path)
     x = cg.add_parser("blind")
     x.add_argument("--drafts", type=Path, required=True)
@@ -72,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
         try:
             if args.action == "assemble":
                 print(json.dumps(casegen.assemble(args.drafts, args.practice, args.official, args.seed,
-                                                  args.practice_frac, args.set_version)))
+                                                  args.practice_frac, args.set_version, args.id_prefix)))
             elif args.action == "blind":
                 casegen.blind(args.drafts, args.out, args.seed)
                 print(f"blind -> {args.out}")
